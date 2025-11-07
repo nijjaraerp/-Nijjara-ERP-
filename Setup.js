@@ -533,6 +533,11 @@ const ERP_SCHEMA = {
   // --------------------------------
   // 2. SYS_ (System Management)
   // --------------------------------
+  // Inside ERP_SCHEMA in Setup.js
+"SYS_Error_Log": [
+  "timestamp", "log_type", "function_name", "error_message",
+  "user_id", "client_ip", "user_agent", "stack_trace"
+],
   "SYS_Main_Dashboard": [
     "metric_key", "metric_value", "metric_label_arabic", "last_refreshed"
   ],
