@@ -1,0 +1,14 @@
+# This file contains the private Script ID.
+# It will be different for every developer.
+.clasp.json
+
+# Contains local user auth tokens. DO NOT COMMIT.
+.clasp.token.json
+
+# Downloaded credentials from GCP (as you mentioned)
+client_secret_*.json
+credentials.json
+
+# Node.js cache and dependency folder
+node_modules
+npm-debug.log

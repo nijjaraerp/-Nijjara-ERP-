@@ -1,0 +1,19 @@
+{
+    "name": "nijjara-erp",
+    "version": "1.0.0",
+    "description": "Nijjara ERP Google Apps Script Project",
+    "main": "Code.js",
+    "scripts": {
+        "pull": "clasp pull",
+        "push": "clasp push",
+        "deploy": "clasp push && git push origin main",
+        "save": "git add . && git commit -m 'WIP' && npm run deploy"
+    },
+    "keywords": [
+        "apps-script",
+        "erp",
+        "google-apps-script"
+    ],
+    "author": "Nijjara ERP",
+    "license": "ISC"
+}
