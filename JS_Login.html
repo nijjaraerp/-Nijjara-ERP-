@@ -9,6 +9,21 @@ const LoginModule = {
   isSubmitting: false,
   
   /**
+   * Safe focus helper (handles cross-origin iframe restrictions)
+   * @param {HTMLElement} element - Element to focus
+   */
+  safeFocus: function(element) {
+    try {
+      if (element && typeof element.focus === 'function') {
+        element.focus();
+      }
+    } catch (error) {
+      // Silently fail - focus is blocked in iframe
+      Logger.debug('Login', 'Focus blocked (expected in iframe)');
+    }
+  },
+  
+  /**
    * Initialize login module
    */
   init: function() {
@@ -61,7 +76,7 @@ const LoginModule = {
     // Enter key navigation
     this.usernameInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        this.passwordInput.focus();
+        this.safeFocus(this.passwordInput);
       }
     });
     
@@ -77,10 +92,10 @@ const LoginModule = {
     if (savedUsername) {
       this.usernameInput.value = savedUsername;
       this.rememberMeCheckbox.checked = true;
-      this.passwordInput.focus();
+      this.safeFocus(this.passwordInput);
       Logger.debug('Login', 'Loaded saved username');
     } else {
-      this.usernameInput.focus();
+      this.safeFocus(this.usernameInput);
     }
   },
   
@@ -219,7 +234,7 @@ const LoginModule = {
         
         // Reset form
         this.passwordInput.value = '';
-        this.passwordInput.focus();
+        this.safeFocus(this.passwordInput);
       }
       
     } catch (error) {
@@ -230,7 +245,7 @@ const LoginModule = {
       
       // Reset form
       this.passwordInput.value = '';
-      this.passwordInput.focus();
+      this.safeFocus(this.passwordInput);
       
     } finally {
       // Reset submitting state
