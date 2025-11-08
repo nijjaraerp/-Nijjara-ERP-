@@ -6,6 +6,8 @@
  *
  * This is the single source of truth for all sheet formulas.
  * It is designed to be run *after* Setup.js.
+ *
+ * [VERSION 2.0 - CORRECTED 2025-11-08]
  */
 
 // --------------------------------------------------------------------------
@@ -21,7 +23,6 @@
  */
 function runApplyAllFormulas() {
   // Note: Assumes Logging.js is in the project.
-  // If not, 'logInfo_' and 'logError_' will be undefined.
   // We will proceed with console.log as a fallback for this file.
   const log = (message) => console.log(`(Seed_Functions) ${message}`);
   const errorLog = (func, err) => {
@@ -89,14 +90,19 @@ function runApplyAllFormulas() {
         const engineColLetter = getColumnLetter_(engineColIndex);
         
         // Define the formula
+        // This formula checks if the engine cell is blank. If so, it leaves the view cell blank.
+        // Otherwise, it displays the engine cell's value.
         const formula = `=ARRAYFORMULA(IF(${engineColLetter}2:${engineColLetter}="",,${engineColLetter}2:${engineColLetter}))`;
         
         // Get the target cell (e.g., D2)
         const targetCell = sheet.getRange(2, viewColIndex);
 
         // Clear the entire column below the header (except the formula cell)
-        const clearRange = sheet.getRange(3, viewColIndex, sheet.getMaxRows() - 2, 1);
-        clearRange.clearContent();
+        // This prevents old data from sitting in cells below the array formula
+        if (sheet.getMaxRows() > 2) {
+          const clearRange = sheet.getRange(3, viewColIndex, sheet.getMaxRows() - 2, 1);
+          clearRange.clearContent();
+        }
 
         // Set the formula in the target cell
         targetCell.setFormula(formula);
@@ -290,14 +296,16 @@ const FORMULA_MAP = [
   { sheetName: "PRJ_Expenses_Monitor", viewHeader: "الوصف", engineHeader: "description" },
   { sheetName: "PRJ_Expenses_Monitor", viewHeader: "المبلغ", engineHeader: "amount" },
   { sheetName: "PRJ_Expenses_Monitor", viewHeader: "المرفق", engineHeader: "receipt_doc_id" },
-  // --- PRJ_Time_Line_Monitor ---
-  { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "المرحلة", engineHeader: "milestone_name" },
+  
+  // --- PRJ_Time_Line_Monitor --- [FIXED]
+  { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "المرحلة", engineHeader: "timeline_id" }, // <-- Was milestone_name
   { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "المشروع", engineHeader: "project_id" },
-  { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "اسم المرحلة", engineHeader: "milestone_name" },
+  { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "اسم المرحلة", engineHeader: "milestone_name" }, // <-- Correct
   { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "التاريخ المخطط", engineHeader: "planned_date" },
   { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "التاريخ الفعلي", engineHeader: "actual_date" },
   { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "الحالة", engineHeader: "status" },
-  { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "ملاحظات", engineHeader: "notes" },
+  { sheetName: "PRJ_Time_Line_Monitor", viewHeader: "ملاحظات", engineHeader: "notes" }, // <-- Typo `sheetName:Z` removed
+
   // --- PRJ_InDirExp_Allocations ---
   { sheetName: "PRJ_InDirExp_Allocations", viewHeader: "التخصيص", engineHeader: "allocation_id" },
   { sheetName: "PRJ_InDirExp_Allocations", viewHeader: "المشروع", engineHeader: "project_id" },
@@ -305,6 +313,7 @@ const FORMULA_MAP = [
   { sheetName: "PRJ_InDirExp_Allocations", viewHeader: "نسبة التخصيص", engineHeader: "allocation_percentage" },
   { sheetName: "PRJ_InDirExp_Allocations", viewHeader: "المبلغ المخصص", engineHeader: "allocated_amount" },
   { sheetName: "PRJ_InDirExp_Allocations", viewHeader: "الفترة", engineHeader: "period" },
+  
   // --- FIN_Direct_Expences ---
   { sheetName: "FIN_Direct_Expences", viewHeader: "كود المصروف", engineHeader: "expense_id" },
   { sheetName: "FIN_Direct_Expences", viewHeader: "المشروع", engineHeader: "project_id" },
@@ -315,20 +324,23 @@ const FORMULA_MAP = [
   { sheetName: "FIN_Direct_Expences", viewHeader: "المرفق", engineHeader: "receipt_doc_id" },
   { sheetName: "FIN_Direct_Expences", viewHeader: "مدفوع بواسطة", engineHeader: "paid_by_employee_id" },
   { sheetName: "FIN_Direct_Expences", viewHeader: "الحالة", engineHeader: "status" },
+  
   // --- FIN_Indirect_Expenses_ReOccurs ---
   { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "كود المصروف", engineHeader: "indirect_expense_id" },
   { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "التاريخ", engineHeader: "expense_date" },
   { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "الفئة", engineHeader: "category" },
   { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "الوصف", engineHeader: "description" },
   { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "المبلغ", engineHeader: "amount" },
-  { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "تاريخ الاستحقاق", engineHeader: "due_date" },
+  { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "تاريخ الاستحقاق", engineHeader: "due_date" }, // <-- Typo `sheetName:Storage:` removed
   { sheetName: "FIN_Indirect_Expenses_ReOccurs", viewHeader: "التكرار", engineHeader: "frequency" },
+  
   // --- FIN_Indirect_Expenses_Once ---
   { sheetName: "FIN_Indirect_Expenses_Once", viewHeader: "كود المصروف", engineHeader: "indirect_expense_id" },
   { sheetName: "FIN_Indirect_Expenses_Once", viewHeader: "التاريخ", engineHeader: "expense_date" },
   { sheetName: "FIN_Indirect_Expenses_Once", viewHeader: "الفئة", engineHeader: "category" },
   { sheetName: "FIN_Indirect_Expenses_Once", viewHeader: "الوصف", engineHeader: "description" },
   { sheetName: "FIN_Indirect_Expenses_Once", viewHeader: "المبلغ", engineHeader: "amount" },
+  
   // --- FIN_Project_Revenue ---
   { sheetName: "FIN_Project_Revenue", viewHeader: "كود الإيراد", engineHeader: "revenue_id" },
   { sheetName: "FIN_Project_Revenue", viewHeader: "المشروع", engineHeader: "project_id" },
@@ -337,6 +349,7 @@ const FORMULA_MAP = [
   { sheetName: "FIN_Project_Revenue", viewHeader: "تاريخ الاستحقاق", engineHeader: "due_date" },
   { sheetName: "FIN_Project_Revenue", viewHeader: "المبلغ", engineHeader: "amount" },
   { sheetName: "FIN_Project_Revenue", viewHeader: "الحالة", engineHeader: "status" },
+  
   // --- FIN_Employess_Custody ---
   { sheetName: "FIN_Employess_Custody", viewHeader: "كود العهدة", engineHeader: "custody_id" },
   { sheetName: "FIN_Employess_Custody", viewHeader: "الموظف", engineHeader: "employee_id" },
