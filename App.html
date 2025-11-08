@@ -24,11 +24,11 @@
   <!-- ============================================ -->
   <!-- LOADING SCREEN -->
   <!-- ============================================ -->
-  <div id="app-loading" class="loading-screen" role="status" aria-live="polite">
+  <div id="loading-screen" class="loading-screen" role="status" aria-live="polite">
     <div class="loading-content">
       <div class="loader"></div>
       <h2>Nijjara ERP</h2>
-      <p>جاري التحميل...</p>
+      <p class="loading-text">جاري التحميل...</p>
     </div>
   </div>
 
@@ -222,7 +222,7 @@
   <script>
     // App initialization when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-      log('App', 'DOM Content Loaded - Initializing application');
+      Logger.info('App', 'DOM Content Loaded - Initializing application');
       
       // Hide loading screen
       hideLoading();
@@ -230,7 +230,7 @@
       // Check if user has active session
       checkSession();
       
-      log('App', 'Application initialized successfully');
+      Logger.info('App', 'Application initialized successfully');
     });
   </script>
 
