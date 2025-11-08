@@ -1,0 +1,425 @@
+<script>
+/* ============================================
+   NIJJARA ERP - SERVER COMMUNICATION LAYER
+   Promisified google.script.run wrapper with:
+   - Timeout handling
+   - Retry logic
+   - Error callbacks
+   - Loading state management
+   ============================================ */
+
+/**
+ * Server API - Promisified wrapper for google.script.run
+ * Provides a clean, modern async/await interface for server calls
+ */
+const Server = {
+  // Configuration
+  config: {
+    defaultTimeout: 30000, // 30 seconds
+    maxRetries: 2,
+    retryDelay: 1000 // 1 second
+  },
+  
+  /**
+   * Call a server-side function with Promise interface
+   * @param {string} functionName - Name of the server function
+   * @param {Array} args - Arguments to pass to the function
+   * @param {Object} options - Additional options
+   * @returns {Promise} Promise that resolves with server response
+   */
+  call: function(functionName, args = [], options = {}) {
+    const {
+      timeout = this.config.defaultTimeout,
+      showLoading = true,
+      loadingMessage = 'جاري معالجة الطلب...',
+      retries = this.config.maxRetries,
+      onProgress = null
+    } = options;
+    
+    Logger.info('Server', `Calling ${functionName}`, args);
+    
+    // Show loading indicator if requested
+    if (showLoading) {
+      Loading.show(loadingMessage);
+    }
+    
+    return new Promise((resolve, reject) => {
+      let timeoutId;
+      let attempts = 0;
+      
+      /**
+       * Execute the server call with retry logic
+       */
+      const executeCall = () => {
+        attempts++;
+        Logger.debug('Server', `Attempt ${attempts}/${retries + 1} for ${functionName}`);
+        
+        // Set timeout
+        timeoutId = setTimeout(() => {
+          const error = new Error(`Request timeout: ${functionName}`);
+          Logger.error('Server', 'Request timeout', error);
+          
+          if (showLoading) {
+            Loading.hide();
+          }
+          
+          // Retry if attempts remaining
+          if (attempts <= retries) {
+            Logger.info('Server', `Retrying ${functionName} (${attempts}/${retries})`);
+            showToast(
+              `انتهت مهلة الطلب. جاري إعادة المحاولة (${attempts}/${retries})...`,
+              'warning',
+              2000
+            );
+            setTimeout(executeCall, this.config.retryDelay * attempts);
+          } else {
+            reject(error);
+            showToast(
+              'انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.',
+              'error'
+            );
+          }
+        }, timeout);
+        
+        // Build the google.script.run chain
+        let runner = google.script.run;
+        
+        // Success handler
+        runner = runner.withSuccessHandler(function(response) {
+          clearTimeout(timeoutId);
+          
+          if (showLoading) {
+            Loading.hide();
+          }
+          
+          Logger.info('Server', `${functionName} succeeded`, response);
+          resolve(response);
+        });
+        
+        // Failure handler
+        runner = runner.withFailureHandler(function(error) {
+          clearTimeout(timeoutId);
+          
+          Logger.error('Server', `${functionName} failed`, error);
+          
+          if (showLoading) {
+            Loading.hide();
+          }
+          
+          // Retry if attempts remaining
+          if (attempts <= retries) {
+            Logger.info('Server', `Retrying ${functionName} (${attempts}/${retries})`);
+            showToast(
+              `فشل الطلب. جاري إعادة المحاولة (${attempts}/${retries})...`,
+              'warning',
+              2000
+            );
+            setTimeout(executeCall, this.config.retryDelay * attempts);
+          } else {
+            reject(error);
+            
+            // User-friendly error message
+            const errorMessage = this._getErrorMessage(error);
+            showToast(errorMessage, 'error');
+          }
+        }.bind(this));
+        
+        // User object (for progress tracking)
+        if (onProgress) {
+          runner = runner.withUserObject({ onProgress });
+        }
+        
+        // Call the server function
+        try {
+          runner[functionName].apply(runner, args);
+        } catch (error) {
+          clearTimeout(timeoutId);
+          Logger.error('Server', 'Call execution error', error);
+          
+          if (showLoading) {
+            Loading.hide();
+          }
+          
+          reject(error);
+          showToast('فشل استدعاء الخادم. يرجى تحديث الصفحة.', 'error');
+        }
+      };
+      
+      // Start execution
+      executeCall();
+    });
+  },
+  
+  /**
+   * Get user-friendly error message
+   * @param {Error} error - The error object
+   * @returns {string} User-friendly message
+   */
+  _getErrorMessage: function(error) {
+    const errorString = error.toString().toLowerCase();
+    
+    // Network errors
+    if (errorString.includes('network') || errorString.includes('connection')) {
+      return 'خطأ في الاتصال بالشبكة. يرجى التحقق من اتصال الإنترنت.';
+    }
+    
+    // Permission errors
+    if (errorString.includes('permission') || errorString.includes('authorization')) {
+      return 'ليس لديك صلاحية للقيام بهذا الإجراء.';
+    }
+    
+    // Timeout errors
+    if (errorString.includes('timeout')) {
+      return 'انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.';
+    }
+    
+    // Script errors
+    if (errorString.includes('script')) {
+      return 'حدث خطأ في معالجة الطلب. يرجى الاتصال بالدعم الفني.';
+    }
+    
+    // Generic error
+    return 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
+  },
+  
+  /**
+   * Batch multiple server calls
+   * @param {Array} calls - Array of call configurations
+   * @returns {Promise} Promise that resolves with array of responses
+   */
+  batch: async function(calls) {
+    Logger.info('Server', `Executing batch of ${calls.length} calls`);
+    Loading.show('جاري معالجة الطلبات...');
+    
+    try {
+      const promises = calls.map(call => 
+        this.call(
+          call.functionName,
+          call.args || [],
+          { ...call.options, showLoading: false }
+        )
+      );
+      
+      const results = await Promise.all(promises);
+      Loading.hide();
+      Logger.info('Server', 'Batch completed successfully');
+      return results;
+    } catch (error) {
+      Loading.hide();
+      Logger.error('Server', 'Batch failed', error);
+      throw error;
+    }
+  }
+};
+
+// ----------------------------------------
+// API WRAPPERS - Clean interfaces for common operations
+// ----------------------------------------
+
+/**
+ * Authentication API
+ */
+const AuthAPI = {
+  /**
+   * Authenticate user with username and password
+   * @param {string} username - Username
+   * @param {string} password - Password
+   * @returns {Promise<Object>} User data and bootstrap data
+   */
+  login: function(username, password) {
+    return Server.call(
+      'authenticateUser',
+      [username, password],
+      {
+        showLoading: true,
+        loadingMessage: 'جاري تسجيل الدخول...',
+        timeout: 15000
+      }
+    );
+  },
+  
+  /**
+   * Verify session token
+   * @param {string} token - Session token
+   * @returns {Promise<Object>} Session validity status
+   */
+  verifySession: function(token) {
+    return Server.call(
+      'verifySessionToken',
+      [token],
+      {
+        showLoading: false,
+        timeout: 10000,
+        retries: 1
+      }
+    );
+  },
+  
+  /**
+   * Logout user and invalidate session
+   * @returns {Promise<boolean>} Success status
+   */
+  logout: function() {
+    return Server.call(
+      'logoutUser',
+      [],
+      {
+        showLoading: true,
+        loadingMessage: 'جاري تسجيل الخروج...',
+        timeout: 5000
+      }
+    );
+  }
+};
+
+/**
+ * System API
+ */
+const SystemAPI = {
+  /**
+   * Get system information
+   * @returns {Promise<Object>} System info
+   */
+  getInfo: function() {
+    return Server.call(
+      'getSystemInfo',
+      [],
+      {
+        showLoading: false,
+        timeout: 5000,
+        retries: 1
+      }
+    );
+  },
+  
+  /**
+   * Test system connectivity
+   * @returns {Promise<Object>} Test results
+   */
+  test: function() {
+    return Server.call(
+      'testSystem',
+      [],
+      {
+        showLoading: true,
+        loadingMessage: 'جاري اختبار النظام...',
+        timeout: 10000
+      }
+    );
+  }
+};
+
+/**
+ * Data API - Generic CRUD operations
+ */
+const DataAPI = {
+  /**
+   * Read data from a sheet
+   * @param {string} sheetName - Name of the sheet
+   * @param {Object} filters - Optional filters
+   * @returns {Promise<Array>} Array of data rows
+   */
+  read: function(sheetName, filters = {}) {
+    return Server.call(
+      'readData',
+      [sheetName, filters],
+      {
+        showLoading: true,
+        loadingMessage: 'جاري تحميل البيانات...',
+        timeout: 20000
+      }
+    );
+  },
+  
+  /**
+   * Create new record
+   * @param {string} sheetName - Name of the sheet
+   * @param {Object} data - Record data
+   * @returns {Promise<Object>} Created record
+   */
+  create: function(sheetName, data) {
+    return Server.call(
+      'createRecord',
+      [sheetName, data],
+      {
+        showLoading: true,
+        loadingMessage: 'جاري حفظ البيانات...',
+        timeout: 15000
+      }
+    );
+  },
+  
+  /**
+   * Update existing record
+   * @param {string} sheetName - Name of the sheet
+   * @param {string} recordId - Record ID
+   * @param {Object} data - Updated data
+   * @returns {Promise<Object>} Updated record
+   */
+  update: function(sheetName, recordId, data) {
+    return Server.call(
+      'updateRecord',
+      [sheetName, recordId, data],
+      {
+        showLoading: true,
+        loadingMessage: 'جاري تحديث البيانات...',
+        timeout: 15000
+      }
+    );
+  },
+  
+  /**
+   * Delete record
+   * @param {string} sheetName - Name of the sheet
+   * @param {string} recordId - Record ID
+   * @returns {Promise<boolean>} Success status
+   */
+  delete: function(sheetName, recordId) {
+    return Server.call(
+      'deleteRecord',
+      [sheetName, recordId],
+      {
+        showLoading: true,
+        loadingMessage: 'جاري حذف البيانات...',
+        timeout: 15000
+      }
+    );
+  }
+};
+
+// ----------------------------------------
+// INITIALIZATION
+// ----------------------------------------
+Logger.info('Server', 'Server communication layer loaded');
+
+// Check if google.script.run is available (client-side only)
+if (typeof google === 'undefined' || !google.script || !google.script.run) {
+  Logger.warn(
+    'Server',
+    'google.script.run not available - running in development mode?'
+  );
+  
+  // Mock for local development (optional)
+  if (window.location.hostname === 'localhost') {
+    Logger.info('Server', 'Loading mock server for local development');
+    window.google = {
+      script: {
+        run: {
+          withSuccessHandler: function(handler) {
+            this._successHandler = handler;
+            return this;
+          },
+          withFailureHandler: function(handler) {
+            this._failureHandler = handler;
+            return this;
+          },
+          withUserObject: function(obj) {
+            this._userObject = obj;
+            return this;
+          }
+        }
+      }
+    };
+  }
+}
+</script>

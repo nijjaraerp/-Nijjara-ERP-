@@ -1,0 +1,338 @@
+<script>
+/* ============================================
+   NIJJARA ERP - LOGIN MODULE
+   Handles login form, authentication flow, session management
+   ============================================ */
+
+const LoginModule = {
+  // State
+  isSubmitting: false,
+  
+  /**
+   * Initialize login module
+   */
+  init: function() {
+    Logger.info('Login', 'Initializing login module');
+    
+    // Get form elements
+    this.form = document.getElementById('login-form');
+    this.usernameInput = document.getElementById('username');
+    this.passwordInput = document.getElementById('password');
+    this.rememberMeCheckbox = document.getElementById('remember-me');
+    this.submitButton = this.form.querySelector('button[type="submit"]');
+    this.togglePasswordButton = document.getElementById('toggle-password');
+    this.errorContainer = document.getElementById('login-error');
+    
+    // Bind events
+    this.bindEvents();
+    
+    // Load saved username if "Remember Me" was checked
+    this.loadSavedCredentials();
+    
+    Logger.info('Login', 'Login module initialized');
+  },
+  
+  /**
+   * Bind event handlers
+   */
+  bindEvents: function() {
+    // Form submission
+    this.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.handleLogin();
+    });
+    
+    // Toggle password visibility
+    this.togglePasswordButton.addEventListener('click', () => {
+      this.togglePasswordVisibility();
+    });
+    
+    // Clear error on input
+    this.usernameInput.addEventListener('input', () => {
+      this.clearError();
+      FormValidator.validateRequired(this.usernameInput);
+    });
+    
+    this.passwordInput.addEventListener('input', () => {
+      this.clearError();
+      FormValidator.validateRequired(this.passwordInput);
+    });
+    
+    // Enter key navigation
+    this.usernameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.passwordInput.focus();
+      }
+    });
+    
+    Logger.debug('Login', 'Event handlers bound');
+  },
+  
+  /**
+   * Load saved credentials from localStorage
+   */
+  loadSavedCredentials: function() {
+    const savedUsername = Utils.getStorage('rememberedUsername');
+    
+    if (savedUsername) {
+      this.usernameInput.value = savedUsername;
+      this.rememberMeCheckbox.checked = true;
+      this.passwordInput.focus();
+      Logger.debug('Login', 'Loaded saved username');
+    } else {
+      this.usernameInput.focus();
+    }
+  },
+  
+  /**
+   * Toggle password visibility
+   */
+  togglePasswordVisibility: function() {
+    const type = this.passwordInput.getAttribute('type');
+    const icon = this.togglePasswordButton.querySelector('.material-icons');
+    
+    if (type === 'password') {
+      this.passwordInput.setAttribute('type', 'text');
+      icon.textContent = 'visibility_off';
+      this.togglePasswordButton.setAttribute('aria-label', 'إخفاء كلمة المرور');
+    } else {
+      this.passwordInput.setAttribute('type', 'password');
+      icon.textContent = 'visibility';
+      this.togglePasswordButton.setAttribute('aria-label', 'عرض كلمة المرور');
+    }
+    
+    Logger.debug('Login', 'Password visibility toggled');
+  },
+  
+  /**
+   * Clear error message
+   */
+  clearError: function() {
+    if (this.errorContainer) {
+      this.errorContainer.style.display = 'none';
+      this.errorContainer.textContent = '';
+    }
+  },
+  
+  /**
+   * Show error message
+   * @param {string} message - Error message to display
+   */
+  showError: function(message) {
+    if (this.errorContainer) {
+      this.errorContainer.textContent = message;
+      this.errorContainer.style.display = 'block';
+      this.errorContainer.setAttribute('role', 'alert');
+    }
+    Logger.debug('Login', 'Error displayed', message);
+  },
+  
+  /**
+   * Validate login form
+   * @returns {boolean} True if valid
+   */
+  validateForm: function() {
+    this.clearError();
+    
+    const usernameValid = FormValidator.validateRequired(this.usernameInput);
+    const passwordValid = FormValidator.validateRequired(this.passwordInput);
+    
+    if (!usernameValid || !passwordValid) {
+      this.showError('يرجى إدخال اسم المستخدم وكلمة المرور');
+      return false;
+    }
+    
+    return true;
+  },
+  
+  /**
+   * Handle login form submission
+   */
+  handleLogin: async function() {
+    // Prevent double submission
+    if (this.isSubmitting) {
+      Logger.warn('Login', 'Form already submitting');
+      return;
+    }
+    
+    // Validate form
+    if (!this.validateForm()) {
+      return;
+    }
+    
+    // Get form values
+    const username = this.usernameInput.value.trim();
+    const password = this.passwordInput.value;
+    const rememberMe = this.rememberMeCheckbox.checked;
+    
+    Logger.info('Login', `Login attempt for user: ${username}`);
+    
+    // Set submitting state
+    this.isSubmitting = true;
+    this.clearError();
+    Loading.buttonStart(this.submitButton, this.submitButton.innerHTML);
+    
+    try {
+      // Call authentication API
+      const response = await AuthAPI.login(username, password);
+      
+      Logger.info('Login', 'Authentication successful', response);
+      
+      // Check if authentication succeeded
+      if (response.success) {
+        // Save credentials if "Remember Me" is checked
+        if (rememberMe) {
+          Utils.setStorage('rememberedUsername', username);
+        } else {
+          Utils.removeStorage('rememberedUsername');
+        }
+        
+        // Store session data
+        Session.set({
+          token: response.sessionToken,
+          user: response.user,
+          permissions: response.permissions || []
+        });
+        
+        // Store bootstrap data for workspace
+        Utils.setStorage('bootstrapData', {
+          tabs: response.tabs || [],
+          settings: response.settings || {},
+          timestamp: Date.now()
+        });
+        
+        Logger.info('Login', 'Session created successfully');
+        
+        // Show success message
+        showToast('تم تسجيل الدخول بنجاح', 'success', 2000);
+        
+        // Redirect to workspace after brief delay
+        setTimeout(() => {
+          this.navigateToWorkspace();
+        }, 500);
+        
+      } else {
+        // Authentication failed
+        const errorMessage = response.message || 'اسم المستخدم أو كلمة المرور غير صحيحة';
+        this.showError(errorMessage);
+        Logger.warn('Login', 'Authentication failed', response);
+        
+        // Reset form
+        this.passwordInput.value = '';
+        this.passwordInput.focus();
+      }
+      
+    } catch (error) {
+      Logger.error('Login', 'Login error', error);
+      
+      // Show user-friendly error
+      this.showError('حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.');
+      
+      // Reset form
+      this.passwordInput.value = '';
+      this.passwordInput.focus();
+      
+    } finally {
+      // Reset submitting state
+      this.isSubmitting = false;
+      Loading.buttonEnd(this.submitButton);
+    }
+  },
+  
+  /**
+   * Navigate to workspace view
+   */
+  navigateToWorkspace: function() {
+    Logger.info('Login', 'Navigating to workspace');
+    
+    const loginView = document.getElementById('login-view');
+    const workspaceView = document.getElementById('workspace-view');
+    
+    if (loginView && workspaceView) {
+      loginView.classList.add('hidden');
+      workspaceView.classList.remove('hidden');
+      
+      // Initialize workspace (to be implemented in future)
+      if (typeof WorkspaceModule !== 'undefined' && WorkspaceModule.init) {
+        WorkspaceModule.init();
+      }
+      
+      Logger.info('Login', 'Workspace view displayed');
+    } else {
+      Logger.error('Login', 'View elements not found');
+      showToast('خطأ في عرض لوحة العمل', 'error');
+    }
+  }
+};
+
+/**
+ * Check session on page load
+ */
+function checkSession() {
+  Logger.info('Login', 'Checking existing session');
+  
+  if (Session.isActive()) {
+    Logger.info('Login', 'Active session found, navigating to workspace');
+    
+    const loginView = document.getElementById('login-view');
+    const workspaceView = document.getElementById('workspace-view');
+    
+    if (loginView && workspaceView) {
+      loginView.classList.add('hidden');
+      workspaceView.classList.remove('hidden');
+      
+      // Initialize workspace
+      if (typeof WorkspaceModule !== 'undefined' && WorkspaceModule.init) {
+        WorkspaceModule.init();
+      }
+      
+      showToast('مرحباً بعودتك!', 'info', 2000);
+    }
+  } else {
+    Logger.info('Login', 'No active session, showing login view');
+    
+    // Initialize login module
+    LoginModule.init();
+  }
+}
+
+/**
+ * Logout function (called from user menu)
+ */
+async function handleLogout() {
+  Logger.info('Login', 'Logout requested');
+  
+  const confirmed = confirm('هل تريد تسجيل الخروج؟');
+  
+  if (!confirmed) {
+    return;
+  }
+  
+  try {
+    // Call server logout (optional - to invalidate session on server)
+    await AuthAPI.logout().catch(err => {
+      Logger.warn('Login', 'Server logout failed, continuing client-side logout', err);
+    });
+    
+  } catch (error) {
+    Logger.error('Login', 'Logout error', error);
+  } finally {
+    // Clear client-side session regardless of server response
+    Session.clear();
+    Utils.clearStorage();
+    
+    Logger.info('Login', 'Logout completed');
+    showToast('تم تسجيل الخروج بنجاح', 'success', 2000);
+    
+    // Reload page to show login view
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  }
+}
+
+// ----------------------------------------
+// INITIALIZATION
+// ----------------------------------------
+Logger.info('Login', 'Login module script loaded');
+</script>
