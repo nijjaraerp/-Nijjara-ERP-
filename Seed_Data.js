@@ -19,6 +19,37 @@ const SEED_ADMIN_USER_ID = 'mkhoraiby';
 const SEED_ADMIN_EMAIL = 'm.elkhoraiby@gmail.com';
 const SEED_ADMIN_PASSWORD = '210388'; // Will be hashed; change after first login.
 
+const HRM_TAB_REGISTER_ENTRIES = [
+	{
+		tab_id: 'HRM',
+		tab_label_arabic: 'الموارد البشرية',
+		sub_tab_id: '',
+		sub_tab_label_arabic: '',
+		sort_order: 100,
+		icon_name: 'groups',
+		source_sheet: '',
+		view_columns_arabic: '',
+		form_id_add: '',
+		form_id_view: '',
+		add_button_label_arabic: '',
+		required_permission: ''
+	},
+	{
+		tab_id: 'HRM',
+		tab_label_arabic: 'الموارد البشرية',
+		sub_tab_id: 'HRM_EMPLOYEES',
+		sub_tab_label_arabic: 'الموظفين',
+		sort_order: 101,
+		icon_name: 'badge',
+		source_sheet: 'HRM_Employees',
+		view_columns_arabic: 'كود الموظف,اسم الموظف,المسمى الوظيفي,الإدارة,الحالة',
+		form_id_add: 'FORM_ADD_EMPLOYEE',
+		form_id_view: 'FORM_VIEW_EMPLOYEE',
+		add_button_label_arabic: 'إضافة موظف جديد',
+		required_permission: 'hr_read'
+	}
+];
+
 // ---------------------------------------------------------------------------
 // --- ID GENERATION UTILITIES ---
 // ---------------------------------------------------------------------------
@@ -64,7 +95,7 @@ function generateSequentialId_(sheet, headers, idColumnName, prefix) {
 
 /**
  * Master seeding function. Executes ALL seeding in dependency order with rollback.
- * Order: Settings → Dropdowns → Departments → Roles → Permissions → Employee → Admin User
+ * Order: Settings → Tab Register → Dropdowns → Departments → Roles → Permissions → Employee → Admin User
  */
 function runSeedAllData() {
 	logInfo_('runSeedAllData', 'Starting COMPLETE seed process for ALL data');
@@ -75,22 +106,25 @@ function runSeedAllData() {
 		// 1. Seed System Settings
 		seedSystemSettings_(ss, rollbackStack);
 		
-		// 2. Seed Dropdowns
+		// 2. Seed Tab Register for HRM module navigation
+		seedTabRegister_(ss, rollbackStack);
+		
+		// 3. Seed Dropdowns
 		seedDropdowns_(ss, rollbackStack);
 		
-		// 3. Seed Departments
+		// 4. Seed Departments
 		seedDepartments_(ss, rollbackStack);
 		
-		// 4. Seed Roles
+		// 5. Seed Roles
 		const roleId = seedRoles_(ss, rollbackStack);
 		
-		// 5. Seed Permissions
+		// 6. Seed Permissions
 		seedPermissions_(ss, rollbackStack);
 		
-		// 6. Seed Employee
+		// 7. Seed Employee
 		const employeeId = seedEmployee_(ss, rollbackStack);
 		
-		// 7. Seed Admin User
+		// 8. Seed Admin User
 		seedAdminUser_(ss, roleId, employeeId, rollbackStack);
 
 		logInfo_('runSeedAllData', 'COMPLETE seed process finished successfully');
@@ -139,6 +173,54 @@ function seedSystemSettings_(ss, rollbackStack) {
 	});
 	
 	logInfo_('seedSystemSettings_', `Seeded ${settings.length} system settings`);
+}
+
+// ---------------------------------------------------------------------------
+// --- TAB REGISTER SEEDING ---
+// ---------------------------------------------------------------------------
+
+/**
+ * Seeds SET_Tab_Register with HRM navigation entries if missing.
+ * @param {SpreadsheetApp.Spreadsheet} ss
+ * @param {Array} rollbackStack
+ */
+function seedTabRegister_(ss, rollbackStack) {
+	const sheet = getSheetOrThrow_(ss, 'SET_Tab_Register');
+	const headers = getHeaders_(sheet);
+	const tabIdIdx = headers.indexOf('tab_id');
+	const subTabIdIdx = headers.indexOf('sub_tab_id');
+	if (tabIdIdx === -1 || subTabIdIdx === -1) {
+		throw new Error('Required headers missing in SET_Tab_Register');
+	}
+
+	const data = getDataBody_(sheet, headers);
+	const existingKeys = data.map(row => ({
+		tabId: String(row[tabIdIdx] || '').trim().toLowerCase(),
+		subTabId: String(row[subTabIdIdx] || '').trim().toLowerCase()
+	}));
+
+	let insertedCount = 0;
+	HRM_TAB_REGISTER_ENTRIES.forEach(entry => {
+		const targetTabId = entry.tab_id.toLowerCase();
+		const targetSubTabId = (entry.sub_tab_id || '').toLowerCase();
+		const alreadyExists = existingKeys.some(record => record.tabId === targetTabId && record.subTabId === targetSubTabId);
+		if (alreadyExists) {
+			return;
+		}
+
+		const newRow = buildRow_(headers, entry);
+		sheet.appendRow(newRow);
+		rollbackStack.push({ sheetName: 'SET_Tab_Register', rowNumber: sheet.getLastRow() });
+		existingKeys.push({ tabId: targetTabId, subTabId: targetSubTabId });
+		insertedCount++;
+	});
+
+	if (insertedCount === 0) {
+		logInfo_('seedTabRegister_', 'HRM tab register entries already exist. Skipping.');
+		return;
+	}
+
+	logInfo_('seedTabRegister_', `Inserted ${insertedCount} HRM tab register entries into SET_Tab_Register.`);
 }
 
 // ---------------------------------------------------------------------------
