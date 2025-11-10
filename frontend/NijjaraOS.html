@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nijjara-OS | جاري التمهيد...</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- II. CSS STYLES --- */
+        
+        :root {
+            --font-family: 'Cairo', sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
+            --color-bg-dark-matter: #07080D;
+            --color-bg-glass: rgba(25, 28, 48, 0.6);
+            --color-border-glass: rgba(255, 255, 255, 0.15);
+            --color-text: #e0e0e0;
+            --color-text-muted: #aaa;
+            --color-accent-primary: #0078f0;
+            --color-accent-secondary: #00a0f0;
+            --color-accent-red: #d93030;
+            --color-accent-green: #30d970;
+            --shadow-depth-md: 0 5px 15px rgba(0, 0, 0, 0.3);
+            --shadow-depth-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* --- Global Reset & Body --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            overflow: hidden; height: 100vh; width: 100vw;
+            background-color: var(--color-bg-dark-matter);
+            color: var(--color-text); font-family: var(--font-family); direction: rtl;
+        }
+
+        /* --- 1. BOOT SCREEN (Login) --- */
+        #boot-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; background: #000; z-index: 1000; position: fixed;
+            top: 0; left: 0; width: 100%;
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+        }
+        #boot-log { width: 450px; font-family: var(--font-mono); font-size: 1rem; color: var(--color-accent-green); }
+        #boot-log p { margin-bottom: 5px; white-space: pre; }
+        .login-box {
+            display: none; flex-direction: column; width: 350px; margin-top: 20px;
+            padding: 25px; border: 1px solid var(--color-accent-primary);
+            box-shadow: var(--shadow-depth-lg); background: var(--color-bg-glass);
+            border-radius: 12px;
+        }
+        .login-box h2 { font-family: var(--font-family); text-align: center; color: var(--color-accent-primary); margin-bottom: 20px; }
+        .login-box input {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--color-text-muted);
+            color: var(--color-text); padding: 12px; margin-bottom: 15px;
+            font-family: var(--font-family); font-size: 1rem; text-align: right;
+            border-radius: 5px;
+        }
+        .login-box input:focus { outline: none; border-color: var(--color-accent-primary); box-shadow: 0 0 8px var(--color-accent-secondary); }
+        .login-box button {
+            background: var(--color-accent-primary); border: none; color: #fff;
+            padding: 12px; font-family: var(--font-family); font-weight: 700;
+            font-size: 1.1rem; cursor: pointer; transition: all 0.3s;
+            border-radius: 5px;
+        }
+        .login-box button:hover { background: var(--color-accent-secondary); box-shadow: var(--shadow-depth-md); transform: translateY(-2px); }
+        #login-feedback { color: var(--color-accent-red); text-align: center; margin-top: 15px; height: 20px; }
+
+        /* --- 2. NIJJARA-OS INTERFACE (The "Desktop") --- */
+        #nijjara-os { display: none; height: 100vh; width: 100vw; position: relative; }
+        
+        /* --- 2.1 The "Holo-Deck" (Desktop Background) --- */
+        #holo-deck {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 50% 50%, #1a1a2e 0%, var(--color-bg-dark-matter) 70%);
+            z-index: 1;
+        }
+        #particles {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 5px 5px; animation: pulse 15s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.1); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 0.2; }
+        }
+
+        /* --- 2.2 The "Neural Dock" (Taskbar) --- */
+        #neural-dock {
+            position: fixed; 
+            bottom: -85px; /* (تعديل) إخفاء تلقائي */
+            left: 50%; transform: translateX(-50%);
+            height: 90px; padding: 10px 15px; display: flex;
+            gap: 0; align-items: center; justify-content: center; z-index: 999;
+            background: var(--color-bg-glass); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); border: 1px solid var(--color-border-glass);
+            border-radius: 15px; box-shadow: var(--shadow-depth-lg);
+            animation: slideInUp 1s ease-out;
+            transition: bottom 0.3s ease; 
+        }
+        
+        #neural-dock:hover {
+            bottom: 10px; 
+        }
+        
+        .dock-group { display: flex; align-items: center; gap: 10px; padding: 0 10px; height: 100%; }
+        /* (تعديل) تم إزالة الحواف الفاصلة */
+        .dock-group.modules { padding: 0; margin: 0; }
+        
+        .dock-app {
+            width: 70px; height: 70px; border-radius: 12px;
+            background: rgba(255,255,255,0.05); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; font-size: 2rem;
+            color: var(--color-text-muted); cursor: pointer;
+            transition: all 0.3s ease; position: relative; padding: 5px;
+        }
+        .dock-app-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+        .dock-app-icon svg { width: 100%; height: 100%; stroke: var(--color-text-muted); transition: all 0.3s ease; }
+        .dock-app-label {
+            font-family: var(--font-family); font-size: 0.75rem;
+            font-weight: 400; margin-top: 5px; color: var(--color-text-muted);
+            transition: all 0.3s ease;
+        }
+        .dock-app:hover { transform: scale(1.1) translateY(-10px); background: var(--color-accent-primary); color: #fff; }
+        .dock-app:hover .dock-app-icon svg { stroke: #fff; }
+        .dock-app:hover .dock-app-label { color: #fff; }
+        
+        .dock-app .tooltip {
+            position: absolute; bottom: 85px; background: #000; color: #fff;
+            padding: 5px 10px; border-radius: 5px; font-size: 0.9rem;
+            font-family: var(--font-family); white-space: nowrap; opacity: 0;
+            visibility: hidden; transition: all 0.3s;
+        }
+        .dock-app:hover .tooltip { opacity: 1; visibility: visible; transform: translateY(-5px); }
+
+        /* --- 2.3 App Windows --- */
+        .app-window {
+            position: absolute; width: 600px; height: 400px; z-index: 10;
+            background: var(--color-bg-glass); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); border: 1px solid var(--color-border-glass);
+            border-radius: 12px; box-shadow: var(--shadow-depth-lg);
+            animation: materialize 0.5s ease-out; resize: both; overflow: hidden;
+            min-width: 300px; min-height: 200px; display: flex; flex-direction: column;
+            transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
+        }
+        @keyframes materialize { from { opacity: 0; transform: scale(0.7) rotateY(45deg); } to { opacity: 1; transform: scale(1) rotateY(0); } }
+        .window-header {
+            width: 100%; height: 35px; background: rgba(0,0,0,0.3);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 10px; cursor: grab; flex-shrink: 0;
+        }
+        .window-header:active { cursor: grabbing; }
+        .window-title { font-weight: 700; color: var(--color-text); }
+        .window-controls { display: flex; gap: 8px; flex-grow: 1; justify-content: space-between; }
+        .window-controls-left { display: flex; gap: 8px; }
+        .window-controls-right { display: flex; gap: 8px; }
+        .window-controls button {
+            width: 15px; height: 15px; border-radius: 50%;
+            border: none; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            padding: 0; line-height: 1; font-weight: bold;
+            color: #000;
+        }
+        .win-btn-icon { background: none; color: var(--color-text-muted); width: 20px; height: 20px; border-radius: 4px; }
+        .win-btn-icon svg { width: 12px; height: 12px; stroke: var(--color-text-muted); stroke-width: 3; }
+        .win-btn-icon:hover { background: rgba(255,255,255,0.2); }
+        .win-btn-icon:hover svg { stroke: var(--color-text); }
+        .btn-close { background: var(--color-accent-red); } 
+        .btn-min { background: #f0a000; }
+        .btn-max { background: var(--color-accent-green); } 
+        .window-content {
+            padding: 20px; flex-grow: 1; overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: var(--color-border-glass) transparent;
+        }
+        .window-content::-webkit-scrollbar { width: 8px; }
+        .window-content::-webkit-scrollbar-track { background: transparent; }
+        .window-content::-webkit-scrollbar-thumb { background-color: var(--color-border-glass); border-radius: 8px; }
+        .window-content h3 { color: var(--color-accent-primary); border-bottom: 1px solid var(--color-border-glass); padding-bottom: 10px; margin-bottom: 15px; }
+        .window-content p { margin-bottom: 10px; }
+        .form-grid { display: grid; grid-template-columns: 100px 1fr; gap: 15px; align-items: center; }
+        .form-grid label { font-weight: 700; color: var(--color-text-muted); }
+        .form-grid input, .form-grid select, .form-grid textarea {
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--color-text-muted);
+            color: var(--color-text); padding: 10px; font-family: var(--font-family); font-size: 1rem; border-radius: 5px;
+        }
+        .form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus { outline: none; border-color: var(--color-accent-primary); }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .data-table th, .data-table td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--color-border-glass); }
+        .data-table th { background: rgba(0,0,0,0.3); color: var(--color-accent-primary); }
+        .data-table tr:hover { background: rgba(255,255,255,0.05); }
+        .win-btn {
+            background: var(--color-accent-primary); border: none; color: #fff; padding: 10px 15px;
+            font-family: var(--font-family); font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: all 0.3s; border-radius: 5px; margin: 10px 5px 0 0;
+        }
+        .win-btn:hover { background: var(--color-accent-secondary); transform: translateY(-2px); }
+        .win-btn-danger { background: var(--color-accent-red); }
+        .win-btn-danger:hover { background: #ff5555; }
+        .audit-log { font-family: var(--font-mono); color: var(--color-text); background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; height: 100%; overflow-y: auto; }
+
+        /* --- 2.4 The "Nexus" (Command Center) --- */
+        #nexus {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; background: var(--color-bg-glass); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border: 1px solid var(--color-accent-primary); 
+            border-radius: 12px; box-shadow: var(--shadow-depth-lg), 0 0 15px var(--color-accent-secondary); 
+            z-index: 2000; padding: 20px; display: none; animation: nexus-pulse 0.7s ease-out;
+        }
+        @keyframes nexus-pulse { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        #nexus h3 { text-align: center; color: var(--color-accent-primary); margin-bottom: 15px; }
+        #nexus-input {
+            width: 100%; padding: 15px; font-family: var(--font-family); font-size: 1.2rem;
+            background: rgba(0,0,0,0.5); border: 1px solid var(--color-border-glass);
+            border-radius: 8px; color: var(--color-text); text-align: right;
+        }
+        #nexus-input:focus { outline: none; border-color: var(--color-accent-primary); }
+        #nexus-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            z-index: 1999; display: none; 
+        }
+
+        /* --- 2.5 Floating Action Buttons (FAB) --- */
+        #fab-container {
+            position: fixed; top: 0; left: 0; 
+            width: 100vw; height: 100vh; 
+            z-index: 900; 
+            pointer-events: none; /* السماح بالنقر من خلاله */
+        }
+        
+        .module-fab {
+            position: absolute; 
+            width: 60px; height: 60px;
+            display: none; 
+            z-index: 901; 
+            pointer-events: auto; /* جعل الزر العائم قابلاً للنقر */
+        }
+        
+        .fab-main {
+            width: 60px; height: 60px; background: var(--color-accent-primary);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; cursor: grab;
+            box-shadow: var(--shadow-depth-md); transition: all 0.3s ease;
+        }
+        .fab-main:active { cursor: grabbing; }
+        .fab-main svg { width: 30px; height: 30px; stroke: #fff; stroke-width: 2; pointer-events: none; }
+        .fab-main:hover { transform: scale(1.1); background: var(--color-accent-secondary); }
+        
+        .fab-rays {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transform: scale(0); opacity: 0;
+            transition: all 0.3s ease-out; pointer-events: none;
+        }
+        .module-fab.active .fab-rays { transform: scale(1); opacity: 1; pointer-events: auto; }
+        .fab-ray { position: absolute; top: 50%; left: 50%; width: 100px; transform-origin: 0 50%; height: 1px; }
+        .fab-sub-app {
+            position: absolute; right: -20px; top: -20px;
+            width: 40px; height: 40px; background: #fff;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; box-shadow: var(--shadow-depth-md);
+            transition: all 0.2s ease;
+        }
+        .fab-sub-app svg { width: 20px; height: 20px; stroke: var(--color-accent-primary); stroke-width: 2; }
+        .fab-sub-app:hover { background: var(--color-text-muted); }
+        
+        .fab-ray:nth-child(1) { transform: translate(30px, 30px) rotate(-45deg); }
+        .fab-ray:nth-child(2) { transform: translate(30px, 30px) rotate(0deg); }
+        .fab-ray:nth-child(3) { transform: translate(30px, 30px) rotate(45deg); }
+        .fab-ray:nth-child(1) .fab-sub-app { transition-delay: 0.05s; }
+        .fab-ray:nth-child(2) .fab-sub-app { transition-delay: 0.1s; }
+        .fab-ray:nth-child(3) .fab-sub-app { transition-delay: 0.15s; }
+        
+        /* --- 2.6 Status Bar --- */
+        #status-bar {
+            position: fixed; 
+            top: 10px; left: 10px; z-index: 998;
+            background: var(--color-bg-glass);
+            border: 1px solid var(--color-border-glass);
+            border-radius: 8px; padding: 10px 15px;
+            display: flex; gap: 20px; font-family: var(--font-mono);
+            font-size: 1rem; color: var(--color-text-muted);
+            box-shadow: var(--shadow-depth-md);
+        }
+        #user-info { color: var(--color-text); font-weight: 700; }
+        #date-time { direction: ltr; text-align: left; color: var(--color-accent-green); min-width: 200px; }
+
+        /* --- 2.7 Task Switcher --- */
+        #task-switcher {
+            position: fixed;
+            top: -55px; /* إخفاء تلقائي */
+            left: 50%;
+            transform: translateX(-50%);
+            height: 60px;
+            z-index: 998;
+            background: var(--color-bg-glass);
+            border: 1px solid var(--color-border-glass);
+            border-radius: 0 0 12px 12px;
+            box-shadow: var(--shadow-depth-md);
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: top 0.3s ease; 
+        }
+        
+        #task-switcher:hover {
+            top: 0; /* إظهار عند التمرير */
+        }
+
+        .task-thumb {
+            width: 100px; height: 50px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--color-border-glass);
+            border-radius: 5px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            gap: 5px; overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .task-thumb:hover { transform: scale(1.1); border-color: var(--color-accent-primary); }
+        .task-thumb.minimized { opacity: 0.6; background: rgba(0,0,0,0.6); }
+        .task-thumb-icon { width: 20px; height: 20px; }
+        .task-thumb-icon svg { width: 100%; height: 100%; stroke: var(--color-text-muted); }
+        .task-thumb-title {
+            font-family: var(--font-family); font-size: 0.7rem;
+            color: var(--color-text-muted); white-space: nowrap;
+        }
+        
+        /* --- 2.8 (جديد) شريط إجراءات النوافذ الجانبي --- */
+        #window-action-bar {
+            position: fixed;
+            left: -55px; /* إخفاء تلقائي - RTL friendly */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            z-index: 998;
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--color-border-glass);
+            border-radius: 0 12px 12px 0; /* RTL friendly */
+            box-shadow: var(--shadow-depth-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            transition: left 0.3s ease;
+        }
+        #window-action-bar:hover {
+            left: 0; /* إظهار عند التمرير */
+        }
+        .action-bar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-bar-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--color-text-muted);
+            stroke-width: 2;
+        }
+        .action-bar-btn:hover {
+            background: var(--color-accent-primary);
+        }
+        .action-bar-btn:hover svg {
+            stroke: #fff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <symbol id="icon-hrm" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></symbol>
+            <symbol id="icon-prj" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></symbol>
+            <symbol id="icon-fin" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></symbol>
+            <symbol id="icon-sys" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></symbol>
+            <symbol id="icon-power" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></symbol>
+            <symbol id="icon-grid" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></symbol>
+            <symbol id="icon-layers" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></symbol>
+            <symbol id="icon-maximize" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></symbol>
+            <symbol id="icon-restore" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></symbol>
+            <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+            <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></symbol>
+            <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></symbol>
+            <symbol id="icon-minus" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></symbol>
+        </defs>
+    </svg>
+
+
+    <div id="boot-screen">
+        <div id="boot-log"></div>
+        <div class="login-box" id="login-box">
+            <h2>مفتاح مصادقة النظام</h2>
+            <input type="text" id="username" placeholder="معرف المستخدم" value="mkhoraiby">
+            <input type="password" id="password" placeholder="رمز الدخول" value="210388">
+            <button id="login-button">ولوج</button>
+            <div id="login-feedback"></div>
+        </div>
+    </div>
+
+    <div id="nijjara-os">
+        
+        <div id="holo-deck">
+            <div id="particles"></div>
+        </div>
+        
+        <div id="status-bar">
+            <div id="user-info">USER: ...</div>
+            <div id="date-time">Loading clock...</div>
+        </div>
+
+        <div id="task-switcher">
+            </div>
+        
+        <div id="window-action-bar">
+            <div class="action-bar-btn" id="app-grid" title="ترتيب شبكي">
+                <svg><use href="#icon-grid"></use></svg>
+            </div>
+            <div class="action-bar-btn" id="app-cascade" title="ترتيب متتالي">
+                <svg><use href="#icon-layers"></use></svg>
+            </div>
+            <div class="action-bar-btn" id="app-minimize-all" title="تصغير الكل">
+                <svg><use href="#icon-minus"></use></svg>
+            </div>
+            <div class="action-bar-btn" id="app-expand-all" title="إظهار الكل">
+                <svg><use href="#icon-maximize"></use></svg>
+            </div>
+        </div>
+        
+        <div id="neural-dock">
+            
+            <div class="dock-group modules">
+                <div class="dock-app" id="app-hrm" data-title="الموارد البشرية (HRM)">
+                    <div class="dock-app-icon"><svg><use href="#icon-hrm"></use></svg></div>
+                    <div class="dock-app-label">الموارد</div>
+                </div>
+                <div class="dock-app" id="app-prj" data-title="المشاريع (PRJ)">
+                    <div class="dock-app-icon"><svg><use href="#icon-prj"></use></svg></div>
+                    <div class="dock-app-label">المشاريع</div>
+                </div>
+                <div class="dock-app" id="app-fin" data-title="المالية (FIN)">
+                    <div class="dock-app-icon"><svg><use href="#icon-fin"></use></svg></div>
+                    <div class="dock-app-label">المالية</div>
+                </div>
+                <div class="dock-app" id="app-sys" data-title="النظام (SYS)">
+                    <div class="dock-app-icon"><svg><use href="#icon-sys"></use></svg></div>
+                    <div class="dock-app-label">النظام</div>
+                </div>
+            </div>
+
+            <div class="dock-app" id="app-shutdown" data-title="إيقاف التشغيل" style="color: var(--color-accent-red);">
+                <div class="dock-app-icon"><svg style="stroke: var(--color-accent-red);"><use href="#icon-power"></use></svg></div>
+                <div class="dock-app-label" style="color: var(--color-accent-red);">خروج</div>
+            </div>
+        </div>
+        
+        <div id="fab-container">
+            </div>
+
+        <div id="nexus-overlay"></div>
+        <div id="nexus">
+            <h3>مركز أوامر Nexus</h3>
+            <input type="text" id="nexus-input" placeholder="اكتب أمراً أو استعلاماً... (مثال: إضافة موظف)">
+        </div>
+
+    </div>
+    
+    <template id="window-template">
+        <div class="app-window">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-controls-right">
+                        <button class="win-btn-icon btn-toggle-fab" title="إظهار/إخفاء الزر العائم">
+                            <svg><use href="#icon-eye"></use></svg>
+                        </button>
+                    </div>
+                    <span class="window-title">عنوان النافذة</span>
+                    <div class="window-controls-left">
+                        <button class="win-btn-icon btn-min" title="تصغير">
+                            <svg><use href="#icon-minus" style="stroke-width: 4; transform: scale(0.8)"></use></svg> 
+                        </button>
+                        <button class="win-btn-icon btn-max" title="تكبير">
+                            <svg><use href="#icon-maximize"></use></svg>
+                        </button>
+                        <button class="win-btn-icon btn-close" title="إغلاق">
+                            <svg><use href="#icon-plus" style="stroke-width: 4; transform: rotate(45deg) scale(0.8)"></use></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content">
+                </div>
+        </div>
+    </template>
+    
+    <template id="fab-template">
+        <div class="module-fab" style="top: calc(100vh - 200px); left: calc(100vw - 100px);">
+            <div class="fab-main">
+                </div>
+            <div class="fab-rays">
+                </div>
+        </div>
+    </template>
+    
+    <template id="fab-ray-template">
+        <div class="fab-ray">
+            <div class="fab-sub-app" data-action="">
+                </div>
+        </div>
+    </template>
+
+    <template id="task-thumb-template">
+        <div class="task-thumb">
+            <div class="task-thumb-icon">
+                <svg><use href="#icon-sys"></use></svg>
+            </div>
+            <span class="task-thumb-title">Window</span>
+        </div>
+    </template>
+
+
+    <script>
+        /* --- III. JAVASCRIPT "OS KERNEL" --- */
+        
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. Element Selectors ---
+            const bootScreen = document.getElementById('boot-screen');
+            const bootLog = document.getElementById('boot-log');
+            const loginBox = document.getElementById('login-box');
+            const loginButton = document.getElementById('login-button');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const nijjaraOS = document.getElementById('nijjara-os');
+            const windowTemplate = document.getElementById('window-template');
+            const fabContainer = document.getElementById('fab-container');
+            const fabTemplate = document.getElementById('fab-template');
+            const fabRayTemplate = document.getElementById('fab-ray-template');
+            
+            const taskSwitcher = document.getElementById('task-switcher'); 
+            const taskThumbTemplate = document.getElementById('task-thumb-template'); 
+            
+            const nexus = document.getElementById('nexus');
+            const nexusOverlay = document.getElementById('nexus-overlay');
+
+            // --- 2. Boot Sequence & Login ---
+            const bootMessages = [
+                'BOOTING NIJJARA-OS v1.0...', 'Loading kernel modules... OK',
+                'Initializing 3D glass display... DONE', 'Connecting to neural-link... SECURE',
+                'Loading user authentication service...', 'Awaiting system key...'
+            ];
+
+            let i = 0;
+            function runBootLog() {
+                if (i < bootMessages.length) {
+                    const p = document.createElement('p');
+                    p.textContent = `> ${bootMessages[i]}`;
+                    bootLog.appendChild(p);
+                    bootLog.scrollTop = bootLog.scrollHeight;
+                    i++;
+                    setTimeout(runBootLog, Math.random() * 300 + 100);
+                } else { loginBox.style.display = 'flex'; }
+            }
+
+            loginButton.addEventListener('click', handleLogin);
+            passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+
+            function handleLogin() {
+                const user = usernameInput.value.trim();
+                const pass = passwordInput.value;
+                
+                if (!user || !pass) {
+                    document.getElementById('login-feedback').textContent = 'الرجاء إدخال اسم المستخدم وكلمة المرور';
+                    logToConsole('Login validation failed: empty fields', 'CLIENT-ERROR');
+                    return;
+                }
+                
+                loginButton.disabled = true;
+                loginButton.textContent = 'جاري المصادقة...';
+                document.getElementById('login-feedback').textContent = '';
+                
+                logToConsole(`Attempting login for user: ${user}`, 'CLIENT-INFO');
+                
+                // Call backend authentication
+                google.script.run
+                    .withSuccessHandler(function(response) {
+                        loginButton.disabled = false;
+                        loginButton.textContent = 'ولوج';
+                        
+                        if (response && response.success) {
+                            logToConsole('Login successful. Session active.', 'CLIENT-SUCCESS');
+                            
+                            // Store session data
+                            sessionStorage.setItem('nijjara_session', JSON.stringify(response.data));
+                            
+                            // Boot into OS
+                            bootScreen.style.opacity = '0';
+                            bootScreen.style.visibility = 'hidden';
+                            nijjaraOS.style.display = 'block';
+                            
+                            document.getElementById('user-info').textContent = `USER: ${response.data.username}`;
+                            startClock();
+                        } else {
+                            logToConsole('Login failed: ' + response.message, 'CLIENT-ERROR');
+                            document.getElementById('login-feedback').textContent = response.message || 'فشل تسجيل الدخول';
+                        }
+                    })
+                    .withFailureHandler(function(error) {
+                        loginButton.disabled = false;
+                        loginButton.textContent = 'ولوج';
+                        logToConsole('Login error: ' + error.message, 'CLIENT-ERROR');
+                        document.getElementById('login-feedback').textContent = 'خطأ في الاتصال بالخادم';
+                    })
+                    .authenticateUser(user, pass);
+            }
+            runBootLog();
+            
+            function startClock() {
+                const dateTimeEl = document.getElementById('date-time');
+                if (!dateTimeEl) return;
+                
+                function updateTime() {
+                    const now = new Date();
+                    const date = now.toLocaleDateString('ar-EG-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                    const time = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    dateTimeEl.textContent = `${date} | ${time}`;
+                }
+                updateTime(); 
+                setInterval(updateTime, 1000); 
+            }
+
+            // --- 3. Window Manager ---
+            let windowCount = 0;
+            let highestZ = 10;
+            const moduleIcons = { 
+                'hrm': '#icon-hrm', 'prj': '#icon-prj',
+                'fin': '#icon-fin', 'sys': '#icon-sys'
+            };
+
+            function createWindow(title, content, moduleId) {
+                windowCount++;
+                highestZ++;
+                
+                const template = windowTemplate.content.cloneNode(true);
+                const newWindow = template.querySelector('.app-window');
+                
+                const windowId = `window-${moduleId}-${Date.now()}`; 
+                newWindow.id = windowId;
+                
+                newWindow.style.top = `${50 + (windowCount * 20)}px`;
+                newWindow.style.left = `${100 + (windowCount * 20)}px`;
+                newWindow.style.zIndex = highestZ;
+                newWindow.dataset.moduleId = moduleId; 
+                
+                newWindow.querySelector('.window-title').textContent = title;
+                newWindow.querySelector('.window-content').innerHTML = content;
+                
+                addTaskThumb(windowId, moduleId, title);
+
+                // إغلاق
+                newWindow.querySelector('.btn-close').addEventListener('click', () => {
+                    removeTaskThumb(windowId); 
+                    newWindow.remove();
+                });
+                
+                // تصغير
+                newWindow.querySelector('.btn-min').addEventListener('click', () => {
+                    newWindow.style.display = 'none';
+                    document.querySelector(`.task-thumb[data-window-id="${windowId}"]`)?.classList.add('minimized'); 
+                });
+                
+                // تكبير/استعادة
+                newWindow.querySelector('.btn-max').addEventListener('click', (e) => {
+                    maximizeWindow(newWindow, e.currentTarget);
+                });
+                
+                // إظهار/إخفاء الزر العائم
+                newWindow.querySelector('.btn-toggle-fab').addEventListener('click', () => {
+                    toggleFabForModule(moduleId);
+                });
+
+                newWindow.addEventListener('mousedown', () => {
+                    bringWindowToFront(newWindow);
+                });
+                
+                makeDraggable(newWindow.querySelector('.window-header'), newWindow, false);
+                nijjaraOS.appendChild(newWindow);
+                return newWindow;
+            }
+
+            function bringWindowToFront(windowEl) {
+                highestZ++;
+                windowEl.style.zIndex = highestZ;
+                windowEl.style.display = 'block';
+                document.querySelector(`.task-thumb[data-window-id="${windowEl.id}"]`)?.classList.remove('minimized');
+            }
+
+
+            function maximizeWindow(windowEl, btn) {
+                const icon = btn.querySelector('svg use');
+                if (windowEl.dataset.isMaximized === 'true') {
+                    // Restore
+                    windowEl.style.top = windowEl.dataset.oldTop;
+                    windowEl.style.left = windowEl.dataset.oldLeft;
+                    windowEl.style.width = windowEl.dataset.oldWidth;
+                    windowEl.style.height = windowEl.dataset.oldHeight;
+                    windowEl.dataset.isMaximized = 'false';
+                    icon.setAttribute('href', '#icon-maximize');
+                } else {
+                    // Maximize
+                    windowEl.dataset.oldTop = windowEl.style.top;
+                    windowEl.dataset.oldLeft = windowEl.style.left;
+                    windowEl.dataset.oldWidth = windowEl.style.width;
+                    windowEl.dataset.oldHeight = windowEl.style.height;
+                    windowEl.style.top = '0'; windowEl.style.left = '0';
+                    windowEl.style.width = '100vw'; windowEl.style.height = '100vh';
+                    windowEl.dataset.isMaximized = 'true';
+                    icon.setAttribute('href', '#icon-restore');
+                }
+            }
+
+            // (تعديل) وظيفة السحب
+            function makeDraggable(header, windowEl, isFab = false) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                let isDragging = false; 
+                
+                header.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    if (e.target.closest('button') && !isFab) return;
+                    
+                    isDragging = false; 
+                    e.preventDefault(); 
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e.preventDefault();
+                    isDragging = true; 
+                    
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    
+                    // تحديث الموضع
+                    windowEl.style.top = (windowEl.offsetTop - pos2) + "px";
+                    windowEl.style.left = (windowEl.offsetLeft - pos1) + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                    
+                    // إذا كان زراً عائماً ولم يتم سحبه، اعتبره "نقر"
+                    if (isFab && !isDragging) {
+                        windowEl.classList.toggle('active');
+                    }
+                }
+            }
+            
+            // --- Window Arrangement Functions ---
+            function arrangeWindowsInGrid() {
+                logToConsole('Arranging windows in grid...', 'CLIENT-EVENT');
+                const windows = document.querySelectorAll('.app-window:not([style*="display: none"])');
+                const numWindows = windows.length;
+                if (numWindows === 0) return;
+                const cols = Math.ceil(Math.sqrt(numWindows));
+                const rows = Math.ceil(numWindows / cols);
+                const winWidth = (window.innerWidth / cols);
+                const winHeight = (window.innerHeight / rows);
+                
+                windows.forEach((win, index) => {
+                    const row = Math.floor(index / cols);
+                    const col = index % cols;
+                    win.style.top = `${row * winHeight}px`;
+                    win.style.left = `${col * winWidth}px`;
+                    win.style.width = `${winWidth}px`;
+                    win.style.height = `${winHeight}px`;
+                });
+            }
+            
+            function arrangeWindowsCascade() {
+                logToConsole('Arranging windows in cascade...', 'CLIENT-EVENT');
+                const windows = document.querySelectorAll('.app-window:not([style*="display: none"])');
+                windows.forEach((win, index) => {
+                    win.style.top = `${50 + (index * 40)}px`;
+                    win.style.left = `${100 + (index * 40)}px`;
+                    win.style.width = '600px'; win.style.height = '400px';
+                    win.style.zIndex = 10 + index;
+                });
+            }
+            
+            function minimizeAllWindows() {
+                logToConsole('Minimizing all windows', 'CLIENT-EVENT');
+                document.querySelectorAll('.app-window').forEach(win => {
+                    win.style.display = 'none';
+                    document.querySelector(`.task-thumb[data-window-id="${win.id}"]`)?.classList.add('minimized');
+                });
+            }
+
+            function expandAllWindows() {
+                logToConsole('Expanding all windows', 'CLIENT-EVENT');
+                document.querySelectorAll('.app-window[style*="display: none"]').forEach(win => {
+                    win.style.display = 'block';
+                    document.querySelector(`.task-thumb[data-window-id="${win.id}"]`)?.classList.remove('minimized');
+                });
+            }
+
+            // --- 4. Dock App Listeners ---
+            
+            function openOrFocusWindow(moduleId, title, content, fabConfig) {
+                logToConsole(`Loading ${moduleId}_Module...`, 'CLIENT-INFO');
+                if (fabConfig) {
+                    ensureFabExists(moduleId, fabConfig.icon, fabConfig.subModules);
+                }
+                createWindow(title, content, moduleId);
+            }
+
+            document.getElementById('app-hrm').addEventListener('click', () => { openOrFocusWindow('hrm', 'وحدة الموارد البشرية (HRM)', `<h3>سجل الموظفين</h3>...`, { icon: '#icon-hrm', subModules: [{ action: 'add-employee', icon: '#icon-plus', title: 'إضافة موظف' }, { action: 'search-employee', icon: '#icon-search', title: 'بحث' }] }); });
+            document.getElementById('app-prj').addEventListener('click', () => { openOrFocusWindow('prj', 'وحدة المشاريع (PRJ)', `<h3>إضافة مشروع جديد</h3>...`, { icon: '#icon-prj', subModules: [{ action: 'add-project', icon: '#icon-plus', title: 'إضافة مشروع' }, { action: 'add-client', icon: '#icon-hrm', title: 'إضافة عميل' }] }); });
+            document.getElementById('app-fin').addEventListener('click', () => { openOrFocusWindow('fin', 'وحدة المالية (FIN)', `<h3>المصروفات والإيرادات</h3>...`, { icon: '#icon-fin', subModules: [{ action: 'add-expense', icon: '#icon-plus', title: 'إضافة مصروف' }, { action: 'add-income', icon: '#icon-plus', title: 'إضافة إيراد' }] }); });
+            document.getElementById('app-sys').addEventListener('click', () => { openOrFocusWindow('sys', 'سجل تدقيق النظام (SYS)', `<pre class="audit-log">...</pre>`); });
+            
+            // (تعديل) مستمعي التحكم بالنوافذ (الآن على الشريط الجانبي)
+            document.getElementById('app-grid').addEventListener('click', arrangeWindowsInGrid);
+            document.getElementById('app-cascade').addEventListener('click', arrangeWindowsCascade);
+            document.getElementById('app-minimize-all').addEventListener('click', minimizeAllWindows);
+            document.getElementById('app-expand-all').addEventListener('click', expandAllWindows); 
+            
+            document.getElementById('app-shutdown').addEventListener('click', () => { 
+                logToConsole('Logging out...', 'CLIENT-INFO');
+                sessionStorage.removeItem('nijjara_session');
+                google.script.run
+                    .withSuccessHandler(function() { location.reload(); })
+                    .withFailureHandler(function() { location.reload(); })
+                    .logoutUser();
+            });
+            
+            // --- 5. Nexus Command Center Logic --- (بدون تغيير)
+            // ...
+            
+            // --- 6. Dynamic Content Listeners --- (بدون تغيير)
+            // ...
+
+            // --- 7. Floating Action Button (FAB) Manager ---
+            const fabStore = {}; 
+            function ensureFabExists(moduleId, mainIconHref, subModules) {
+                if (fabStore[moduleId]) return; 
+
+                logToConsole(`Creating FAB for module: ${moduleId}`, 'CLIENT-INFO');
+                
+                const fab = fabTemplate.content.cloneNode(true).querySelector('.module-fab');
+                fab.id = `fab-${moduleId}`;
+                
+                fab.querySelector('.fab-main').innerHTML = `<svg><use href="${mainIconHref}"></use></svg>`;
+                
+                const raysContainer = fab.querySelector('.fab-rays');
+                subModules.forEach((mod, index) => {
+                    const ray = fabRayTemplate.content.cloneNode(true).querySelector('.fab-ray');
+                    const subApp = ray.querySelector('.fab-sub-app');
+                    subApp.dataset.action = mod.action;
+                    subApp.title = mod.title;
+                    subApp.innerHTML = `<svg><use href="${mod.icon}"></use></svg>`;
+                    const angle = -45 + (index * 45);
+                    ray.style.transform = `translate(30px, 30px) rotate(${angle}deg)`;
+                    raysContainer.appendChild(ray);
+                });
+                
+                makeDraggable(fab.querySelector('.fab-main'), fab, true);
+                
+                raysContainer.addEventListener('click', (e) => {
+                    const actionBtn = e.target.closest('.fab-sub-app');
+                    if (actionBtn) {
+                        const action = actionBtn.dataset.action;
+                        logToConsole(`FAB Action: ${action}`, 'CLIENT-EVENT');
+                        document.body.dispatchEvent(new MouseEvent('click', { target: actionBtn, bubbles: true }));
+                        fab.classList.remove('active'); 
+                    }
+                });
+
+                fabContainer.appendChild(fab);
+                fabStore[moduleId] = fab;
+            }
+
+            function toggleFabForModule(moduleId) {
+                const fab = fabStore[moduleId];
+                if (fab) {
+                    const isHidden = fab.style.display === 'none';
+                    fab.style.display = isHidden ? 'block' : 'none';
+                    if (!isHidden) { fab.classList.remove('active'); }
+                    logToConsole(`Toggled FAB visibility for ${moduleId}: ${isHidden ? 'ON' : 'OFF'}`, 'CLIENT-EVENT');
+                }
+            }
+            
+            // --- 8. Task Switcher Manager ---
+            function addTaskThumb(windowId, moduleId, title) {
+                const thumb = taskThumbTemplate.content.cloneNode(true).querySelector('.task-thumb');
+                thumb.dataset.windowId = windowId;
+                
+                const iconHref = moduleIcons[moduleId] || '#icon-sys';
+                thumb.querySelector('svg use').setAttribute('href', iconHref);
+                
+                thumb.querySelector('.task-thumb-title').textContent = title.substring(0, 10) + '...';
+                
+                thumb.addEventListener('click', () => {
+                    const windowEl = document.getElementById(windowId);
+                    if (windowEl) {
+                        bringWindowToFront(windowEl);
+                    }
+                });
+                
+                taskSwitcher.appendChild(thumb);
+            }
+            
+            function removeTaskThumb(windowId) {
+                document.querySelector(`.task-thumb[data-window-id="${windowId}"]`)?.remove();
+            }
+
+            // --- 9. Global Log Function ---
+            function logToConsole(message, type = 'CLIENT-INFO') {
+                console.log(`[${type}] ${message}`);
+            }
+
+        });
+    </script>
+</body>
+</html>

@@ -183,35 +183,12 @@ function testSessionCreation() {
  */
 function doGet(e) {
   try {
-    const page = (e && e.parameter && e.parameter.page) ? e.parameter.page : 'login';
+    logInfo_('System', 'doGet', 'WebApp', 'N/A', 'Loading Nijjara-OS interface');
     
-    logInfo_('System', 'doGet', 'WebApp', 'N/A', `Web app accessed - page: ${page}`);
-    
-    let template;
-    let title = 'Nijjara ERP';
-    
-    // Route to the appropriate page
-    if (page === 'dashboard') {
-      try {
-        template = HtmlService.createTemplateFromFile('frontend/Dashboard');
-        title = 'لوحة التحكم - Nijjara ERP';
-      } catch (err) {
-        logError_('System', 'doGet', 'WebApp', 'N/A', 'Failed to load Dashboard', err);
-        return HtmlService.createHtmlOutput('<h1>Dashboard Error</h1><p>' + err.message + '</p><p>Path: frontend/Dashboard</p>');
-      }
-    } else {
-      // Default to login page
-      try {
-        template = HtmlService.createTemplateFromFile('frontend/Login');
-        title = 'Nijjara ERP - Login';
-      } catch (err) {
-        logError_('System', 'doGet', 'WebApp', 'N/A', 'Failed to load Login', err);
-        return HtmlService.createHtmlOutput('<h1>Login Error</h1><p>' + err.message + '</p><p>Path: frontend/Login</p>');
-      }
-    }
-    
+    // Always serve the Nijjara-OS interface (it handles its own login/desktop)
+    const template = HtmlService.createTemplateFromFile('frontend/NijjaraOS');
     const html = template.evaluate()
-      .setTitle(title)
+      .setTitle('Nijjara-OS | Enterprise Resource Planning')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
     
@@ -219,10 +196,10 @@ function doGet(e) {
   } catch (error) {
     logError_('System', 'doGet', 'WebApp', 'N/A', 'Failed to load web app', error);
     return HtmlService.createHtmlOutput(
-      '<h1>Error</h1>' +
+      '<h1>Error Loading Nijjara-OS</h1>' +
       '<p>' + error.message + '</p>' +
       '<p>Stack: ' + error.stack + '</p>' +
-      '<a href="' + ScriptApp.getService().getUrl() + '">Back to Login</a>'
+      '<a href="' + ScriptApp.getService().getUrl() + '">Reload</a>'
     );
   }
 }
