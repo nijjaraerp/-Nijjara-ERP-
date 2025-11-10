@@ -194,7 +194,10 @@
       if (response && response.success) {
         showSuccess('تم تسجيل الدخول بنجاح!');
         setTimeout(function() {
-          window.location.href = '?page=dashboard';
+          // Store session in browser
+          sessionStorage.setItem('erp_session', JSON.stringify(response.data));
+          // Reload to dashboard
+          window.location.href = window.location.origin + window.location.pathname + '?page=dashboard';
         }, 1500);
       } else {
         showError(response.message || 'اسم المستخدم أو كلمة المرور غير صحيحة');

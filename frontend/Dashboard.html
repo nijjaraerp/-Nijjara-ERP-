@@ -218,24 +218,30 @@
   </div>
 
   <script>
-    // Load user info
-    google.script.run
-      .withSuccessHandler(function(user) {
-        if (user && user.success) {
-          document.getElementById('userName').textContent = user.data.username || 'مستخدم';
-        } else {
-          window.location.href = '?page=login';
-        }
-      })
-      .withFailureHandler(function() {
-        window.location.href = '?page=login';
-      })
-      .getCurrentUser();
+    // Check for session
+    const session = sessionStorage.getItem('erp_session');
+    
+    if (!session) {
+      // No session found, redirect to login
+      window.location.href = window.location.origin + window.location.pathname;
+    } else {
+      // Parse session data
+      const userData = JSON.parse(session);
+      document.getElementById('userName').textContent = userData.username || 'مستخدم';
+    }
 
     function logout() {
+      // Clear session
+      sessionStorage.removeItem('erp_session');
+      
+      // Call backend logout
       google.script.run
         .withSuccessHandler(function() {
-          window.location.href = '?page=login';
+          window.location.href = window.location.origin + window.location.pathname;
+        })
+        .withFailureHandler(function() {
+          // Even if backend fails, still redirect to login
+          window.location.href = window.location.origin + window.location.pathname;
         })
         .logoutUser();
     }
