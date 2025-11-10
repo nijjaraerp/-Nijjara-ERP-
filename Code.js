@@ -183,22 +183,31 @@ function testSessionCreation() {
  */
 function doGet(e) {
   try {
-    logInfo_('System', 'doGet', 'WebApp', 'N/A', 'Web app accessed');
+    const page = (e && e.parameter && e.parameter.page) ? e.parameter.page : 'login';
     
-    // Get the page parameter (default to login)
-    const page = e && e.parameter && e.parameter.page ? e.parameter.page : 'login';
+    logInfo_('System', 'doGet', 'WebApp', 'N/A', `Web app accessed - page: ${page}`);
     
     let template;
     let title = 'Nijjara ERP';
     
     // Route to the appropriate page
     if (page === 'dashboard') {
-      template = HtmlService.createTemplateFromFile('frontend/Dashboard');
-      title = 'لوحة التحكم - Nijjara ERP';
+      try {
+        template = HtmlService.createTemplateFromFile('frontend/Dashboard');
+        title = 'لوحة التحكم - Nijjara ERP';
+      } catch (err) {
+        logError_('System', 'doGet', 'WebApp', 'N/A', 'Failed to load Dashboard', err);
+        return HtmlService.createHtmlOutput('<h1>Dashboard Error</h1><p>' + err.message + '</p><p>Path: frontend/Dashboard</p>');
+      }
     } else {
       // Default to login page
-      template = HtmlService.createTemplateFromFile('frontend/Login');
-      title = 'Nijjara ERP - Login';
+      try {
+        template = HtmlService.createTemplateFromFile('frontend/Login');
+        title = 'Nijjara ERP - Login';
+      } catch (err) {
+        logError_('System', 'doGet', 'WebApp', 'N/A', 'Failed to load Login', err);
+        return HtmlService.createHtmlOutput('<h1>Login Error</h1><p>' + err.message + '</p><p>Path: frontend/Login</p>');
+      }
     }
     
     const html = template.evaluate()
@@ -209,6 +218,11 @@ function doGet(e) {
     return html;
   } catch (error) {
     logError_('System', 'doGet', 'WebApp', 'N/A', 'Failed to load web app', error);
-    return HtmlService.createHtmlOutput('<h1>Error</h1><p>' + error.message + '</p>');
+    return HtmlService.createHtmlOutput(
+      '<h1>Error</h1>' +
+      '<p>' + error.message + '</p>' +
+      '<p>Stack: ' + error.stack + '</p>' +
+      '<a href="' + ScriptApp.getService().getUrl() + '">Back to Login</a>'
+    );
   }
 }
