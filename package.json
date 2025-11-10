@@ -5,7 +5,7 @@
     "main": "Code.js",
     "scripts": {
         "pull": "clasp pull",
-        "push": "clasp push",
+        "push": "clasp push --force",
         "push:git": "git push origin main",
         "push:both": "npm run push && npm run push:git",
         "deploy": "npm run push:both",
