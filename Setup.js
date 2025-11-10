@@ -188,7 +188,24 @@ function setupAllSheets() {
 
   ["FIN_Analysis",
   ["FIN_ANA_ID","FIN_ANA_Date","FIN_ANA_Start","FIN_ANA_End","FIN_ANA_Item1","FIN_ANA_Item2","FIN_ANA_Item3","FIN_ANA_Item4","FIN_ANA_Item5","FIN_ANA_Item6","FIN_ANA_Item7","FIN_ANA_Item8","FIN_ANA_Item9"],
-  ["معرف التحليل","تاريخ التحليل","البدء","الانتهاء","بند1","بند2","بند3","بند4","بند5","بند6","بند7","بند8","بند9"]]
+  ["معرف التحليل","تاريخ التحليل","البدء","الانتهاء","بند1","بند2","بند3","بند4","بند5","بند6","بند7","بند8","بند9"]],
+
+  // ===== POLICY SHEETS (3-COLUMN STATIC MODEL) =====
+  ["POLICY_Penalties",
+  ["Policy_ID","Policy_Description","Policy_Value"],
+  ["معرف السياسة","وصف السياسة","القيمة"]],
+
+  ["POLICY_Overtime",
+  ["Policy_ID","Policy_Description","Policy_Value"],
+  ["معرف السياسة","وصف السياسة","القيمة"]],
+
+  ["POLICY_Salary",
+  ["Policy_ID","Policy_Description","Policy_Value"],
+  ["معرف السياسة","وصف السياسة","القيمة"]],
+
+  ["POLICY_Deductions",
+  ["Policy_ID","Policy_Description","Policy_Value"],
+  ["معرف السياسة","وصف السياسة","القيمة"]]
   ];
 
   // ──────────────────────────────────────────────
