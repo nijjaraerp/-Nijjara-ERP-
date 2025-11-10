@@ -48,8 +48,8 @@ function setupAllSheets() {
   ["معرف القائمة","القيمة بالإنجليزية","القيمة بالعربية","نشط","ترتيب الفرز"]],
 
   ["SYS_Users",
-  ["USR_ID","EMP_Name_EN","USR_Name","EMP_Email","Job_Title","DEPT_Name","ROL_ID","USR_Is_Active","Password_Hash","Last_Login","USR_Crt_At","USR_Crt_By","USR_Upd_At","USR_Upd_By"],
-  ["معرف المستخدم","اسم الموظف بالإنجليزية","اسم المستخدم","البريد الإلكتروني","المسمى الوظيفي","القسم","معرف الدور","نشط","كلمة المرور المشفرة","آخر تسجيل دخول","تاريخ الإنشاء","أنشأ بواسطة","تاريخ التحديث","تم التحديث بواسطة"]],
+  ["USR_ID","EMP_Name_EN","USR_Name","EMP_Email","Job_Title","DEPT_Name","ROL_ID","USR_Is_Active","Password_Hash","Password_Salt","Last_Login","USR_Crt_At","USR_Crt_By","USR_Upd_At","USR_Upd_By"],
+  ["معرف المستخدم","اسم الموظف بالإنجليزية","اسم المستخدم","البريد الإلكتروني","المسمى الوظيفي","القسم","معرف الدور","نشط","كلمة المرور المشفرة","ملح كلمة المرور","آخر تسجيل دخول","تاريخ الإنشاء","أنشأ بواسطة","تاريخ التحديث","تم التحديث بواسطة"]],
 
   ["SYS_Roles",
   ["ROL_ID","ROL_Title","ROL_Notes","ROL_Is_System","ROL_Crt_At","ROL_Crt_By","ROL_Upd_At","ROL_Upd_By"],
