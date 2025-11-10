@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول - Nijjara ERP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      direction: rtl;
+    }
+    
+    .login-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+      width: 400px;
+      max-width: 90%;
+      padding: 40px;
+    }
+    
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .logo h1 {
+      color: #667eea;
+      font-size: 32px;
+      margin-bottom: 5px;
+    }
+    
+    .logo p {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      direction: ltr;
+      text-align: left;
+    }
+    
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+      text-align: center;
+    }
+    
+    .message.error {
+      background-color: #fee;
+      color: #c33;
+      border: 1px solid #fcc;
+    }
+    
+    .message.success {
+      background-color: #efe;
+      color: #3c3;
+      border: 1px solid #cfc;
+    }
+    
+    .message.warning {
+      background-color: #ffc;
+      color: #c93;
+      border: 1px solid #fec;
+    }
+    
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-left: 10px;
+      display: none;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <h1>🏢 Nijjara ERP</h1>
+      <p>نظام تخطيط موارد المؤسسة</p>
+    </div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" name="username" required autocomplete="username">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      
+      <button type="submit" class="btn" id="loginBtn">
+        <span id="btnText">تسجيل الدخول</span>
+        <span class="spinner" id="spinner"></span>
+      </button>
+      
+      <div class="message" id="message"></div>
+    </form>
+    
+    <div class="footer">
+      <p>&copy; 2025 Nijjara Company. All rights reserved.</p>
+    </div>
+  </div>
+
+  <script>
+    // Include debug.js functions inline for now
+    const DBG = {
+      log: function(level, scope, msg, data) {
+        const timestamp = new Date().toLocaleTimeString();
+        const message = `[CLIENT][${level}] ${timestamp} ${scope} → ${msg}`;
+        console.log(message, data || '');
+      },
+      info: function(scope, msg, data) { this.log('INFO', scope, msg, data); },
+      error: function(scope, msg, data) { this.log('ERR', scope, msg, data); },
+      success: function(scope, msg, data) { this.log('OK', scope, msg, data); },
+      warn: function(scope, msg, data) { this.log('WARN', scope, msg, data); }
+    };
+    
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('loginBtn');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('spinner');
+      const message = document.getElementById('message');
+      
+      // Validate inputs
+      if (!username || !password) {
+        showMessage('error', 'الرجاء إدخال اسم المستخدم وكلمة المرور');
+        return;
+      }
+      
+      // Disable button and show loading
+      loginBtn.disabled = true;
+      btnText.textContent = 'جاري التحقق...';
+      spinner.style.display = 'inline-block';
+      message.style.display = 'none';
+      
+      DBG.info('Login', 'Attempting login', { username: username });
+      
+      // Call server-side authentication
+      google.script.run
+        .withSuccessHandler(function(response) {
+          DBG.success('Login', 'Server response received', response);
+          
+          if (response.success) {
+            showMessage('success', 'تم تسجيل الدخول بنجاح! جاري التحميل...');
+            DBG.success('Login', 'Authentication successful', response.data);
+            
+            // Store session token
+            sessionStorage.setItem('sessionToken', response.data.sessionToken);
+            sessionStorage.setItem('userId', response.data.userId);
+            sessionStorage.setItem('username', response.data.username);
+            
+            // Redirect to dashboard (will be implemented later)
+            setTimeout(function() {
+              showMessage('success', 'لوحة التحكم قيد التطوير حالياً');
+              resetForm();
+            }, 2000);
+          } else {
+            showMessage('error', response.message || 'فشل تسجيل الدخول');
+            DBG.error('Login', 'Authentication failed', response.errors);
+            resetForm();
+          }
+        })
+        .withFailureHandler(function(error) {
+          DBG.error('Login', 'Server error', error);
+          showMessage('error', 'حدث خطأ في الاتصال بالخادم');
+          resetForm();
+        })
+        .authenticateUser(username, password, 'Web');
+    });
+    
+    function showMessage(type, text) {
+      const message = document.getElementById('message');
+      message.className = 'message ' + type;
+      message.textContent = text;
+      message.style.display = 'block';
+    }
+    
+    function resetForm() {
+      const loginBtn = document.getElementById('loginBtn');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('spinner');
+      
+      loginBtn.disabled = false;
+      btnText.textContent = 'تسجيل الدخول';
+      spinner.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
