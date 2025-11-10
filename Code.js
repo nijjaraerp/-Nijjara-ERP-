@@ -185,10 +185,24 @@ function doGet(e) {
   try {
     logInfo_('System', 'doGet', 'WebApp', 'N/A', 'Web app accessed');
     
-    // Serve the login page
-    const template = HtmlService.createTemplateFromFile('frontend/Login');
+    // Get the page parameter (default to login)
+    const page = e && e.parameter && e.parameter.page ? e.parameter.page : 'login';
+    
+    let template;
+    let title = 'Nijjara ERP';
+    
+    // Route to the appropriate page
+    if (page === 'dashboard') {
+      template = HtmlService.createTemplateFromFile('frontend/Dashboard');
+      title = 'لوحة التحكم - Nijjara ERP';
+    } else {
+      // Default to login page
+      template = HtmlService.createTemplateFromFile('frontend/Login');
+      title = 'Nijjara ERP - Login';
+    }
+    
     const html = template.evaluate()
-      .setTitle('Nijjara ERP - Login')
+      .setTitle(title)
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
     

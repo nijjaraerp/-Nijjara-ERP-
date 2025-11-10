@@ -404,3 +404,18 @@ function updateLastLogin_(userId, timestamp) {
     logError_('System', 'Update', 'SYS_Users', userId, 'Failed to update last login', error);
   }
 }
+
+/**
+ * Finds a user by email
+ * @param {string} email - Email address
+ * @returns {Object|null} - User object or null
+ */
+function findUserByEmail_(email) {
+  try {
+    const users = getSheetData_('SYS_Users', 1);
+    return users.find(u => u.EMP_Email === email) || null;
+  } catch (error) {
+    logError_(getCurrentUser_(), 'Find', 'SYS_Users', email, 'Failed to find user by email', error);
+    return null;
+  }
+}

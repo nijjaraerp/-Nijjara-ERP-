@@ -385,3 +385,50 @@ function updateSessionLastSeen_(sessionId) {
     logError_('System', 'Update', 'SYS_Sessions', sessionId, 'Failed to update last seen', error);
   }
 }
+
+/**
+ * Gets current logged-in user info (for UI)
+ * @returns {Object} - User data
+ */
+function getCurrentUser() {
+  try {
+    const user = Session.getActiveUser().getEmail();
+    
+    if (!user) {
+      return createResponse_(false, null, 'Not authenticated', ['NOT_AUTH']);
+    }
+    
+    const userData = findUserByEmail_(user);
+    
+    if (!userData) {
+      return createResponse_(false, null, 'User not found', ['USER_NOT_FOUND']);
+    }
+    
+    return createResponse_(true, {
+      userId: userData.USR_ID,
+      username: userData.USR_Name,
+      email: userData.EMP_Email,
+      name: userData.EMP_Name_EN,
+      role: userData.ROL_ID
+    }, 'User info retrieved', []);
+    
+  } catch (error) {
+    logError_('System', 'GetUser', 'Auth', 'N/A', 'Failed to get current user', error);
+    return createResponse_(false, null, 'Failed to get user info', ['GET_USER_ERROR']);
+  }
+}
+
+/**
+ * Logs out current user (for UI)
+ * @returns {Object} - Result
+ */
+function logoutUser() {
+  try {
+    // For now, just return success
+    // In production, would revoke session token
+    return createResponse_(true, null, 'Logged out successfully', []);
+  } catch (error) {
+    logError_('System', 'Logout', 'Auth', 'N/A', 'Logout error', error);
+    return createResponse_(false, null, 'Logout failed', ['LOGOUT_ERROR']);
+  }
+}
