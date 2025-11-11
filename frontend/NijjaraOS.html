@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NijjaraOS</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #0b111e;
+        color: #cbd5e1;
+      }
+      .five-engine-hub {
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px;
+        background: #0f172a;
+      }
+      .five-engine-hub.compact {
+        height: 80px;
+        overflow: hidden;
+      }
+      .compact-orb {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #22c55e;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 24px rgba(34, 197, 94, 0.5);
+      }
+      .compact-orb.visible {
+        display: flex;
+      }
+      .module-drawer {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 420px;
+        height: 100vh;
+        background: #111827;
+        border-left: 1px solid #334155;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      }
+      .module-drawer.open {
+        transform: translateX(0);
+      }
+      .module-header {
+        padding: 12px 16px;
+        background: #0b141e;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .badge {
+        font-size: 12px;
+        color: #94a3b8;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid #334155;
+      }
+      .content {
+        padding: 16px;
+      }
+    </style>
+  </head>
+  <body data-debug="<?!= debug ?>">
+    <div id="fiveEngineHub" class="five-engine-hub compact">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span class="badge">Hub</span>
+        <strong>Nijjara-OS</strong>
+      </div>
+      <div class="content">
+        <p>
+          When expanded, this area would show dashboards and module launchers.
+        </p>
+      </div>
+    </div>
+
+    <div id="compactOrb" class="compact-orb visible" title="Expand hub">◎</div>
+
+    <aside id="moduleDrawer" class="module-drawer" aria-hidden="true">
+      <div class="module-header">
+        <span class="badge">HRM</span><strong>Human Resources</strong>
+      </div>
+      <div class="content">
+        <p>HRM module drawer auto-opened by debug=1.</p>
+      </div>
+    </aside>
+
+    <script>
+      const fiveEngineHub = document.getElementById('fiveEngineHub');
+      const compactOrb = document.getElementById('compactOrb');
+      const moduleDrawer = document.getElementById('moduleDrawer');
+
+      function openModuleDrawer(module) {
+        moduleDrawer.classList.add('open');
+        moduleDrawer.setAttribute('aria-hidden', 'false');
+        console.log('Drawer opened for module:', module);
+      }
+
+      window.addEventListener('load', () => {
+        // Safely get debug value from data attribute for local preview compatibility
+        window.__DEBUG__ = document.body.dataset.debug || '0'; // Default to '0' if not set
+
+        if (String(window.__DEBUG__) === '1') {
+          // Expand hub and hide orb
+          fiveEngineHub.classList.remove('compact');
+          compactOrb.classList.remove('visible');
+          // Open HRM drawer
+          setTimeout(() => openModuleDrawer('hrm'), 300);
+        }
+      });
+    </script>
+  </body>
+</html>
