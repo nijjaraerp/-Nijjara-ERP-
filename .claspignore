@@ -1,0 +1,17 @@
+node_modules/**
+scripts/**
+.git/**
+.github/**
+**/*.md
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.svg
+**/*.ico
+**/*.pdf
+**/*.zip
+**/*.rar
+**/*.7z
+**/*.log
+**/*.tmp
