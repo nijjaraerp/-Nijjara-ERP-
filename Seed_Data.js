@@ -26,6 +26,136 @@ function seedAllPolicySheets() {
 }
 
 /**
+ * Seeds system permissions and creates admin role
+ * RUN THIS ONCE to initialize the permission system
+ */
+function seedPermissionsAndRoles() {
+  const user = getCurrentUser_();
+  logInfo_(user, 'SeedStart', 'PERMISSIONS', 'ALL', 'Starting permissions seed');
+  
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // Seed permissions
+    const permSheet = ss.getSheetByName('SYS_Permissions');
+    if (!permSheet) throw new Error('SYS_Permissions sheet not found');
+    
+    const permissions = [
+      // HRM Permissions
+      ['PRM-HRM-001', 'View_Employee', 'View employee records', 'HRM'],
+      ['PRM-HRM-002', 'Create_Employee', 'Create new employees', 'HRM'],
+      ['PRM-HRM-003', 'Update_Employee', 'Update employee records', 'HRM'],
+      ['PRM-HRM-004', 'Delete_Employee', 'Deactivate employees', 'HRM'],
+      ['PRM-HRM-005', 'View_Attendance', 'View attendance records', 'HRM'],
+      ['PRM-HRM-006', 'Manage_Attendance', 'Clock in/out and manage attendance', 'HRM'],
+      ['PRM-HRM-007', 'View_Leave', 'View leave requests', 'HRM'],
+      ['PRM-HRM-008', 'Manage_Leave', 'Create and approve leave requests', 'HRM'],
+      ['PRM-HRM-009', 'View_Deductions', 'View deductions', 'HRM'],
+      ['PRM-HRM-010', 'Manage_Deductions', 'Create and manage deductions', 'HRM'],
+      ['PRM-HRM-011', 'View_Overtime', 'View overtime records', 'HRM'],
+      ['PRM-HRM-012', 'Manage_Overtime', 'Create and manage overtime', 'HRM'],
+      ['PRM-HRM-013', 'View_Advances', 'View employee advances', 'HRM'],
+      ['PRM-HRM-014', 'Manage_Advances', 'Create and manage advances', 'HRM'],
+      ['PRM-HRM-015', 'View_Payroll', 'View payroll data', 'HRM'],
+      ['PRM-HRM-016', 'Process_Payroll', 'Process and manage payroll', 'HRM'],
+      
+      // PRJ Permissions
+      ['PRM-PRJ-001', 'View_Project', 'View project records', 'PRJ'],
+      ['PRM-PRJ-002', 'Create_Project', 'Create new projects', 'PRJ'],
+      ['PRM-PRJ-003', 'Update_Project', 'Update project records', 'PRJ'],
+      ['PRM-PRJ-004', 'Delete_Project', 'Delete projects', 'PRJ'],
+      ['PRM-PRJ-005', 'View_Client', 'View client records', 'PRJ'],
+      ['PRM-PRJ-006', 'Manage_Client', 'Create and manage clients', 'PRJ'],
+      
+      // FIN Permissions
+      ['PRM-FIN-001', 'View_Expense', 'View expenses', 'FIN'],
+      ['PRM-FIN-002', 'Create_Expense', 'Create expenses', 'FIN'],
+      ['PRM-FIN-003', 'View_Income', 'View income records', 'FIN'],
+      ['PRM-FIN-004', 'Create_Income', 'Create income records', 'FIN'],
+      
+      // SYS Permissions
+      ['PRM-SYS-001', 'View_Audit_Log', 'View system audit logs', 'SYS'],
+      ['PRM-SYS-002', 'Manage_Users', 'Create and manage users', 'SYS'],
+      ['PRM-SYS-003', 'Manage_Roles', 'Create and manage roles', 'SYS'],
+      ['PRM-SYS-004', 'Manage_Permissions', 'Assign permissions to roles', 'SYS']
+    ];
+    
+    const timestamp = new Date();
+    permissions.forEach(perm => {
+      permSheet.appendRow([
+        perm[0],  // PRM_ID
+        perm[1],  // PRM_Name
+        perm[2],  // PRM_Notes
+        perm[3],  // PRM_Catg
+        timestamp, // PRM_Crt_At
+        user,     // PRM_Crt_By
+        '',       // PRM_Upd_At
+        ''        // PRM_Upd_By
+      ]);
+    });
+    
+    logInfo_(user, 'Seed', 'PERMISSIONS', 'ALL', `Seeded ${permissions.length} permissions`);
+    
+    // Create Admin role
+    const roleSheet = ss.getSheetByName('SYS_Roles');
+    if (!roleSheet) throw new Error('SYS_Roles sheet not found');
+    
+    roleSheet.appendRow([
+      'ROL-ADMIN',              // ROL_ID
+      'System Administrator',   // ROL_Title
+      'Full system access',     // ROL_Notes
+      'TRUE',                   // ROL_Is_System
+      timestamp,                // ROL_Crt_At
+      user,                     // ROL_Crt_By
+      '',                       // ROL_Upd_At
+      ''                        // ROL_Upd_By
+    ]);
+    
+    // Assign all permissions to Admin role
+    const rolePermSheet = ss.getSheetByName('SYS_Role_Permissions');
+    if (!rolePermSheet) throw new Error('SYS_Role_Permissions sheet not found');
+    
+    permissions.forEach(perm => {
+      rolePermSheet.appendRow([
+        'ROL-ADMIN',  // ROL_ID
+        perm[0],      // PRM_ID
+        'ALL',        // SRP_Scope
+        'TRUE',       // SRP_Is_Allowed
+        '',           // SRP_Constraints
+        timestamp,    // SRP_Crt_At
+        user,         // SRP_Crt_By
+        '',           // SRP_Upd_At
+        ''            // SRP_Upd_By
+      ]);
+    });
+    
+    logInfo_(user, 'Seed', 'ROLES', 'ADMIN', 'Created admin role with all permissions');
+    
+    // Update test user to have admin role
+    const userSheet = ss.getSheetByName('SYS_Users');
+    if (userSheet) {
+      const userData = userSheet.getDataRange().getValues();
+      for (let i = 1; i < userData.length; i++) {
+        if (userData[i][2] === 'mkhoraiby') { // USR_Name column
+          userSheet.getRange(i + 1, 7).setValue('ROL-ADMIN'); // ROL_ID column
+          logInfo_(user, 'Update', 'USERS', 'mkhoraiby', 'Assigned admin role');
+          break;
+        }
+      }
+    }
+    
+    SpreadsheetApp.getUi().alert('✅ Permissions seeded successfully!\n\n' +
+      `Created ${permissions.length} permissions\n` +
+      'Created Admin role\n' +
+      'Assigned admin role to mkhoraiby');
+      
+  } catch (error) {
+    logError_(user, 'SeedFailed', 'PERMISSIONS', 'ALL', 'Failed to seed permissions', error);
+    SpreadsheetApp.getUi().alert('❌ Error: ' + error.message);
+  }
+}
+
+/**
  * Seeds POLICY_Penalties sheet
  */
 function seedPenalties_() {

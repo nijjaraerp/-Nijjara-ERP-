@@ -7,14 +7,14 @@
 /**
  * Checks if a user has a specific permission
  * @param {string} userId - User ID
- * @param {string} permissionId - Permission ID (e.g., 'PRM-SYS-USER-CREATE')
+ * @param {string} permissionName - Permission name (e.g., 'View_Employee') or ID (e.g., 'PRM-HRM-001')
  * @returns {boolean} - True if user has permission
  */
-function userHasPermission(userId, permissionId) {
+function userHasPermission(userId, permissionName) {
   const actor = getCurrentUser_();
   
   try {
-    if (isEmpty_(userId) || isEmpty_(permissionId)) {
+    if (isEmpty_(userId) || isEmpty_(permissionName)) {
       return false;
     }
     
@@ -31,6 +31,13 @@ function userHasPermission(userId, permissionId) {
       return false;
     }
     
+    // Get permission ID from name
+    const permissionId = getPermissionIdByName_(permissionName);
+    if (!permissionId) {
+      logWarn_(actor, 'CheckPermission', 'SYS_Permissions', userId, `Permission ${permissionName} not found`);
+      return false;
+    }
+    
     // Get role permissions
     const rolePermissions = getRolePermissions_(user.ROL_ID);
     const hasPermission = rolePermissions.some(rp => 
@@ -38,9 +45,9 @@ function userHasPermission(userId, permissionId) {
     );
     
     if (hasPermission) {
-      logInfo_(actor, 'CheckPermission', 'SYS_Permissions', userId, `Permission ${permissionId} granted`);
+      logInfo_(actor, 'CheckPermission', 'SYS_Permissions', userId, `Permission ${permissionName} granted`);
     } else {
-      logWarn_(actor, 'CheckPermission', 'SYS_Permissions', userId, `Permission ${permissionId} denied`);
+      logWarn_(actor, 'CheckPermission', 'SYS_Permissions', userId, `Permission ${permissionName} denied`);
     }
     
     return hasPermission;
@@ -52,15 +59,36 @@ function userHasPermission(userId, permissionId) {
 }
 
 /**
+ * Gets permission ID by permission name
+ * @param {string} permissionName - Permission name (e.g., 'View_Employee')
+ * @returns {string|null} - Permission ID or null if not found
+ */
+function getPermissionIdByName_(permissionName) {
+  try {
+    // If it's already an ID (starts with PRM-), return it
+    if (permissionName && permissionName.startsWith('PRM-')) {
+      return permissionName;
+    }
+    
+    const permissions = getSheetData_('SYS_Permissions', 1);
+    const perm = permissions.find(p => p.PRM_Name === permissionName);
+    return perm ? perm.PRM_ID : null;
+  } catch (error) {
+    logError_(getCurrentUser_(), 'GetPermissionId', 'SYS_Permissions', permissionName, 'Failed to get permission ID', error);
+    return null;
+  }
+}
+
+/**
  * Ensures user has permission, throws error if not
  * @param {string} userId - User ID
- * @param {string} permissionId - Permission ID
+ * @param {string} permissionName - Permission name or ID
  * @throws {Error} - If permission denied
  */
-function ensurePermission_(userId, permissionId) {
-  if (!userHasPermission(userId, permissionId)) {
-    const error = new Error(`ACCESS DENIED: Permission ${permissionId} required`);
-    logError_(userId, 'AccessDenied', 'SYS_Permissions', permissionId, 'Access denied', null);
+function ensurePermission_(userId, permissionName) {
+  if (!userHasPermission(userId, permissionName)) {
+    const error = new Error(`ACCESS DENIED: Permission ${permissionName} required`);
+    logError_(userId, 'AccessDenied', 'SYS_Permissions', permissionName, 'Access denied', null);
     throw error;
   }
 }

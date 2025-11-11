@@ -89,133 +89,6 @@
             100% { transform: scale(1); opacity: 0.2; }
         }
 
-        /* --- 2.2 The "Neural Dock" (Taskbar) --- */
-        #neural-dock {
-            position: fixed; 
-            bottom: -85px; /* (تعديل) إخفاء تلقائي */
-            left: 50%; transform: translateX(-50%);
-            height: 90px; padding: 10px 15px; display: flex;
-            gap: 0; align-items: center; justify-content: center; z-index: 999;
-            background: var(--color-bg-glass); backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px); border: 1px solid var(--color-border-glass);
-            border-radius: 15px; box-shadow: var(--shadow-depth-lg);
-            animation: slideInUp 1s ease-out;
-            transition: bottom 0.3s ease; 
-        }
-        
-        #neural-dock:hover {
-            bottom: 10px; 
-        }
-        
-        .dock-group { display: flex; align-items: center; gap: 10px; padding: 0 10px; height: 100%; }
-        /* (تعديل) تم إزالة الحواف الفاصلة */
-        .dock-group.modules { padding: 0; margin: 0; }
-        
-        .dock-app {
-            width: 80px; 
-            height: 80px; 
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(100, 116, 139, 0.4) 0%, rgba(71, 85, 105, 0.6) 100%);
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
-            color: var(--color-text-muted); 
-            cursor: pointer;
-            transition: all 0.3s ease; 
-            position: relative; 
-            padding: 8px;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-        }
-        
-        /* Base glossy overlay */
-        .dock-app::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        /* Top-left glass reflection */
-        .dock-app::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 50%;
-            background: radial-gradient(circle at top left, rgba(255,255,255,0.4) 0%, transparent 60%);
-            border-radius: 24px 0 0 0;
-            pointer-events: none;
-            z-index: 2;
-            filter: blur(8px);
-        }
-        
-        /* Animated shimmer on hover */
-        .dock-app .shimmer {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
-            transform: translateX(-100%) skewX(-20deg);
-            transition: transform 1.5s ease;
-            pointer-events: none;
-            z-index: 3;
-        }
-        
-        .dock-app:hover .shimmer {
-            transform: translateX(200%) skewX(-20deg);
-        }
-        .dock-app-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 4; }
-        .dock-app-icon svg { width: 100%; height: 100%; stroke: var(--color-text-muted); transition: all 0.3s ease; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); }
-        .dock-app-label {
-            font-family: var(--font-family); font-size: 0.7rem;
-            font-weight: 500; margin-top: 4px; color: var(--color-text-muted);
-            transition: all 0.3s ease; position: relative; z-index: 4;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-        }
-        
-        /* Module-specific gradient colors on hover */
-        .dock-app[data-module="hrm"]:hover { 
-            background: linear-gradient(135deg, rgb(147, 51, 234) 0%, rgb(126, 34, 206) 100%);
-        }
-        .dock-app[data-module="prj"]:hover { 
-            background: linear-gradient(135deg, rgb(5, 150, 105) 0%, rgb(4, 120, 87) 100%);
-        }
-        .dock-app[data-module="fin"]:hover { 
-            background: linear-gradient(135deg, rgb(217, 119, 6) 0%, rgb(180, 83, 9) 100%);
-        }
-        .dock-app[data-module="sys"]:hover { 
-            background: linear-gradient(135deg, rgb(8, 145, 178) 0%, rgb(21, 94, 117) 100%);
-        }
-        .dock-app[data-module="power"]:hover { 
-            background: linear-gradient(135deg, rgb(220, 38, 38) 0%, rgb(185, 28, 28) 100%);
-        }
-        
-        .dock-app:hover { 
-            transform: scale(1.15) translateY(-12px);
-            color: #fff;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                0 0 40px currentColor,
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        .dock-app:hover .dock-app-icon svg { stroke: #fff; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
-        .dock-app:hover .dock-app-label { color: #fff; }
-        
-        .dock-app .tooltip {
-            position: absolute; bottom: 85px; background: #000; color: #fff;
-            padding: 5px 10px; border-radius: 5px; font-size: 0.9rem;
-            font-family: var(--font-family); white-space: nowrap; opacity: 0;
-            visibility: hidden; transition: all 0.3s;
-        }
-        .dock-app:hover .tooltip { opacity: 1; visibility: visible; transform: translateY(-5px); }
-
         /* --- 2.3 App Windows --- */
         .app-window {
             position: absolute; width: 600px; height: 400px; z-index: 10;
@@ -303,30 +176,30 @@
             z-index: 1999; display: none; 
         }
 
-        /* --- 2.5 Floating Action Buttons (FAB) --- */
+        /* --- 2.5 Floating Action Buttons (FAB) - Hierarchical System --- */
         #fab-container {
             position: fixed; top: 0; left: 0; 
             width: 100vw; height: 100vh; 
             z-index: 900; 
-            pointer-events: none; /* السماح بالنقر من خلاله */
+            pointer-events: none;
         }
         
-        .module-fab {
+        /* Base FAB (all levels) */
+        .fab {
             position: absolute; 
-            width: 60px; height: 60px;
             display: none; 
             z-index: 901; 
-            pointer-events: auto; /* جعل الزر العائم قابلاً للنقر */
+            pointer-events: auto;
         }
         
-        .fab-main {
-            width: 60px; height: 60px; 
-            background: linear-gradient(135deg, rgb(37, 99, 235) 0%, rgb(29, 78, 216) 100%);
+        /* FAB Button */
+        .fab-button {
+            width: 64px; height: 64px; 
             border-radius: 50%; 
             display: flex; 
             align-items: center;
             justify-content: center; 
-            cursor: grab;
+            cursor: pointer;
             box-shadow: 
                 0 20px 60px rgba(0, 0, 0, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -335,8 +208,9 @@
             position: relative;
             overflow: hidden;
         }
-        /* Base glossy overlay for FAB */
-        .fab-main::before {
+        
+        /* Glossy overlay */
+        .fab-button::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -344,8 +218,9 @@
             pointer-events: none;
             border-radius: 50%;
         }
-        /* Top-left glass reflection for FAB */
-        .fab-main::after {
+        
+        /* Glass reflection */
+        .fab-button::after {
             content: '';
             position: absolute;
             top: -10px;
@@ -357,18 +232,10 @@
             pointer-events: none;
             filter: blur(6px);
         }
-        .fab-main:active { cursor: grabbing; }
-        .fab-main:hover {
-            transform: scale(1.1);
-            background: linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(37, 99, 235) 100%);
-            box-shadow: 
-                0 20px 60px rgba(37, 99, 235, 0.6),
-                0 0 40px rgba(59, 130, 246, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        .fab-main svg { 
-            width: 30px; 
-            height: 30px; 
+        
+        .fab-button svg { 
+            width: 32px; 
+            height: 32px; 
             stroke: #fff; 
             stroke-width: 2; 
             pointer-events: none; 
@@ -376,19 +243,88 @@
             position: relative;
             z-index: 1;
         }
-        .fab-main:hover { transform: scale(1.1); background: var(--color-accent-secondary); }
         
-        .fab-rays {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            transform: scale(0); opacity: 0;
-            transition: all 0.3s ease-out; pointer-events: none;
+        .fab-button:hover {
+            transform: scale(1.1);
         }
-        .module-fab.active .fab-rays { transform: scale(1); opacity: 1; pointer-events: auto; }
-        .fab-ray { position: absolute; top: 50%; left: 50%; width: 100px; transform-origin: 0 50%; height: 1px; }
-        .fab-sub-app {
-            position: absolute; right: -20px; top: -20px;
-            width: 44px; height: 44px; 
-            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        
+        /* Module-specific colors */
+        .fab[data-module="hrm"] .fab-button { 
+            background: linear-gradient(135deg, rgb(147, 51, 234) 0%, rgb(126, 34, 206) 100%);
+        }
+        .fab[data-module="hrm"] .fab-button:hover { 
+            box-shadow: 
+                0 20px 60px rgba(147, 51, 234, 0.6),
+                0 0 40px rgba(147, 51, 234, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .fab[data-module="prj"] .fab-button { 
+            background: linear-gradient(135deg, rgb(5, 150, 105) 0%, rgb(4, 120, 87) 100%);
+        }
+        .fab[data-module="prj"] .fab-button:hover { 
+            box-shadow: 
+                0 20px 60px rgba(5, 150, 105, 0.6),
+                0 0 40px rgba(5, 150, 105, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .fab[data-module="fin"] .fab-button { 
+            background: linear-gradient(135deg, rgb(217, 119, 6) 0%, rgb(180, 83, 9) 100%);
+        }
+        .fab[data-module="fin"] .fab-button:hover { 
+            box-shadow: 
+                0 20px 60px rgba(217, 119, 6, 0.6),
+                0 0 40px rgba(217, 119, 6, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .fab[data-module="sys"] .fab-button { 
+            background: linear-gradient(135deg, rgb(8, 145, 178) 0%, rgb(21, 94, 117) 100%);
+        }
+        .fab[data-module="sys"] .fab-button:hover { 
+            box-shadow: 
+                0 20px 60px rgba(8, 145, 178, 0.6),
+                0 0 40px rgba(8, 145, 178, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Ray container */
+        .fab-rays {
+            position: absolute; 
+            top: 32px; 
+            left: 32px;
+            pointer-events: none;
+        }
+        
+        /* Individual ray */
+        .fab-ray {
+            position: absolute; 
+            transform-origin: 0 0;
+            pointer-events: auto;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Show rays on hover */
+        .fab:hover .fab-ray {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Staggered animation delays */
+        .fab-ray:nth-child(1) { transition-delay: 0.05s; }
+        .fab-ray:nth-child(2) { transition-delay: 0.1s; }
+        .fab-ray:nth-child(3) { transition-delay: 0.15s; }
+        .fab-ray:nth-child(4) { transition-delay: 0.2s; }
+        .fab-ray:nth-child(5) { transition-delay: 0.25s; }
+        .fab-ray:nth-child(6) { transition-delay: 0.3s; }
+        
+        /* Ray button */
+        .fab-ray-button {
+            width: 48px; 
+            height: 48px; 
             border-radius: 50%; 
             display: flex; 
             align-items: center;
@@ -401,9 +337,10 @@
             transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
         }
-        /* Glossy overlay for sub-FAB */
-        .fab-sub-app::before {
+        
+        .fab-ray-button::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -411,8 +348,8 @@
             pointer-events: none;
             border-radius: 50%;
         }
-        /* Glass shine for sub-FAB */
-        .fab-sub-app::after {
+        
+        .fab-ray-button::after {
             content: '';
             position: absolute;
             top: -6px;
@@ -424,46 +361,373 @@
             pointer-events: none;
             filter: blur(4px);
         }
-        .fab-sub-app svg { 
-            width: 22px; 
-            height: 22px; 
-            stroke: rgb(37, 99, 235); 
+        
+        .fab-ray-button svg { 
+            width: 24px; 
+            height: 24px; 
             stroke-width: 2; 
             filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
             position: relative;
             z-index: 1;
         }
-        .fab-sub-app:hover { 
-            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+        
+        /* Color inheritance from parent module */
+        .fab[data-module="hrm"] .fab-ray-button svg { stroke: rgb(147, 51, 234); }
+        .fab[data-module="prj"] .fab-ray-button svg { stroke: rgb(5, 150, 105); }
+        .fab[data-module="fin"] .fab-ray-button svg { stroke: rgb(217, 119, 6); }
+        .fab[data-module="sys"] .fab-ray-button svg { stroke: rgb(8, 145, 178); }
+        
+        .fab-ray-button:hover { 
             transform: scale(1.15);
             box-shadow: 
                 0 12px 40px rgba(0,0,0,0.5),
-                0 0 20px rgba(37, 99, 235, 0.3),
                 inset 0 1px 0 rgba(255,255,255,0.8);
         }
         
-        .fab-ray:nth-child(1) { transform: translate(30px, 30px) rotate(-45deg); }
-        .fab-ray:nth-child(2) { transform: translate(30px, 30px) rotate(0deg); }
-        .fab-ray:nth-child(3) { transform: translate(30px, 30px) rotate(45deg); }
-        .fab-ray:nth-child(1) .fab-sub-app { transition-delay: 0.05s; }
-        .fab-ray:nth-child(2) .fab-sub-app { transition-delay: 0.1s; }
-        .fab-ray:nth-child(3) .fab-sub-app { transition-delay: 0.15s; }
+        /* Ray label */
+        .fab-ray-label {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-family);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
         
-        /* --- 2.6 Status Bar --- */
-        #status-bar {
-            position: fixed; 
-            top: 10px; left: 10px; z-index: 998;
+        .fab-ray-button:hover + .fab-ray-label {
+            opacity: 1;
+        }
+        
+        /* Level 2 FAB (spawned from ray click) - smaller */
+        .fab[data-level="2"] .fab-button {
+            width: 52px;
+            height: 52px;
+        }
+        
+        .fab[data-level="2"] .fab-button svg {
+            width: 26px;
+            height: 26px;
+        }
+        
+        .fab[data-level="2"] .fab-ray-button {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .fab[data-level="2"] .fab-ray-button svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* --- 2.6 Top Control Bar (Fixed) --- */
+        #top-control-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            z-index: 9998;
             background: var(--color-bg-glass);
-            border: 1px solid var(--color-border-glass);
-            border-radius: 8px; padding: 10px 15px;
-            display: flex; gap: 20px; font-family: var(--font-mono);
-            font-size: 1rem; color: var(--color-text-muted);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--color-border-glass);
+            box-shadow: var(--shadow-depth-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        #user-info {
+            color: var(--color-text);
+            font-weight: 700;
+            font-family: var(--font-family);
+            font-size: 1rem;
+        }
+        
+        #date-time {
+            direction: ltr;
+            text-align: left;
+            color: var(--color-accent-green);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+        
+        #logout-btn {
+            background: var(--color-accent-red);
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            font-family: var(--font-family);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 6px;
+        }
+        
+        #logout-btn:hover {
+            background: #ff5555;
+            transform: translateY(-2px);
             box-shadow: var(--shadow-depth-md);
         }
-        #user-info { color: var(--color-text); font-weight: 700; }
-        #date-time { direction: ltr; text-align: left; color: var(--color-accent-green); min-width: 200px; }
+        
+        /* --- 2.7 Five-Engine Hub System --- */
+        #five-engine-hub {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        #five-engine-hub.compact {
+            top: 50%;
+            left: calc(100% - 50px);
+            width: 80px;
+            height: 80px;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Central Search Hub */
+        #central-search {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            pointer-events: auto;
+            opacity: 1;
+            transition: all 0.4s ease;
+        }
+        
+        #five-engine-hub.compact #central-search {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
+        }
+        
+        #search-input {
+            width: 100%;
+            padding: 18px 24px;
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--color-accent-primary);
+            border-radius: 50px;
+            color: var(--color-text);
+            font-family: var(--font-family);
+            font-size: 1.1rem;
+            text-align: center;
+            box-shadow: 
+                0 20px 60px rgba(0, 120, 240, 0.3),
+                0 0 40px rgba(0, 120, 240, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        
+        #search-input:focus {
+            outline: none;
+            border-color: var(--color-accent-secondary);
+            box-shadow: 
+                0 20px 80px rgba(0, 160, 240, 0.4),
+                0 0 60px rgba(0, 160, 240, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        #search-input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        /* Orbiting Module Buttons */
+        .orbit-module {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: orbit 20s linear infinite;
+            transform-origin: center;
+        }
+        
+        #five-engine-hub.compact .orbit-module {
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        /* Glossy overlay */
+        .orbit-module::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        /* Glass reflection */
+        .orbit-module::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(10px);
+            z-index: 2;
+        }
+        
+        .orbit-module-icon {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .orbit-module-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: #fff;
+            stroke-width: 2;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+        }
+        
+        .orbit-module-label {
+            font-family: var(--font-family);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 6px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 3;
+        }
+        
+        .orbit-module:hover {
+            transform: scale(1.2) translateZ(50px);
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.6),
+                0 0 60px currentColor,
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Module-specific colors and positions */
+        #module-hrm {
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgb(147, 51, 234) 0%, rgb(126, 34, 206) 100%);
+            animation-delay: 0s;
+        }
+        
+        #module-prj {
+            top: 50%;
+            right: 50px;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, rgb(5, 150, 105) 0%, rgb(4, 120, 87) 100%);
+            animation-delay: -5s;
+        }
+        
+        #module-fin {
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgb(217, 119, 6) 0%, rgb(180, 83, 9) 100%);
+            animation-delay: -10s;
+        }
+        
+        #module-sys {
+            top: 50%;
+            left: 50px;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, rgb(8, 145, 178) 0%, rgb(21, 94, 117) 100%);
+            animation-delay: -15s;
+        }
+        
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(0) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(0) rotate(-360deg); }
+        }
+        
+        /* Compact Orb */
+        #compact-orb {
+            position: fixed;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%) scale(0);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgb(37, 99, 235) 0%, rgb(29, 78, 216) 100%);
+            box-shadow: 
+                0 20px 60px rgba(37, 99, 235, 0.6),
+                0 0 40px rgba(37, 99, 235, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            pointer-events: none;
+            z-index: 1001;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #compact-orb.visible {
+            transform: translateY(-50%) scale(1);
+            pointer-events: auto;
+        }
+        
+        #compact-orb::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
+            border-radius: 50%;
+        }
+        
+        #compact-orb svg {
+            width: 40px;
+            height: 40px;
+            stroke: #fff;
+            stroke-width: 2;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+        }
+        
+        #compact-orb:hover {
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 
+                0 30px 80px rgba(37, 99, 235, 0.7),
+                0 0 60px rgba(37, 99, 235, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
 
-        /* --- 2.7 Task Switcher --- */
+        /* --- 2.8 Task Switcher --- */
         #task-switcher {
             position: fixed;
             top: -55px; /* إخفاء تلقائي */
@@ -709,18 +973,64 @@
         <!-- Toast Notification Container -->
         <div id="toast-container"></div>
         
+        <!-- Background -->
         <div id="holo-deck">
             <div id="particles"></div>
         </div>
         
-        <div id="status-bar">
+        <!-- Top Control Bar (Fixed) -->
+        <div id="top-control-bar">
             <div id="user-info">USER: ...</div>
             <div id="date-time">Loading clock...</div>
+            <button id="logout-btn">تسجيل الخروج</button>
+        </div>
+        
+        <!-- Five-Engine Hub System -->
+        <div id="five-engine-hub">
+            <!-- Central Search -->
+            <div id="central-search">
+                <input type="text" id="search-input" placeholder="🔍 ابحث عن أي شيء...">
+            </div>
+            
+            <!-- Orbiting Module Buttons -->
+            <div class="orbit-module" id="module-hrm" data-module="hrm">
+                <div class="orbit-module-icon">
+                    <svg><use href="#icon-hrm"></use></svg>
+                </div>
+                <div class="orbit-module-label">الموارد البشرية</div>
+            </div>
+            
+            <div class="orbit-module" id="module-prj" data-module="prj">
+                <div class="orbit-module-icon">
+                    <svg><use href="#icon-prj"></use></svg>
+                </div>
+                <div class="orbit-module-label">المشاريع</div>
+            </div>
+            
+            <div class="orbit-module" id="module-fin" data-module="fin">
+                <div class="orbit-module-icon">
+                    <svg><use href="#icon-fin"></use></svg>
+                </div>
+                <div class="orbit-module-label">المالية</div>
+            </div>
+            
+            <div class="orbit-module" id="module-sys" data-module="sys">
+                <div class="orbit-module-icon">
+                    <svg><use href="#icon-sys"></use></svg>
+                </div>
+                <div class="orbit-module-label">النظام</div>
+            </div>
+        </div>
+        
+        <!-- Compact Orb (Right Side) -->
+        <div id="compact-orb">
+            <svg><use href="#icon-grid"></use></svg>
         </div>
 
-        <div id="task-switcher">
-            </div>
+        <!-- Task Switcher (Top Auto-Hide) -->
+        <div id="task-switcher"></div>
         
+        <!-- Window Action Bar (Left Auto-Hide) -->
         <div id="window-action-bar">
             <div class="action-bar-btn" id="app-grid" title="ترتيب شبكي">
                 <svg><use href="#icon-grid"></use></svg>
@@ -734,47 +1044,6 @@
             <div class="action-bar-btn" id="app-expand-all" title="إظهار الكل">
                 <svg><use href="#icon-maximize"></use></svg>
             </div>
-        </div>
-        
-        <div id="neural-dock">
-            
-            <div class="dock-group modules">
-                <div class="dock-app" id="app-hrm" data-title="الموارد البشرية (HRM)" data-module="hrm">
-                    <div class="shimmer"></div>
-                    <div class="dock-app-icon"><svg><use href="#icon-hrm"></use></svg></div>
-                    <div class="dock-app-label">الموارد</div>
-                </div>
-                <div class="dock-app" id="app-prj" data-title="المشاريع (PRJ)" data-module="prj">
-                    <div class="shimmer"></div>
-                    <div class="dock-app-icon"><svg><use href="#icon-prj"></use></svg></div>
-                    <div class="dock-app-label">المشاريع</div>
-                </div>
-                <div class="dock-app" id="app-fin" data-title="المالية (FIN)" data-module="fin">
-                    <div class="shimmer"></div>
-                    <div class="dock-app-icon"><svg><use href="#icon-fin"></use></svg></div>
-                    <div class="dock-app-label">المالية</div>
-                </div>
-                <div class="dock-app" id="app-sys" data-title="النظام (SYS)" data-module="sys">
-                    <div class="shimmer"></div>
-                    <div class="dock-app-icon"><svg><use href="#icon-sys"></use></svg></div>
-                    <div class="dock-app-label">النظام</div>
-                </div>
-            </div>
-
-            <div class="dock-app" id="app-shutdown" data-title="إيقاف التشغيل" data-module="power" style="color: var(--color-accent-red);">
-                <div class="shimmer"></div>
-                <div class="dock-app-icon"><svg style="stroke: var(--color-accent-red);"><use href="#icon-power"></use></svg></div>
-                <div class="dock-app-label" style="color: var(--color-accent-red);">خروج</div>
-            </div>
-        </div>
-        
-        <div id="fab-container">
-            </div>
-
-        <div id="nexus-overlay"></div>
-        <div id="nexus">
-            <h3>مركز أوامر Nexus</h3>
-            <input type="text" id="nexus-input" placeholder="اكتب أمراً أو استعلاماً... (مثال: إضافة موظف)">
         </div>
 
     </div>
@@ -803,22 +1072,6 @@
                 </div>
             </div>
             <div class="window-content">
-                </div>
-        </div>
-    </template>
-    
-    <template id="fab-template">
-        <div class="module-fab" style="top: calc(100vh - 200px); left: calc(100vw - 100px);">
-            <div class="fab-main">
-                </div>
-            <div class="fab-rays">
-                </div>
-        </div>
-    </template>
-    
-    <template id="fab-ray-template">
-        <div class="fab-ray">
-            <div class="fab-sub-app" data-action="">
                 </div>
         </div>
     </template>
@@ -896,8 +1149,6 @@
             const nijjaraOS = document.getElementById('nijjara-os');
             const windowTemplate = document.getElementById('window-template');
             const fabContainer = document.getElementById('fab-container');
-            const fabTemplate = document.getElementById('fab-template');
-            const fabRayTemplate = document.getElementById('fab-ray-template');
             
             const taskSwitcher = document.getElementById('task-switcher'); 
             const taskThumbTemplate = document.getElementById('task-thumb-template'); 
@@ -1057,6 +1308,10 @@
                 
                 makeDraggable(newWindow.querySelector('.window-header'), newWindow, false);
                 nijjaraOS.appendChild(newWindow);
+                // Module specific initializers
+                if (moduleId === 'hrm') {
+                    initHRMWindow(newWindow);
+                }
                 return newWindow;
             }
 
@@ -1186,24 +1441,24 @@
             
             function openOrFocusWindow(moduleId, title, content, fabConfig) {
                 logToConsole(`Loading ${moduleId}_Module...`, 'CLIENT-INFO');
+                const existing = document.querySelector(`.app-window[data-module-id="${moduleId}"]`);
+                if (existing) {
+                    bringWindowToFront(existing);
+                    return existing;
+                }
                 if (fabConfig) {
                     ensureFabExists(moduleId, fabConfig.icon, fabConfig.subModules);
                 }
-                createWindow(title, content, moduleId);
+                return createWindow(title, content, moduleId);
             }
 
-            document.getElementById('app-hrm').addEventListener('click', () => { openOrFocusWindow('hrm', 'وحدة الموارد البشرية (HRM)', `<h3>سجل الموظفين</h3>...`, { icon: '#icon-hrm', subModules: [{ action: 'add-employee', icon: '#icon-plus', title: 'إضافة موظف' }, { action: 'search-employee', icon: '#icon-search', title: 'بحث' }] }); });
-            document.getElementById('app-prj').addEventListener('click', () => { openOrFocusWindow('prj', 'وحدة المشاريع (PRJ)', `<h3>إضافة مشروع جديد</h3>...`, { icon: '#icon-prj', subModules: [{ action: 'add-project', icon: '#icon-plus', title: 'إضافة مشروع' }, { action: 'add-client', icon: '#icon-hrm', title: 'إضافة عميل' }] }); });
-            document.getElementById('app-fin').addEventListener('click', () => { openOrFocusWindow('fin', 'وحدة المالية (FIN)', `<h3>المصروفات والإيرادات</h3>...`, { icon: '#icon-fin', subModules: [{ action: 'add-expense', icon: '#icon-plus', title: 'إضافة مصروف' }, { action: 'add-income', icon: '#icon-plus', title: 'إضافة إيراد' }] }); });
-            document.getElementById('app-sys').addEventListener('click', () => { openOrFocusWindow('sys', 'سجل تدقيق النظام (SYS)', `<pre class="audit-log">...</pre>`); });
+            // --- Five-Engine Hub System Initialization ---
+            const fiveEngineHub = document.getElementById('five-engine-hub');
+            const compactOrb = document.getElementById('compact-orb');
+            const searchInput = document.getElementById('search-input');
             
-            // (تعديل) مستمعي التحكم بالنوافذ (الآن على الشريط الجانبي)
-            document.getElementById('app-grid').addEventListener('click', arrangeWindowsInGrid);
-            document.getElementById('app-cascade').addEventListener('click', arrangeWindowsCascade);
-            document.getElementById('app-minimize-all').addEventListener('click', minimizeAllWindows);
-            document.getElementById('app-expand-all').addEventListener('click', expandAllWindows); 
-            
-            document.getElementById('app-shutdown').addEventListener('click', () => { 
+            // Logout Button
+            document.getElementById('logout-btn').addEventListener('click', () => { 
                 logToConsole('Logging out...', 'CLIENT-INFO');
                 sessionStorage.removeItem('nijjara_session');
                 google.script.run
@@ -1212,60 +1467,540 @@
                     .logoutUser();
             });
             
+            // Compact Orb Toggle
+            compactOrb.addEventListener('click', () => {
+                fiveEngineHub.classList.remove('compact');
+                compactOrb.classList.remove('visible');
+            });
+            
+            // Central Search Functionality
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && searchInput.value.trim()) {
+                    const query = searchInput.value.trim();
+                    showToast('بحث', `جاري البحث عن: ${query}`, 'info', 2000);
+                    // TODO: Implement smart search logic in Phase 2
+                    searchInput.value = '';
+                }
+            });
+            
+            // Module Click Handlers (Phase 1: Basic window opening, Phase 2 will add drawer)
+            document.getElementById('module-hrm').addEventListener('click', () => { 
+                const hrmContent = `
+                    <h3>سجل الموظفين</h3>
+                    <div id="emp-actions" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                        <input type="text" id="emp-search" placeholder="بحث بالاسم أو القسم" style="flex:1; padding:8px; background:rgba(0,0,0,0.4); border:1px solid var(--color-border-glass); color:var(--color-text); border-radius:6px;" />
+                        <select id="emp-status-filter" style="padding:8px; background:rgba(0,0,0,0.4); border:1px solid var(--color-border-glass); color:var(--color-text); border-radius:6px;">
+                            <option value="All">الكل (الحالة)</option>
+                            <option value="Active">نشط</option>
+                            <option value="Inactive">غير نشط</option>
+                        </select>
+                        <button id="btn-refresh-emps" class="win-btn" style="min-width:120px">تحديث</button>
+                    </div>
+                    <div id="emp-table-wrapper"><div class="loading" style="padding:15px; text-align:center; color:var(--color-accent-primary);">جاري التحميل...</div></div>
+                    <div id="emp-form-wrapper" style="display:none; margin-top:20px;">
+                        <h3>إضافة موظف</h3>
+                        <form id="emp-form" style="display:grid; grid-template-columns:150px 1fr; gap:12px; align-items:center;">
+                            <label for="EMP_Name_EN">الاسم (EN)</label><input id="EMP_Name_EN" name="EMP_Name_EN" />
+                            <label for="EMP_Name_AR">الاسم (AR)</label><input id="EMP_Name_AR" name="EMP_Name_AR" />
+                            <label for="Job_Title">المسمى الوظيفي</label><input id="Job_Title" name="Job_Title" />
+                            <label for="DEPT_Name">القسم</label><input id="DEPT_Name" name="DEPT_Name" />
+                            <label for="Hire_Date">تاريخ تاريخ التعيين</label><input id="Hire_Date" name="Hire_Date" type="date" />
+                            <label for="National_ID">الرقم القومي</label><input id="National_ID" name="National_ID" />
+                            <div></div>
+                            <div style="display:flex; gap:10px;">
+                                <button type="submit" class="win-btn">حفظ</button>
+                                <button type="button" id="emp-form-cancel" class="win-btn" style="background:#555;">إلغاء</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                openOrFocusWindow('hrm', 'وحدة الموارد البشرية (HRM)', hrmContent, { 
+                    icon: '#icon-hrm', 
+                    subModules: HRM_SUBMODULES
+                });
+                
+                // Collapse to compact mode (Phase 4 behavior preview)
+                // TODO: Move to Phase 4 with full drawer integration
+                fiveEngineHub.classList.add('compact');
+                setTimeout(() => compactOrb.classList.add('visible'), 300);
+            });
+            
+            document.getElementById('module-prj').addEventListener('click', () => { 
+                openOrFocusWindow('prj', 'وحدة المشاريع (PRJ)', `<h3>إضافة مشروع جديد</h3>...`, { 
+                    icon: '#icon-prj', 
+                    subModules: [
+                        { action: 'add-project', icon: '#icon-plus', title: 'إضافة مشروع' }, 
+                        { action: 'add-client', icon: '#icon-hrm', title: 'إضافة عميل' }
+                    ] 
+                });
+                fiveEngineHub.classList.add('compact');
+                setTimeout(() => compactOrb.classList.add('visible'), 300);
+            });
+            
+            document.getElementById('module-fin').addEventListener('click', () => { 
+                openOrFocusWindow('fin', 'وحدة المالية (FIN)', `<h3>المصروفات والإيرادات</h3>...`, { 
+                    icon: '#icon-fin', 
+                    subModules: [
+                        { action: 'add-expense', icon: '#icon-plus', title: 'إضافة مصروف' }, 
+                        { action: 'add-income', icon: '#icon-plus', title: 'إضافة إيراد' }
+                    ] 
+                });
+                fiveEngineHub.classList.add('compact');
+                setTimeout(() => compactOrb.classList.add('visible'), 300);
+            });
+            
+            document.getElementById('module-sys').addEventListener('click', () => { 
+                openOrFocusWindow('sys', 'سجل تدقيق النظام (SYS)', `<pre class="audit-log">...</pre>`);
+                fiveEngineHub.classList.add('compact');
+                setTimeout(() => compactOrb.classList.add('visible'), 300);
+            });
+            
+            // Window Control Listeners (Left Action Bar)
+            document.getElementById('app-grid').addEventListener('click', arrangeWindowsInGrid);
+            document.getElementById('app-cascade').addEventListener('click', arrangeWindowsCascade);
+            document.getElementById('app-minimize-all').addEventListener('click', minimizeAllWindows);
+            document.getElementById('app-expand-all').addEventListener('click', expandAllWindows);
+            
             // --- 5. Nexus Command Center Logic --- (بدون تغيير)
             // ...
             
             // --- 6. Dynamic Content Listeners --- (بدون تغيير)
             // ...
 
-            // --- 7. Floating Action Button (FAB) Manager ---
-            const fabStore = {}; 
-            function ensureFabExists(moduleId, mainIconHref, subModules) {
-                if (fabStore[moduleId]) return; 
-
-                logToConsole(`Creating FAB for module: ${moduleId}`, 'CLIENT-INFO');
+            // --- 7. Hierarchical FAB System ---
+            const fabRegistry = new Map(); // Store all FABs by ID
+            let fabIdCounter = 0;
+            
+            // HRM Module Configuration
+            const HRM_SUBMODULES = [
+                { id: 'hrm-employees', icon: '#icon-hrm', label: 'الموظفين', angle: -60 },
+                { id: 'hrm-attendance', icon: '#icon-grid', label: 'الحضور', angle: -30 },
+                { id: 'hrm-deductions', icon: '#icon-minus', label: 'الخصومات', angle: 0 },
+                { id: 'hrm-overtime', icon: '#icon-plus', label: 'الإضافي', angle: 30 },
+                { id: 'hrm-advances', icon: '#icon-fin', label: 'السلف', angle: 60 },
+                { id: 'hrm-payroll', icon: '#icon-fin', label: 'الرواتب', angle: 90 }
+            ];
+            
+            const HRM_ACTIONS = {
+                'hrm-employees': [
+                    { id: 'view-employees', icon: '#icon-eye', label: 'عرض', angle: -45 },
+                    { id: 'add-employee', icon: '#icon-plus', label: 'إضافة', angle: 45 }
+                ],
+                'hrm-attendance': [
+                    { id: 'view-attendance', icon: '#icon-eye', label: 'عرض', angle: -45 },
+                    { id: 'clock-in-out', icon: '#icon-grid', label: 'تسجيل', angle: 45 }
+                ],
+                'hrm-deductions': [
+                    { id: 'view-deductions', icon: '#icon-eye', label: 'عرض', angle: -45 },
+                    { id: 'add-deduction', icon: '#icon-plus', label: 'إضافة', angle: 45 }
+                ],
+                'hrm-overtime': [
+                    { id: 'view-overtime', icon: '#icon-eye', label: 'عرض', angle: -45 },
+                    { id: 'add-overtime', icon: '#icon-plus', label: 'إضافة', angle: 45 }
+                ],
+                'hrm-advances': [
+                    { id: 'view-advances', icon: '#icon-eye', label: 'عرض', angle: -45 },
+                    { id: 'add-advance', icon: '#icon-plus', label: 'إضافة', angle: 45 }
+                ],
+                'hrm-payroll': [
+                    { id: 'view-payroll', icon: '#icon-eye', label: 'عرض', angle: -45 },
+                    { id: 'process-payroll', icon: '#icon-grid', label: 'معالجة', angle: 45 }
+                ]
+            };
+            
+            /**
+             * Create a FAB with rays
+             * @param {string} moduleId - Module identifier (hrm, prj, fin, sys)
+             * @param {string} mainIconHref - SVG icon reference for main button
+             * @param {Array} rays - Array of ray configurations
+             * @param {number} level - FAB hierarchy level (1 or 2)
+             * @param {number} x - X position
+             * @param {number} y - Y position
+             */
+            function createFAB(moduleId, mainIconHref, rays, level = 1, x = null, y = null) {
+                const fabId = `fab-${fabIdCounter++}`;
                 
-                const fab = fabTemplate.content.cloneNode(true).querySelector('.module-fab');
-                fab.id = `fab-${moduleId}`;
+                // Create FAB container
+                const fab = document.createElement('div');
+                fab.className = 'fab';
+                fab.id = fabId;
+                fab.dataset.module = moduleId;
+                fab.dataset.level = level;
                 
-                fab.querySelector('.fab-main').innerHTML = `<svg><use href="${mainIconHref}"></use></svg>`;
+                // Position
+                if (x !== null && y !== null) {
+                    fab.style.left = `${x}px`;
+                    fab.style.top = `${y}px`;
+                } else {
+                    // Default position (right side)
+                    fab.style.left = `calc(100vw - 100px)`;
+                    fab.style.top = `calc(100vh - 200px)`;
+                }
                 
-                const raysContainer = fab.querySelector('.fab-rays');
-                subModules.forEach((mod, index) => {
-                    const ray = fabRayTemplate.content.cloneNode(true).querySelector('.fab-ray');
-                    const subApp = ray.querySelector('.fab-sub-app');
-                    subApp.dataset.action = mod.action;
-                    subApp.title = mod.title;
-                    subApp.innerHTML = `<svg><use href="${mod.icon}"></use></svg>`;
-                    const angle = -45 + (index * 45);
-                    ray.style.transform = `translate(30px, 30px) rotate(${angle}deg)`;
-                    raysContainer.appendChild(ray);
+                // Main button
+                const mainButton = document.createElement('div');
+                mainButton.className = 'fab-button';
+                mainButton.innerHTML = `<svg><use href="${mainIconHref}"></use></svg>`;
+                fab.appendChild(mainButton);
+                
+                // Make draggable
+                makeFabDraggable(fab, mainButton);
+                
+                // Rays container
+                const raysContainer = document.createElement('div');
+                raysContainer.className = 'fab-rays';
+                
+                rays.forEach((ray, index) => {
+                    const rayEl = document.createElement('div');
+                    rayEl.className = 'fab-ray';
+                    
+                    // Calculate position based on angle
+                    const distance = level === 1 ? 120 : 100;
+                    const angleRad = (ray.angle * Math.PI) / 180;
+                    const rayX = Math.cos(angleRad) * distance;
+                    const rayY = Math.sin(angleRad) * distance;
+                    
+                    rayEl.style.transform = `translate(${rayX}px, ${rayY}px)`;
+                    
+                    // Ray button
+                    const rayButton = document.createElement('div');
+                    rayButton.className = 'fab-ray-button';
+                    rayButton.dataset.rayId = ray.id;
+                    rayButton.innerHTML = `<svg><use href="${ray.icon}"></use></svg>`;
+                    
+                    // Ray label
+                    const rayLabel = document.createElement('div');
+                    rayLabel.className = 'fab-ray-label';
+                    rayLabel.textContent = ray.label;
+                    
+                    // Position label based on ray angle
+                    if (ray.angle < 0) {
+                        rayLabel.style.bottom = '110%';
+                        rayLabel.style.left = '50%';
+                        rayLabel.style.transform = 'translateX(-50%)';
+                    } else {
+                        rayLabel.style.top = '110%';
+                        rayLabel.style.left = '50%';
+                        rayLabel.style.transform = 'translateX(-50%)';
+                    }
+                    
+                    rayButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        handleRayClick(ray.id, moduleId, level, fab, rayButton);
+                    });
+                    
+                    rayEl.appendChild(rayButton);
+                    rayEl.appendChild(rayLabel);
+                    raysContainer.appendChild(rayEl);
                 });
                 
-                makeDraggable(fab.querySelector('.fab-main'), fab, true);
+                fab.appendChild(raysContainer);
+                fabContainer.appendChild(fab);
                 
-                raysContainer.addEventListener('click', (e) => {
-                    const actionBtn = e.target.closest('.fab-sub-app');
-                    if (actionBtn) {
-                        const action = actionBtn.dataset.action;
-                        logToConsole(`FAB Action: ${action}`, 'CLIENT-EVENT');
-                        document.body.dispatchEvent(new MouseEvent('click', { target: actionBtn, bubbles: true }));
-                        fab.classList.remove('active'); 
+                // Register FAB
+                fabRegistry.set(fabId, {
+                    element: fab,
+                    moduleId: moduleId,
+                    level: level,
+                    parentRayId: null
+                });
+                
+                // Show FAB
+                fab.style.display = 'block';
+                
+                logToConsole(`Created FAB: ${fabId}, Module: ${moduleId}, Level: ${level}, Rays: ${rays.length}`, 'CLIENT-INFO');
+                
+                return fabId;
+            }
+            
+            /**
+             * Make FAB draggable
+             */
+            function makeFabDraggable(fab, button) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                let isDragging = false;
+                
+                button.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    isDragging = false;
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e.preventDefault();
+                    isDragging = true;
+                    
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    
+                    fab.style.left = (fab.offsetLeft - pos1) + "px";
+                    fab.style.top = (fab.offsetTop - pos2) + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            }
+            
+            /**
+             * Handle ray click - either spawn child FAB or execute action
+             */
+            function handleRayClick(rayId, moduleId, level, parentFab, rayButton) {
+                logToConsole(`Ray clicked: ${rayId}, Level: ${level}`, 'CLIENT-EVENT');
+                
+                if (level === 1) {
+                    // Level 1: Spawn level 2 FAB
+                    const actions = HRM_ACTIONS[rayId] || [];
+                    if (actions.length === 0) {
+                        showToast('قريباً', `وظيفة ${rayId} قيد التطوير`, 'info');
+                        return;
+                    }
+                    
+                    // Remove any existing level 2 FABs
+                    removeChildFABs(parentFab);
+                    
+                    // Calculate position near the clicked ray
+                    const fabRect = parentFab.getBoundingClientRect();
+                    const rayRect = rayButton.getBoundingClientRect();
+                    
+                    const childX = rayRect.left - 26; // Center the child FAB on ray button
+                    const childY = rayRect.top - 26;
+                    
+                    // Get icon from ray
+                    const rayIcon = rayButton.querySelector('svg use').getAttribute('href');
+                    
+                    createFAB(moduleId, rayIcon, actions, 2, childX, childY);
+                    
+                } else if (level === 2) {
+                    // Level 2: Execute action
+                    executeAction(rayId, moduleId);
+                }
+            }
+            
+            /**
+             * Remove all child FABs of a parent
+             */
+            function removeChildFABs(parentFab) {
+                const parentId = parentFab.id;
+                fabRegistry.forEach((fabData, fabId) => {
+                    if (fabData.level === 2) {
+                        fabData.element.remove();
+                        fabRegistry.delete(fabId);
                     }
                 });
-
-                fabContainer.appendChild(fab);
-                fabStore[moduleId] = fab;
+            }
+            
+            /**
+             * Execute action when level 2 ray is clicked
+             */
+            function executeAction(actionId, moduleId) {
+                logToConsole(`Executing action: ${actionId}`, 'CLIENT-EVENT');
+                
+                // Map actions to functions
+                const actionMap = {
+                    'view-employees': () => openEmployeesWindow('view'),
+                    'add-employee': () => openEmployeesWindow('add'),
+                    'view-attendance': () => showToast('قريباً', 'عرض الحضور قيد التطوير', 'info'),
+                    'clock-in-out': () => showToast('قريباً', 'تسجيل الحضور قيد التطوير', 'info'),
+                    'view-deductions': () => showToast('قريباً', 'عرض الخصومات قيد التطوير', 'info'),
+                    'add-deduction': () => showToast('قريباً', 'إضافة خصم قيد التطوير', 'info'),
+                    'view-overtime': () => showToast('قريباً', 'عرض الإضافي قيد التطوير', 'info'),
+                    'add-overtime': () => showToast('قريباً', 'إضافة إضافي قيد التطوير', 'info'),
+                    'view-advances': () => showToast('قريباً', 'عرض السلف قيد التطوير', 'info'),
+                    'add-advance': () => showToast('قريباً', 'إضافة سلفة قيد التطوير', 'info'),
+                    'view-payroll': () => showToast('قريباً', 'عرض الرواتب قيد التطوير', 'info'),
+                    'process-payroll': () => showToast('قريباً', 'معالجة الرواتب قيد التطوير', 'info')
+                };
+                
+                const action = actionMap[actionId];
+                if (action) {
+                    action();
+                } else {
+                    showToast('خطأ', `إجراء غير معروف: ${actionId}`, 'error');
+                }
+            }
+            
+            /**
+             * Open or focus employees window
+             */
+            function openEmployeesWindow(mode) {
+                let win = document.querySelector('.app-window[data-module-id="hrm"]');
+                if (!win) {
+                    document.getElementById('module-hrm').click();
+                    win = document.querySelector('.app-window[data-module-id="hrm"]');
+                }
+                
+                if (win) {
+                    bringWindowToFront(win);
+                    
+                    if (mode === 'add') {
+                        const formWrapper = win.querySelector('#emp-form-wrapper');
+                        if (formWrapper) {
+                            formWrapper.style.display = 'block';
+                            showToast('نموذج', 'تم فتح نموذج إضافة موظف', 'info', 1500);
+                        }
+                    } else if (mode === 'view') {
+                        const formWrapper = win.querySelector('#emp-form-wrapper');
+                        if (formWrapper) {
+                            formWrapper.style.display = 'none';
+                        }
+                        showToast('عرض', 'جاري عرض قائمة الموظفين', 'info', 1500);
+                    }
+                }
+            }
+            
+            /**
+             * Toggle FAB visibility for a module
+             */
+            function toggleFabForModule(moduleId) {
+                fabRegistry.forEach((fabData, fabId) => {
+                    if (fabData.moduleId === moduleId && fabData.level === 1) {
+                        const fab = fabData.element;
+                        const isHidden = fab.style.display === 'none';
+                        fab.style.display = isHidden ? 'block' : 'none';
+                        logToConsole(`Toggled FAB visibility for ${moduleId}: ${isHidden ? 'ON' : 'OFF'}`, 'CLIENT-EVENT');
+                    }
+                });
+            }
+            
+            /**
+             * Create module FAB (called when module window is opened)
+             */
+            function ensureFabExists(moduleId, mainIconHref, subModules) {
+                // Check if level 1 FAB already exists
+                let exists = false;
+                fabRegistry.forEach((fabData) => {
+                    if (fabData.moduleId === moduleId && fabData.level === 1) {
+                        exists = true;
+                    }
+                });
+                
+                if (!exists) {
+                    createFAB(moduleId, mainIconHref, subModules, 1);
+                }
             }
 
-            function toggleFabForModule(moduleId) {
-                const fab = fabStore[moduleId];
-                if (fab) {
-                    const isHidden = fab.style.display === 'none';
-                    fab.style.display = isHidden ? 'block' : 'none';
-                    if (!isHidden) { fab.classList.remove('active'); }
-                    logToConsole(`Toggled FAB visibility for ${moduleId}: ${isHidden ? 'ON' : 'OFF'}`, 'CLIENT-EVENT');
+            // --- 8. HRM Module Frontend Logic ---
+            function getSessionUserId() {
+                try {
+                    const raw = sessionStorage.getItem('nijjara_session');
+                    if (!raw) return null;
+                    const data = JSON.parse(raw);
+                    return data.userId || data.userID || data.USR_ID || null;
+                } catch(e){ return null; }
+            }
+
+            function initHRMWindow(win) {
+                const tableWrapper = win.querySelector('#emp-table-wrapper');
+                const searchInput = win.querySelector('#emp-search');
+                const statusFilter = win.querySelector('#emp-status-filter');
+                const refreshBtn = win.querySelector('#btn-refresh-emps');
+                const formWrapper = win.querySelector('#emp-form-wrapper');
+                const empForm = win.querySelector('#emp-form');
+                const cancelBtn = win.querySelector('#emp-form-cancel');
+
+                if (!tableWrapper) return; // safety
+
+                refreshBtn.addEventListener('click', () => loadEmployees(win));
+                statusFilter.addEventListener('change', () => loadEmployees(win));
+                searchInput.addEventListener('input', () => filterEmployeeRows(tableWrapper, searchInput.value.trim()));
+                empForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    handleCreateEmployee(win);
+                });
+                cancelBtn.addEventListener('click', () => {
+                    formWrapper.style.display = 'none';
+                });
+
+                loadEmployees(win);
+            }
+
+            function loadEmployees(win) {
+                const tableWrapper = win.querySelector('#emp-table-wrapper');
+                const statusFilter = win.querySelector('#emp-status-filter');
+                if (!tableWrapper) return;
+                const userId = getSessionUserId();
+                tableWrapper.innerHTML = `<div class="loading" style="padding:15px; text-align:center;">جاري التحميل...</div>`;
+                const status = statusFilter ? statusFilter.value : 'All';
+                google.script.run
+                    .withSuccessHandler(function(resp){
+                        if (!resp || !resp.success) {
+                            tableWrapper.innerHTML = `<div style='color:var(--color-accent-red); padding:15px;'>فشل تحميل البيانات: ${resp?.message || ''}</div>`;
+                            showToast('خطأ', resp?.message || 'تعذر تحميل الموظفين', 'error');
+                            return;
+                        }
+                        renderEmployeesTable(tableWrapper, resp.data.employees || []);
+                    })
+                    .withFailureHandler(function(err){
+                        tableWrapper.innerHTML = `<div style='color:var(--color-accent-red); padding:15px;'>خطأ في الاتصال بالخادم</div>`;
+                        showToast('فشل', 'خطأ في الاتصال', 'error');
+                    })
+                    .listEmployees(status, null, 1, 200, userId);
+            }
+
+            function renderEmployeesTable(wrapper, employees) {
+                if (!employees.length) { wrapper.innerHTML = `<div style='padding:10px; text-align:center;'>لا توجد سجلات موظفين</div>`; return; }
+                const headersMap = [
+                    { key:'EMP_ID', label:'المعرف' },
+                    { key:'EMP_Name_AR', label:'الاسم' },
+                    { key:'Job_Title', label:'المسمى' },
+                    { key:'DEPT_Name', label:'القسم' },
+                    { key:'Hire_Date', label:'تاريخ التعيين' },
+                    { key:'EMP_Status', label:'الحالة' }
+                ];
+                let html = `<table class='data-table'><thead><tr>`;
+                headersMap.forEach(h => { html += `<th>${h.label}</th>`; });
+                html += `</tr></thead><tbody>`;
+                employees.forEach(emp => {
+                    html += `<tr data-emp-id='${emp.EMP_ID}'>` + headersMap.map(h => `<td>${emp[h.key] || ''}</td>`).join('') + `</tr>`;
+                });
+                html += `</tbody></table>`;
+                wrapper.innerHTML = html;
+            }
+
+            function filterEmployeeRows(wrapper, term) {
+                const rows = wrapper.querySelectorAll('tbody tr');
+                const t = term.toLowerCase();
+                rows.forEach(r => {
+                    const text = r.textContent.toLowerCase();
+                    r.style.display = text.includes(t) ? '' : 'none';
+                });
+            }
+
+            function handleCreateEmployee(win) {
+                const userId = getSessionUserId();
+                const formWrapper = win.querySelector('#emp-form-wrapper');
+                const form = win.querySelector('#emp-form');
+                const formData = Object.fromEntries(Array.from(form.elements).filter(el => el.name).map(el => [el.name, el.value.trim()]));
+                // Basic validation
+                if (!formData.EMP_Name_EN || !formData.EMP_Name_AR || !formData.Job_Title || !formData.DEPT_Name || !formData.Hire_Date) {
+                    showToast('تنبيه', 'جميع الحقول الأساسية مطلوبة', 'warning');
+                    return;
                 }
+                showToast('جارٍ الحفظ', 'إرسال بيانات الموظف...', 'info', 2000);
+                google.script.run
+                    .withSuccessHandler(function(resp){
+                        if (resp && resp.success) {
+                            showToast('تم', 'تم إنشاء الموظف بنجاح', 'success');
+                            form.reset();
+                            formWrapper.style.display = 'none';
+                            loadEmployees(win);
+                        } else {
+                            showToast('فشل', resp?.message || 'تعذر إنشاء الموظف', 'error');
+                        }
+                    })
+                    .withFailureHandler(function(err){
+                        showToast('خطأ', 'فشل الاتصال بالخادم', 'error');
+                    })
+                    .createEmployee(formData, userId);
             }
             
             // --- 8. Task Switcher Manager ---

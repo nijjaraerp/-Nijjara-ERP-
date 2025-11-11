@@ -138,12 +138,31 @@ function getSheetData_(sheetName, headerRow = 1) {
     }
     
     const lastRow = sheet.getLastRow();
-    if (lastRow < headerRow + 1) {
+    
+    // Skip both English (row 1) and Arabic (row 2) header rows
+    // Data starts from row 3
+    const dataStartRow = 3;
+    
+    if (lastRow < dataStartRow) {
       return []; // No data rows
     }
     
-    const range = sheet.getRange(headerRow, 1, lastRow - headerRow + 1, sheet.getLastColumn());
-    return rangeToObjects_(range, 1);
+    // Get English headers from row 1
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    
+    // Get data rows starting from row 3
+    const dataRange = sheet.getRange(dataStartRow, 1, lastRow - dataStartRow + 1, sheet.getLastColumn());
+    const dataValues = dataRange.getValues();
+    
+    // Convert to objects using English headers
+    return dataValues.map(row => {
+      const obj = {};
+      headers.forEach((header, index) => {
+        obj[header] = row[index];
+      });
+      return obj;
+    });
+    
   } catch (error) {
     logError_(getCurrentUser_(), 'Read', sheetName, 'N/A', 'Failed to get sheet data', error);
     throw error;
