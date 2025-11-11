@@ -1437,7 +1437,7 @@
                 });
             }
 
-            // --- 4. Dock App Listeners ---
+            // --- 4. Five-Engine Module Handlers ---
             
             function openOrFocusWindow(moduleId, title, content, fabConfig) {
                 logToConsole(`Loading ${moduleId}_Module...`, 'CLIENT-INFO');
@@ -2003,7 +2003,7 @@
                     .createEmployee(formData, userId);
             }
             
-            // --- 8. Task Switcher Manager ---
+            // --- 9. Task Switcher Manager ---
             function addTaskThumb(windowId, moduleId, title) {
                 const thumb = taskThumbTemplate.content.cloneNode(true).querySelector('.task-thumb');
                 thumb.dataset.windowId = windowId;
@@ -2027,7 +2027,7 @@
                 document.querySelector(`.task-thumb[data-window-id="${windowId}"]`)?.remove();
             }
 
-            // --- 9. Global Log Function ---
+            // --- 10. Global Log Function ---
             function logToConsole(message, type = 'CLIENT-INFO') {
                 console.log(`[${type}] ${message}`);
             }
