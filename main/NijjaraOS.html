@@ -1128,8 +1128,165 @@
         width: 40px;
         height: 40px;
       }
-    </style>
-  </head>
+    /* --- UX Redesign Additions --- */
+:root {
+  --brand-primary: #1e3a8a; /* dark blue */
+  --brand-primary-hover: #2b4db5;
+  --brand-primary-focus: #3b82f6;
+  --error-red: #dc2626;
+}
+
+/* Header styles */
+.login-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.brand-title {
+  font-family: 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 700; /* Bold */
+  font-size: 48px; /* ~36pt */
+  line-height: 1.2;
+  color: var(--color-text);
+}
+.brand-subtitle {
+  font-family: 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: 18px; /* ~14pt */
+  line-height: 1.4;
+  margin-top: 8px; /* 8px spacing */
+  color: var(--color-text-muted);
+}
+
+/* Input field enhancements */
+.login-box-3d .control input,
+.login-box input {
+  font-family: 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  height: 48px;
+  padding: 16px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+.login-box-3d .control input::placeholder,
+.login-box input::placeholder {
+  font-family: 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: right;
+}
+/* Visual states: normal, focus, error */
+.login-box-3d .control input {
+  border: 1.5px solid var(--color-text-muted);
+  background-color: rgba(0,0,0,0.35);
+}
+.login-box-3d .control input:focus {
+  border-color: var(--brand-primary-focus);
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.35);
+  background-color: rgba(0,0,0,0.5);
+}
+.login-box-3d .control input.is-error {
+  border-color: var(--error-red);
+  box-shadow: 0 0 0 2px rgba(220,38,38,0.35);
+}
+
+/* Login button specs */
+.login-box-3d .btn .text,
+.login-box button {
+  font-family: 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 600; /* SemiBold */
+  font-size: 18px;
+}
+.login-box-3d .btn,
+.login-box button {
+  min-width: 200px;
+  height: 48px; /* ensure >=48px touch target */
+  background: var(--brand-primary);
+  transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.login-box-3d .btn:hover,
+.login-box button:hover {
+  background: var(--brand-primary-hover);
+}
+.login-box-3d .btn:focus,
+.login-box button:focus {
+  outline: none;
+  background: var(--brand-primary-focus);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.35);
+}
+
+/* Cinematic background: pan/zoom + cross-fade */
+.cinematic-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 5; /* behind header and login */
+  overflow: hidden;
+  pointer-events: none;
+}
+.cinematic-bg .scene {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: -10%;
+  left: -10%;
+  object-fit: cover;
+  filter: saturate(115%) contrast(105%);
+  will-change: transform, opacity;
+  transform: scale(1) translate3d(0,0,0);
+}
+.scene-1 { animation: panZoom1 40s ease-in-out infinite; }
+.scene-2 { animation: panZoom2 40s ease-in-out infinite; }
+.scene-3 { animation: panZoom3 40s ease-in-out infinite; }
+
+/* Cross-fade sequencing */
+@keyframes panZoom1 {
+  0% { opacity: 1; transform: scale(1) translate3d(0,0,0); }
+  30% { opacity: 1; transform: scale(1.08) translate3d(2%, -2%, 0); }
+  33% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes panZoom2 {
+  0% { opacity: 0; }
+  33% { opacity: 1; transform: scale(1) translate3d(0,0,0); }
+  63% { opacity: 1; transform: scale(1.08) translate3d(-2%, 1%, 0); }
+  66% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes panZoom3 {
+  0% { opacity: 0; }
+  66% { opacity: 1; transform: scale(1) translate3d(0,0,0); }
+  96% { opacity: 1; transform: scale(1.08) translate3d(1%, 2%, 0); }
+  100% { opacity: 0; }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-bg .scene,
+  .scene-1,
+  .scene-2,
+  .scene-3 {
+    animation: none !important;
+    opacity: 0.15; /* subtle static backdrop */
+    transform: none !important;
+  }
+}
+
+/* RTL considerations */
+#boot-screen[dir="rtl"], .login-header[dir="rtl"] {
+  direction: rtl;
+}
+.login-box-3d .control input { text-align: right; }
+
+/* Ensure WCAG AA contrast for inputs and button against dark bg */
+.login-box-3d .control input,
+.login-box-3d .btn {
+  color: #fff;
+}
+</style>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
 
   <body>
     <!-- 1. BOOT SCREEN -->
@@ -1156,17 +1313,21 @@
         </div>
       </div>
       
-      <div id="boot-log">
-        <p>NIJJARA-OS v1.0</p>
-        <p>Copyright (c) 2024 Nijjara Systems</p>
-        <p>For Contracting & Woodcrafts</p>
-        <p>----------------------------------------</p>
-        <p>Initializing neural interface...</p>
-        <p>Loading system modules...</p>
-        <p>Authenticating user...</p>
-      </div>
       
-      <!-- 3D Cube Login Form -->
+      
+      <!-- Brand Header -->
+<div class="login-header" dir="rtl" aria-label="Nijjara brand header">
+  <h1 class="brand-title">Nijjara</h1>
+  <p class="brand-subtitle">For Contracting & Woodcrafts</p>
+</div>
+
+<!-- Cinematic Pan/Zoom Background (WebP scenes) -->
+<div class="cinematic-bg" aria-hidden="true">
+  <img src="../frontend/Background Files/dist/scene1.webp" alt="" class="scene scene-1" />
+  <img src="../frontend/Background Files/dist/scene2.webp" alt="" class="scene scene-2" />
+  <img src="../frontend/Background Files/dist/scene3.webp" alt="" class="scene scene-3" />
+</div>
+<!-- 3D Cube Login Form -->
       <div class="login-box-3d" id="loginBox">
         <div class='control'>
           <h1>
@@ -1207,9 +1368,7 @@
           <div class='bg'>
             <div class='bg-inner'></div>
           </div>
-          <div class='text'>
-            دخول
-          </div>
+          <div class="text">تسجيل الدخول</div>
         </button>
         <div id="login-feedback"></div>
       </div>
@@ -2006,3 +2165,4 @@
     </script>
   </body>
 </html>
+
