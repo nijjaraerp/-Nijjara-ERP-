@@ -19,7 +19,8 @@
     <script>
       // Debug flag injected from Apps Script template (set in Code.js doGet)
       // Will be an empty string when not provided.
-      window.__DEBUG__ = '<?!= JSON.stringify(typeof debug !== "undefined" ? debug : "") ?>';
+      window.__DEBUG__ =
+        '<?!= JSON.stringify(typeof debug !== "undefined" ? debug : "") ?>';
     </script>
 
     <style>
@@ -28,13 +29,13 @@
       :root {
         --font-family: "Cairo", sans-serif;
         --font-mono: "Share Tech Mono", monospace;
-        --color-bg-dark-matter: #07080d;
+        --color-bg-dark-matter: #001F3F;
         --color-bg-glass: rgba(25, 28, 48, 0.6);
         --color-border-glass: rgba(255, 255, 255, 0.15);
         --color-text: #e0e0e0;
         --color-text-muted: #aaa;
-        --color-accent-primary: #0078f0;
-        --color-accent-secondary: #00a0f0;
+        --color-accent-primary: #4FC3F7;
+        --color-accent-secondary: #29B6F6;
         --color-accent-red: #d93030;
         --color-accent-green: #30d970;
         --shadow-depth-md: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -89,7 +90,7 @@
         width: 350px;
         margin-top: 20px;
         padding: 25px;
-        border: 1px solid var(--color-accent-primary);
+        border: 2px solid var(--color-accent-primary);
         box-shadow: var(--shadow-depth-lg);
         background: var(--color-bg-glass);
         border-radius: 12px;
@@ -110,14 +111,17 @@
         font-size: 1rem;
         text-align: right;
         border-radius: 5px;
+        transition: all 0.2s ease;
       }
       .login-box input:focus {
         outline: none;
         border-color: var(--color-accent-primary);
-        box-shadow: 0 0 8px var(--color-accent-secondary);
+        box-shadow: 0 0 12px var(--color-accent-secondary), inset 0 0 0 1px var(--color-accent-primary);
+        background: rgba(0, 0, 0, 0.7);
+        transform: translateY(-1px);
       }
       .login-box button {
-        background: var(--color-accent-primary);
+        background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
         border: none;
         color: #fff;
         padding: 12px;
@@ -129,9 +133,10 @@
         border-radius: 5px;
       }
       .login-box button:hover {
-        background: var(--color-accent-secondary);
+        background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-primary));
         box-shadow: var(--shadow-depth-md);
         transform: translateY(-2px);
+        box-shadow: 0 0 20px var(--color-accent-secondary);
       }
       #login-feedback {
         color: var(--color-accent-red);
@@ -157,8 +162,9 @@
         height: 100%;
         background: radial-gradient(
           ellipse at 50% 50%,
-          #1a1a2e 0%,
-          var(--color-bg-dark-matter) 70%
+          #003366 0%,
+          var(--color-bg-dark-matter) 70%,
+          #000814 100%
         );
         z-index: 1;
       }
@@ -343,12 +349,15 @@
         font-family: var(--font-family);
         font-size: 1rem;
         border-radius: 5px;
+        transition: all 0.2s ease;
       }
       .form-grid input:focus,
       .form-grid select:focus,
       .form-grid textarea:focus {
         outline: none;
         border-color: var(--color-accent-primary);
+        box-shadow: 0 0 8px var(--color-accent-secondary);
+        background: rgba(0, 0, 0, 0.7);
       }
       .data-table {
         width: 100%;
@@ -369,7 +378,7 @@
         background: rgba(255, 255, 255, 0.05);
       }
       .win-btn {
-        background: var(--color-accent-primary);
+        background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
         border: none;
         color: #fff;
         padding: 10px 15px;
@@ -382,8 +391,9 @@
         margin: 10px 5px 0 0;
       }
       .win-btn:hover {
-        background: var(--color-accent-secondary);
+        background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-primary));
         transform: translateY(-2px);
+        box-shadow: 0 0 15px var(--color-accent-secondary);
       }
       .win-btn-danger {
         background: var(--color-accent-red);
@@ -411,10 +421,9 @@
         background: var(--color-bg-glass);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--color-accent-primary);
+        border: 2px solid var(--color-accent-primary);
         border-radius: 12px;
-        box-shadow: var(--shadow-depth-lg),
-          0 0 15px var(--color-accent-secondary);
+        box-shadow: var(--shadow-depth-lg), 0 0 25px var(--color-accent-secondary);
         z-index: 2000;
         padding: 20px;
         display: none;
@@ -445,10 +454,13 @@
         border-radius: 8px;
         color: var(--color-text);
         text-align: right;
+        transition: all 0.2s ease;
       }
       #nexus-input:focus {
         outline: none;
         border-color: var(--color-accent-primary);
+        box-shadow: 0 0 12px var(--color-accent-secondary);
+        background: rgba(0, 0, 0, 0.7);
       }
       #nexus-overlay {
         position: fixed;
@@ -755,2507 +767,739 @@
         width: 40px;
         height: 40px;
       }
-
-      .fab[data-level="2"] .fab-ray-button svg {
-        width: 20px;
-        height: 20px;
-      }
-
-      /* --- 2.6 Top Control Bar (Fixed) --- */
-      #top-control-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 50px;
-        z-index: 9998;
-        background: var(--color-bg-glass);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-bottom: 1px solid var(--color-border-glass);
-        box-shadow: var(--shadow-depth-md);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
-      }
-
-      #user-info {
-        color: var(--color-text);
-        font-weight: 700;
-        font-family: var(--font-family);
-        font-size: 1rem;
-      }
-
-      #date-time {
-        direction: ltr;
-        text-align: left;
-        color: var(--color-accent-green);
-        font-family: var(--font-mono);
-        font-size: 0.9rem;
-        min-width: 200px;
-      }
-
-      #logout-btn {
-        background: var(--color-accent-red);
-        border: none;
-        color: #fff;
-        padding: 8px 16px;
-        font-family: var(--font-family);
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.3s;
-        border-radius: 6px;
-      }
-
-      #logout-btn:hover {
-        background: #ff5555;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-depth-md);
-      }
-
-      /* --- 2.7 Five-Engine Hub System --- */
-      #five-engine-hub {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 600px;
-        height: 600px;
-        z-index: 1000;
-        pointer-events: none;
-      }
-
-      #five-engine-hub.compact {
-        top: 50%;
-        left: calc(100% - 50px);
-        width: 80px;
-        height: 80px;
-        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      /* Central Search Hub */
-      #central-search {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 300px;
-        pointer-events: auto;
-        opacity: 1;
-        transition: all 0.4s ease;
-      }
-
-      #five-engine-hub.compact #central-search {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0);
-      }
-
-      #search-input {
-        width: 100%;
-        padding: 18px 24px;
-        background: var(--color-bg-glass);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 2px solid var(--color-accent-primary);
-        border-radius: 50px;
-        color: var(--color-text);
-        font-family: var(--font-family);
-        font-size: 1.1rem;
-        text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 120, 240, 0.3),
-          0 0 40px rgba(0, 120, 240, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        transition: all 0.3s;
-      }
-
-      #search-input:focus {
-        outline: none;
-        border-color: var(--color-accent-secondary);
-        box-shadow: 0 20px 80px rgba(0, 160, 240, 0.4),
-          0 0 60px rgba(0, 160, 240, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-      }
-
-      #search-input::placeholder {
-        color: var(--color-text-muted);
-      }
-
-      /* Orbiting Module Buttons */
-      .orbit-module {
-        position: absolute;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        pointer-events: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        border: 3px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        animation: orbit 20s linear infinite;
-        transform-origin: center;
-      }
-
-      #five-engine-hub.compact .orbit-module {
-        opacity: 0;
-        transform: scale(0);
-      }
-
-      /* Glossy overlay */
-      .orbit-module::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.3) 0%,
-          transparent 50%,
-          rgba(0, 0, 0, 0.3) 100%
-        );
-        pointer-events: none;
-        border-radius: 50%;
-        z-index: 1;
-      }
-
-      /* Glass reflection */
-      .orbit-module::after {
-        content: "";
-        position: absolute;
-        top: -15px;
-        left: -15px;
-        width: 50px;
-        height: 50px;
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.6) 0%,
-          transparent 70%
-        );
-        border-radius: 50%;
-        pointer-events: none;
-        filter: blur(10px);
-        z-index: 2;
-      }
-
-      .orbit-module-icon {
-        width: 50px;
-        height: 50px;
-        position: relative;
-        z-index: 3;
-      }
-
-      .orbit-module-icon svg {
-        width: 100%;
-        height: 100%;
-        stroke: #fff;
-        stroke-width: 2;
-        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
-      }
-
-      .orbit-module-label {
-        font-family: var(--font-family);
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #fff;
-        margin-top: 6px;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-        position: relative;
-        z-index: 3;
-      }
-
-      .orbit-module:hover {
-        transform: scale(1.2) translateZ(50px);
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px currentColor,
-          inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      }
-
-      /* Module-specific colors and positions */
-      #module-hrm {
-        top: 50px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(
-          135deg,
-          rgb(147, 51, 234) 0%,
-          rgb(126, 34, 206) 100%
-        );
-        animation-delay: 0s;
-      }
-
-      #module-prj {
-        top: 50%;
-        right: 50px;
-        transform: translateY(-50%);
-        background: linear-gradient(
-          135deg,
-          rgb(5, 150, 105) 0%,
-          rgb(4, 120, 87) 100%
-        );
-        animation-delay: -5s;
-      }
-
-      #module-fin {
-        bottom: 50px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(
-          135deg,
-          rgb(217, 119, 6) 0%,
-          rgb(180, 83, 9) 100%
-        );
-        animation-delay: -10s;
-      }
-
-      #module-sys {
-        top: 50%;
-        left: 50px;
-        transform: translateY(-50%);
-        background: linear-gradient(
-          135deg,
-          rgb(8, 145, 178) 0%,
-          rgb(21, 94, 117) 100%
-        );
-        animation-delay: -15s;
-      }
-
-      @keyframes orbit {
-        0% {
-          transform: rotate(0deg) translateX(0) rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg) translateX(0) rotate(-360deg);
-        }
-      }
-
-      /* Compact Orb */
-      #compact-orb {
-        position: fixed;
-        top: 50%;
-        right: 30px;
-        transform: translateY(-50%) scale(0);
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(
-          135deg,
-          rgb(37, 99, 235) 0%,
-          rgb(29, 78, 216) 100%
-        );
-        box-shadow: 0 20px 60px rgba(37, 99, 235, 0.6),
-          0 0 40px rgba(37, 99, 235, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        border: 3px solid rgba(255, 255, 255, 0.2);
-        cursor: pointer;
-        pointer-events: none;
-        z-index: 1001;
-        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #compact-orb.visible {
-        transform: translateY(-50%) scale(1);
-        pointer-events: auto;
-      }
-
-      #compact-orb::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.3) 0%,
-          transparent 50%,
-          rgba(0, 0, 0, 0.3) 100%
-        );
-        border-radius: 50%;
-      }
-
-      #compact-orb svg {
-        width: 40px;
-        height: 40px;
-        stroke: #fff;
-        stroke-width: 2;
-        position: relative;
-        z-index: 1;
-        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
-      }
-
-      #compact-orb:hover {
-        transform: translateY(-50%) scale(1.15);
-        box-shadow: 0 30px 80px rgba(37, 99, 235, 0.7),
-          0 0 60px rgba(37, 99, 235, 0.5),
-          inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      }
-
-      /* --- 2.6 Module Drawer System (Phase 2) --- */
-      body.drawer-open #holo-deck,
-      body.drawer-open #particles {
-        filter: blur(5px) brightness(0.9);
-      }
-      body.drawer-open #five-engine-hub {
-        pointer-events: none; /* prevent accidental clicks on hub while drawer open */
-      }
-      body.drawer-open #five-engine-hub .orbit-module:not(.active) {
-        filter: blur(4px);
-        opacity: 0.4;
-      }
-      .orbit-module.active {
-        position: fixed;
-        top: 90px;
-        left: 50%;
-        transform: translateX(-50%) scale(1.2);
-        z-index: 2002;
-        animation: none; /* stop orbit */
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px currentColor,
-          inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      }
-      #module-drawer-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 2000;
-        display: none;
-        background: rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-      }
-      #module-drawer-overlay.visible {
-        display: block;
-      }
-      #module-drawer {
-        position: fixed;
-        top: 160px;
-        left: 50%;
-        transform: translateX(-50%) scale(0.9);
-        z-index: 2003;
-        display: none;
-        width: 640px;
-        height: 360px;
-        pointer-events: auto;
-      }
-      #module-drawer.visible {
-        display: block;
-        animation: drawer-unfold 300ms ease-out;
-      }
-      @keyframes drawer-unfold {
-        from {
-          opacity: 0;
-          transform: translateX(-50%) scale(0.8);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(-50%) scale(0.95);
-        }
-      }
-      #module-submodules {
-        position: absolute;
-        inset: 0;
-        display: block;
-      }
-      .drawer-submodule {
-        position: absolute;
-        width: 88px;
-        height: 88px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.15),
-          rgba(0, 0, 0, 0.25)
-        );
-        border: 2px solid rgba(255, 255, 255, 0.25);
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        color: #fff;
-        cursor: pointer;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-        overflow: hidden;
-      }
-      .drawer-submodule:hover {
-        transform: scale(1.08);
-        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
-      }
-      .drawer-submodule .icon {
-        width: 36px;
-        height: 36px;
-        z-index: 1;
-      }
-      .drawer-submodule .icon svg {
-        width: 100%;
-        height: 100%;
-        stroke: #fff;
-        stroke-width: 2;
-        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
-      }
-      .drawer-submodule .label {
-        font-size: 11px;
-        font-weight: 700;
-        margin-top: 6px;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-        z-index: 1;
-      }
-      .drawer-submodule::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        pointer-events: none;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.25),
-          transparent 50%,
-          rgba(0, 0, 0, 0.35)
-        );
-      }
-      .drawer-submodule::after {
-        content: "";
-        position: absolute;
-        top: -8px;
-        left: -8px;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.5) 0%,
-          transparent 70%
-        );
-        filter: blur(5px);
-        pointer-events: none;
-      }
-      #module-drawer-close {
-        position: absolute;
-        top: -12px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        background: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      }
-      #module-drawer-close:hover {
-        transform: translateX(-50%) scale(1.08);
-      }
-
-      /* --- 2.8 Task Switcher --- */
-      #task-switcher {
-        position: fixed;
-        top: -55px; /* إخفاء تلقائي */
-        left: 50%;
-        transform: translateX(-50%);
-        height: 60px;
-        z-index: 998;
-        background: var(--color-bg-glass);
-        border: 1px solid var(--color-border-glass);
-        border-radius: 0 0 12px 12px;
-        box-shadow: var(--shadow-depth-md);
-        padding: 5px 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        transition: top 0.3s ease;
-      }
-
-      #task-switcher:hover {
-        top: 0; /* إظهار عند التمرير */
-      }
-
-      .task-thumb {
-        width: 100px;
-        height: 50px;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid var(--color-border-glass);
-        border-radius: 5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        overflow: hidden;
-        transition: all 0.2s ease;
-      }
-      .task-thumb:hover {
-        transform: scale(1.1);
-        border-color: var(--color-accent-primary);
-      }
-      .task-thumb.minimized {
-        opacity: 0.6;
-        background: rgba(0, 0, 0, 0.6);
-      }
-      .task-thumb-icon {
-        width: 20px;
-        height: 20px;
-      }
-      .task-thumb-icon svg {
-        width: 100%;
-        height: 100%;
-        stroke: var(--color-text-muted);
-      }
-      .task-thumb-title {
-        font-family: var(--font-family);
-        font-size: 0.7rem;
-        color: var(--color-text-muted);
-        white-space: nowrap;
-      }
-
-      /* --- 2.8 Toast Notifications --- */
-      #toast-container {
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        min-width: 300px;
-        max-width: 400px;
-      }
-      .toast {
-        background: var(--color-bg-glass);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid var(--color-border-glass);
-        border-radius: 12px;
-        padding: 15px 20px;
-        box-shadow: var(--shadow-depth-lg);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        animation: slideInRight 0.5s ease-out;
-        position: relative;
-        overflow: hidden;
-      }
-      .toast::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: var(--toast-color, var(--color-accent-primary));
-      }
-      .toast.success {
-        --toast-color: var(--color-accent-green);
-      }
-      .toast.error {
-        --toast-color: var(--color-accent-red);
-      }
-      .toast.warning {
-        --toast-color: #f0a000;
-      }
-      .toast.info {
-        --toast-color: var(--color-accent-primary);
-      }
-      .toast-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--toast-color, var(--color-accent-primary));
-        flex-shrink: 0;
-      }
-      .toast-icon svg {
-        width: 16px;
-        height: 16px;
-        stroke: #fff;
-        stroke-width: 2;
-      }
-      .toast-content {
-        flex: 1;
-        font-family: var(--font-family);
-      }
-      .toast-title {
-        font-weight: 700;
-        color: var(--color-text);
-        margin-bottom: 4px;
-      }
-      .toast-message {
-        font-size: 0.9rem;
-        color: var(--color-text-muted);
-      }
-      .toast-close {
-        background: none;
-        border: none;
-        color: var(--color-text-muted);
-        cursor: pointer;
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: color 0.2s;
-      }
-      .toast-close:hover {
-        color: var(--color-text);
-      }
-      .toast-close svg {
-        width: 16px;
-        height: 16px;
-        stroke: currentColor;
-        stroke-width: 2;
-      }
-      @keyframes slideInRight {
-        from {
-          transform: translateX(400px);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      .toast.hiding {
-        animation: slideOutRight 0.3s ease-out forwards;
-      }
-      @keyframes slideOutRight {
-        from {
-          transform: translateX(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateX(400px);
-          opacity: 0;
-        }
-      }
-
-      /* --- 2.9 (جديد) شريط إجراءات النوافذ الجانبي --- */
-      #window-action-bar {
-        position: fixed;
-        left: -55px; /* إخفاء تلقائي - RTL friendly */
-        top: 50%;
-        transform: translateY(-50%);
-        width: 60px;
-        z-index: 998;
-        background: var(--color-bg-glass);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid var(--color-border-glass);
-        border-radius: 0 12px 12px 0; /* RTL friendly */
-        box-shadow: var(--shadow-depth-md);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 0;
-        transition: left 0.3s ease;
-      }
-      #window-action-bar:hover {
-        left: 0; /* إظهار عند التمرير */
-      }
-      .action-bar-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .action-bar-btn svg {
-        width: 20px;
-        height: 20px;
-        stroke: var(--color-text-muted);
-        stroke-width: 2;
-      }
-      .action-bar-btn:hover {
-        background: var(--color-accent-primary);
-      }
-      .action-bar-btn:hover svg {
-        stroke: #fff;
-      }
     </style>
   </head>
-  <body>
-    <svg width="0" height="0" style="position: absolute">
-      <defs>
-        <symbol
-          id="icon-hrm"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </symbol>
-        <symbol
-          id="icon-prj"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-          ></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </symbol>
-        <symbol
-          id="icon-fin"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="12" y1="1" x2="12" y2="23"></line>
-          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-        </symbol>
-        <symbol
-          id="icon-sys"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="3"></circle>
-          <path
-            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-          ></path>
-        </symbol>
-        <symbol
-          id="icon-power"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-          <line x1="12" y1="2" x2="12" y2="12"></line>
-        </symbol>
-        <symbol
-          id="icon-grid"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <rect x="3" y="3" width="7" height="7"></rect>
-          <rect x="14" y="3" width="7" height="7"></rect>
-          <rect x="14" y="14" width="7" height="7"></rect>
-          <rect x="3" y="14" width="7" height="7"></rect>
-        </symbol>
-        <symbol
-          id="icon-layers"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
-        </symbol>
-        <symbol
-          id="icon-maximize"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
-          ></path>
-        </symbol>
-        <symbol
-          id="icon-restore"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
-          ></path>
-        </symbol>
-        <symbol
-          id="icon-eye"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
-        </symbol>
-        <symbol
-          id="icon-plus"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </symbol>
-        <symbol
-          id="icon-search"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </symbol>
-        <symbol
-          id="icon-minus"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </symbol>
-        <symbol
-          id="icon-check"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </symbol>
-        <symbol
-          id="icon-x"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </symbol>
-        <symbol
-          id="icon-alert"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
-          ></path>
-          <line x1="12" y1="9" x2="12" y2="13"></line>
-          <line x1="12" y1="17" x2="12.01" y2="17"></line>
-        </symbol>
-        <symbol
-          id="icon-info"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </symbol>
-      </defs>
-    </svg>
 
+  <body>
+    <!-- 1. BOOT SCREEN -->
     <div id="boot-screen">
-      <div id="boot-log"></div>
-      <div class="login-box" id="login-box">
-        <h2>مفتاح مصادقة النظام</h2>
-        <input
-          type="text"
-          id="username"
-          placeholder="معرف المستخدم"
-          value="mkhoraiby"
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="رمز الدخول"
-          value="210388"
-        />
-        <button id="login-button">ولوج</button>
+      <div id="boot-log">
+        <p>NIJJARA-OS v1.0</p>
+        <p>Copyright (c) 2024 Nijjara Systems</p>
+        <p>For Contracting & Woodcrafts</p>
+        <p>----------------------------------------</p>
+        <p>Initializing neural interface...</p>
+        <p>Loading system modules...</p>
+        <p>Authenticating user...</p>
+      </div>
+      <div class="login-box" id="loginBox">
+        <h2>تسجيل الدخول</h2>
+        <input type="text" id="loginUser" placeholder="اسم المستخدم" />
+        <input type="password" id="loginPass" placeholder="كلمة المرور" />
+        <button onclick="handleLogin()">دخول</button>
         <div id="login-feedback"></div>
       </div>
     </div>
 
+    <!-- 2. NIJJARA-OS DESKTOP -->
     <div id="nijjara-os">
-      <!-- Toast Notification Container -->
-      <div id="toast-container"></div>
-
-      <!-- Background -->
       <div id="holo-deck">
         <div id="particles"></div>
       </div>
 
-      <!-- Top Control Bar (Fixed) -->
-      <div id="top-control-bar">
-        <div id="user-info">USER: ...</div>
-        <div id="date-time">Loading clock...</div>
-        <button id="logout-btn">تسجيل الخروج</button>
+      <!-- Windows Container -->
+      <div id="windows-container"></div>
+
+      <!-- Nexus (Command Center) -->
+      <div id="nexus-overlay"></div>
+      <div id="nexus">
+        <h3>النكسس - مركز التحكم</h3>
+        <input
+          type="text"
+          id="nexus-input"
+          placeholder="اكتب أمرًا أو استخدم الأزرار..."
+          onkeypress="if(event.key==='Enter'){executeNexusCommand()}"
+        />
       </div>
 
-      <!-- Five-Engine Hub System -->
-      <div id="five-engine-hub">
-        <!-- Central Search -->
-        <div id="central-search">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="🔍 ابحث عن أي شيء..."
-          />
-        </div>
-
-        <!-- Orbiting Module Buttons -->
-        <div class="orbit-module" id="module-hrm" data-module="hrm">
-          <div class="orbit-module-icon">
-            <svg><use href="#icon-hrm"></use></svg>
-          </div>
-          <div class="orbit-module-label">الموارد البشرية</div>
-        </div>
-
-        <div class="orbit-module" id="module-prj" data-module="prj">
-          <div class="orbit-module-icon">
-            <svg><use href="#icon-prj"></use></svg>
-          </div>
-          <div class="orbit-module-label">المشاريع</div>
-        </div>
-
-        <div class="orbit-module" id="module-fin" data-module="fin">
-          <div class="orbit-module-icon">
-            <svg><use href="#icon-fin"></use></svg>
-          </div>
-          <div class="orbit-module-label">المالية</div>
-        </div>
-
-        <div class="orbit-module" id="module-sys" data-module="sys">
-          <div class="orbit-module-icon">
-            <svg><use href="#icon-sys"></use></svg>
-          </div>
-          <div class="orbit-module-label">النظام</div>
-        </div>
-      </div>
-
-      <!-- Module Drawer (Phase 2) -->
-      <div id="module-drawer-overlay"></div>
-      <div id="module-drawer">
-        <div id="module-submodules"></div>
-        <button id="module-drawer-close" title="إغلاق">×</button>
-      </div>
-
-      <!-- Compact Orb (Right Side) -->
-      <div id="compact-orb">
-        <svg><use href="#icon-grid"></use></svg>
-      </div>
-
-      <!-- Task Switcher (Top Auto-Hide) -->
-      <div id="task-switcher"></div>
-
-      <!-- Window Action Bar (Left Auto-Hide) -->
-      <div id="window-action-bar">
-        <div class="action-bar-btn" id="app-grid" title="ترتيب شبكي">
-          <svg><use href="#icon-grid"></use></svg>
-        </div>
-        <div class="action-bar-btn" id="app-cascade" title="ترتيب متتالي">
-          <svg><use href="#icon-layers"></use></svg>
-        </div>
-        <div class="action-bar-btn" id="app-minimize-all" title="تصغير الكل">
-          <svg><use href="#icon-minus"></use></svg>
-        </div>
-        <div class="action-bar-btn" id="app-expand-all" title="إظهار الكل">
-          <svg><use href="#icon-maximize"></use></svg>
-        </div>
-      </div>
+      <!-- FAB Container -->
+      <div id="fab-container"></div>
     </div>
 
-    <template id="window-template">
-      <div class="app-window">
-        <div class="window-header">
-          <div class="window-controls">
-            <div class="window-controls-right">
-              <button
-                class="win-btn-icon btn-toggle-fab"
-                title="إظهار/إخفاء الزر العائم"
-              >
-                <svg><use href="#icon-eye"></use></svg>
-              </button>
-            </div>
-            <span class="window-title">عنوان النافذة</span>
+    <script>
+      // =========================================================
+      // NIJJARA-OS v1.0 - MAIN JAVASCRIPT
+      // =========================================================
+
+      // --- Global State ---
+      const state = {
+        authenticated: false,
+        currentUser: null,
+        windows: new Map(), // windowId -> {element, module, type, data}
+        activeWindow: null,
+        windowZIndex: 10,
+        nexusVisible: false,
+        fabModules: new Map(),
+      };
+
+      // --- Module Definitions ---
+      const modules = {
+        hrm: {
+          name: 'الموارد البشرية',
+          icon: '👥',
+          color: '#9333ea',
+          position: { x: 100, y: 100 },
+          actions: [
+            { id: 'employees', name: 'إدارة الموظفين', icon: '👤' },
+            { id: 'attendance', name: 'الحضور والانصراف', icon: '📅' },
+            { id: 'payroll', name: 'الرواتب', icon: '💰' }
+          ]
+        },
+        prj: {
+          name: 'إدارة المشاريع',
+          icon: '📊',
+          color: '#059669',
+          position: { x: 200, y: 100 },
+          actions: [
+            { id: 'projects', name: 'المشاريع', icon: '📋' },
+            { id: 'tasks', name: 'المهام', icon: '✅' },
+            { id: 'timeline', name: 'الجدول الزمني', icon: '📅' }
+          ]
+        },
+        fin: {
+          name: 'النظام المالي',
+          icon: '💰',
+          color: '#d97706',
+          position: { x: 300, y: 100 },
+          actions: [
+            { id: 'accounts', name: 'الحسابات', icon: '📊' },
+            { id: 'transactions', name: 'المعاملات', icon: '💳' },
+            { id: 'reports', name: 'التقارير', icon: '📈' }
+          ]
+        },
+        sys: {
+          name: 'إدارة النظام',
+          icon: '⚙️',
+          color: '#0891b2',
+          position: { x: 400, y: 100 },
+          actions: [
+            { id: 'users', name: 'المستخدمين', icon: '👥' },
+            { id: 'permissions', name: 'الصلاحيات', icon: '🔐' },
+            { id: 'settings', name: 'الإعدادات', icon: '⚙️' }
+          ]
+        }
+      };
+
+      // --- Boot Sequence ---
+      function boot() {
+        const bootLog = document.getElementById('boot-log');
+        const loginBox = document.getElementById('loginBox');
+        
+        setTimeout(() => {
+          bootLog.innerHTML += '<p>✓ System ready</p>';
+          loginBox.style.display = 'flex';
+          document.getElementById('loginUser').focus();
+        }, 2000);
+      }
+
+      // --- Authentication ---
+      function handleLogin() {
+        const username = document.getElementById('loginUser').value;
+        const password = document.getElementById('loginPass').value;
+        const feedback = document.getElementById('login-feedback');
+
+        if (!username || !password) {
+          feedback.textContent = 'يرجى إدخال اسم المستخدم وكلمة المرور';
+          return;
+        }
+
+        feedback.textContent = 'جاري التحقق...';
+
+        google.script.run
+          .withSuccessHandler(function(response) {
+            if (response && response.success) {
+              state.authenticated = true;
+              state.currentUser = response.data;
+              feedback.textContent = '✓ تم تسجيل الدخول بنجاح';
+              
+              // Store session
+              sessionStorage.setItem('nijjara_session', JSON.stringify(response.data));
+              
+              setTimeout(() => {
+                showDesktop();
+              }, 1000);
+            } else {
+              feedback.textContent = response.message || 'فشل تسجيل الدخول';
+              document.getElementById('loginPass').value = '';
+            }
+          })
+          .withFailureHandler(function(error) {
+            feedback.textContent = 'خطأ في الاتصال: ' + error.message;
+          })
+          .authenticateUser(username, password);
+      }
+
+      // --- Desktop Interface ---
+      function showDesktop() {
+        document.getElementById('boot-screen').style.opacity = '0';
+        document.getElementById('boot-screen').style.visibility = 'hidden';
+        document.getElementById('nijjara-os').style.display = 'block';
+        
+        initializeFABs();
+        initializeNexus();
+      }
+
+      // --- FAB System ---
+      function initializeFABs() {
+        const container = document.getElementById('fab-container');
+        
+        Object.entries(modules).forEach(([moduleId, module]) => {
+          const fabElement = createFAB(moduleId, module, 1);
+          container.appendChild(fabElement);
+          state.fabModules.set(moduleId, fabElement);
+        });
+      }
+
+      function createFAB(moduleId, module, level) {
+        const fab = document.createElement('div');
+        fab.className = 'fab';
+        fab.setAttribute('data-module', moduleId);
+        fab.setAttribute('data-level', level);
+        fab.style.left = module.position.x + 'px';
+        fab.style.top = module.position.y + 'px';
+
+        const button = document.createElement('div');
+        button.className = 'fab-button';
+        button.innerHTML = module.icon;
+        button.title = module.name;
+        
+        button.addEventListener('click', () => {
+          if (level === 1) {
+            toggleRays(fab, moduleId, module);
+          }
+        });
+
+        fab.appendChild(button);
+        return fab;
+      }
+
+      function toggleRays(fab, moduleId, module) {
+        const existingRays = fab.querySelector('.fab-rays');
+        
+        if (existingRays) {
+          existingRays.remove();
+          return;
+        }
+
+        const raysContainer = document.createElement('div');
+        raysContainer.className = 'fab-rays';
+
+        module.actions.forEach((action, index) => {
+          const angle = (index * 60) - 90; // Spread rays in arc
+          const distance = 80;
+          const x = Math.cos(angle * Math.PI / 180) * distance;
+          const y = Math.sin(angle * Math.PI / 180) * distance;
+
+          const ray = document.createElement('div');
+          ray.className = 'fab-ray';
+          ray.style.transform = `translate(${x}px, ${y}px)`;
+
+          const rayButton = document.createElement('div');
+          rayButton.className = 'fab-ray-button';
+          rayButton.innerHTML = action.icon;
+          rayButton.title = action.name;
+          
+          rayButton.addEventListener('click', () => {
+            openWindow(moduleId, action.id, action.name);
+            toggleRays(fab, moduleId, module); // Close rays after click
+          });
+
+          const label = document.createElement('div');
+          label.className = 'fab-ray-label';
+          label.textContent = action.name;
+          label.style.transform = `translate(-50%, -40px)`;
+          label.style.left = '50%';
+
+          ray.appendChild(rayButton);
+          ray.appendChild(label);
+          raysContainer.appendChild(ray);
+        });
+
+        fab.appendChild(raysContainer);
+      }
+
+      // --- Window System ---
+      function openWindow(moduleId, actionId, title) {
+        const windowId = `${moduleId}-${actionId}-${Date.now()}`;
+        
+        // Check if window already exists
+        const existingWindow = Array.from(state.windows.values()).find(w => 
+          w.module === moduleId && w.type === actionId
+        );
+        
+        if (existingWindow) {
+          // Focus existing window
+          existingWindow.element.style.zIndex = ++state.windowZIndex;
+          return;
+        }
+
+        const windowElement = createWindow(windowId, title, moduleId, actionId);
+        document.getElementById('windows-container').appendChild(windowElement);
+        
+        state.windows.set(windowId, {
+          element: windowElement,
+          module: moduleId,
+          type: actionId,
+          data: {}
+        });
+
+        // Load content based on module and action
+        loadWindowContent(windowId, moduleId, actionId);
+      }
+
+      function createWindow(windowId, title, moduleId, actionId) {
+        const window = document.createElement('div');
+        window.className = 'app-window';
+        window.id = windowId;
+        window.style.zIndex = ++state.windowZIndex;
+        window.style.top = '50px';
+        window.style.left = '50px';
+
+        window.innerHTML = `
+          <div class="window-header">
             <div class="window-controls-left">
-              <button class="win-btn-icon btn-min" title="تصغير">
-                <svg>
-                  <use
-                    href="#icon-minus"
-                    style="stroke-width: 4; transform: scale(0.8)"
-                  ></use>
-                </svg>
-              </button>
-              <button class="win-btn-icon btn-max" title="تكبير">
-                <svg><use href="#icon-maximize"></use></svg>
-              </button>
-              <button class="win-btn-icon btn-close" title="إغلاق">
-                <svg>
-                  <use
-                    href="#icon-plus"
-                    style="stroke-width: 4; transform: rotate(45deg) scale(0.8)"
-                  ></use>
-                </svg>
-              </button>
+              <button class="btn-min" onclick="minimizeWindow('${windowId}')" title="تصغير">−</button>
+              <button class="btn-max" onclick="maximizeWindow('${windowId}')" title="تكبير">□</button>
+            </div>
+            <div class="window-title">${title}</div>
+            <div class="window-controls-right">
+              <button class="btn-close" onclick="closeWindow('${windowId}')" title="إغلاق">×</button>
             </div>
           </div>
-        </div>
-        <div class="window-content"></div>
-      </div>
-    </template>
+          <div class="window-content" id="content-${windowId}">
+            <p>جاري التحميل...</p>
+          </div>
+        `;
 
-    <template id="task-thumb-template">
-      <div class="task-thumb">
-        <div class="task-thumb-icon">
-          <svg><use href="#icon-sys"></use></svg>
-        </div>
-        <span class="task-thumb-title">Window</span>
-      </div>
-    </template>
+        // Make window draggable
+        makeDraggable(window);
+        
+        return window;
+      }
 
-    <script>
-      /* --- III. JAVASCRIPT "OS KERNEL" --- */
+      function makeDraggable(element) {
+        const header = element.querySelector('.window-header');
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
 
-      document.addEventListener("DOMContentLoaded", () => {
-        // --- Toast Notification System ---
-        function showToast(title, message, type = "info", duration = 4000) {
-          const container = document.getElementById("toast-container");
-          const toast = document.createElement("div");
-          toast.className = `toast ${type}`;
+        header.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
 
-          const iconMap = {
-            success: "icon-check",
-            error: "icon-x",
-            warning: "icon-alert",
-            info: "icon-info",
-          };
+        function dragStart(e) {
+          initialX = e.clientX - xOffset;
+          initialY = e.clientY - yOffset;
 
-          toast.innerHTML = `
-                    <div class="toast-icon">
-                        <svg><use href="#${
-                          iconMap[type] || "icon-info"
-                        }"></use></svg>
-                    </div>
-                    <div class="toast-content">
-                        <div class="toast-title">${title}</div>
-                        <div class="toast-message">${message}</div>
-                    </div>
-                    <button class="toast-close">
-                        <svg><use href="#icon-x"></use></svg>
-                    </button>
-                `;
-
-          container.appendChild(toast);
-
-          // Close button handler
-          const closeBtn = toast.querySelector(".toast-close");
-          closeBtn.addEventListener("click", () => {
-            toast.classList.add("hiding");
-            setTimeout(() => toast.remove(), 300);
-          });
-
-          // Auto-dismiss
-          if (duration > 0) {
-            setTimeout(() => {
-              if (toast.parentElement) {
-                toast.classList.add("hiding");
-                setTimeout(() => toast.remove(), 300);
-              }
-            }, duration);
-          }
-
-          return toast;
-        }
-
-        // --- 1. Element Selectors ---
-        const bootScreen = document.getElementById("boot-screen");
-        const bootLog = document.getElementById("boot-log");
-        const loginBox = document.getElementById("login-box");
-        const loginButton = document.getElementById("login-button");
-        const usernameInput = document.getElementById("username");
-        const passwordInput = document.getElementById("password");
-        const nijjaraOS = document.getElementById("nijjara-os");
-        const windowTemplate = document.getElementById("window-template");
-        const fabContainer = document.getElementById("fab-container");
-
-        const taskSwitcher = document.getElementById("task-switcher");
-        const taskThumbTemplate = document.getElementById(
-          "task-thumb-template"
-        );
-
-        const nexus = document.getElementById("nexus");
-        const nexusOverlay = document.getElementById("nexus-overlay");
-
-        // --- 2. Boot Sequence & Login ---
-        const bootMessages = [
-          "BOOTING NIJJARA-OS v1.0...",
-          "Loading kernel modules... OK",
-          "Initializing 3D glass display... DONE",
-          "Connecting to neural-link... SECURE",
-          "Loading user authentication service...",
-          "Awaiting system key...",
-        ];
-
-        let i = 0;
-        function runBootLog() {
-          if (i < bootMessages.length) {
-            const p = document.createElement("p");
-            p.textContent = `> ${bootMessages[i]}`;
-            bootLog.appendChild(p);
-            bootLog.scrollTop = bootLog.scrollHeight;
-            i++;
-            setTimeout(runBootLog, Math.random() * 300 + 100);
-          } else {
-            loginBox.style.display = "flex";
+          if (e.target === header || header.contains(e.target)) {
+            isDragging = true;
+            element.style.zIndex = ++state.windowZIndex;
           }
         }
 
-        loginButton.addEventListener("click", handleLogin);
-        passwordInput.addEventListener("keypress", (e) => {
-          if (e.key === "Enter") handleLogin();
-        });
+        function drag(e) {
+          if (isDragging) {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+            xOffset = currentX;
+            yOffset = currentY;
 
-        function handleLogin() {
-          const user = usernameInput.value.trim();
-          const pass = passwordInput.value;
-
-          if (!user || !pass) {
-            document.getElementById("login-feedback").textContent =
-              "الرجاء إدخال اسم المستخدم وكلمة المرور";
-            logToConsole(
-              "Login validation failed: empty fields",
-              "CLIENT-ERROR"
-            );
-            return;
+            element.style.transform = `translate(${currentX}px, ${currentY}px)`;
           }
-
-          loginButton.disabled = true;
-          loginButton.textContent = "جاري المصادقة...";
-          document.getElementById("login-feedback").textContent = "";
-
-          logToConsole(`Attempting login for user: ${user}`, "CLIENT-INFO");
-
-          // Call backend authentication
-          google.script.run
-            .withSuccessHandler(function (response) {
-              loginButton.disabled = false;
-              loginButton.textContent = "ولوج";
-
-              if (response && response.success) {
-                logToConsole(
-                  "Login successful. Session active.",
-                  "CLIENT-SUCCESS"
-                );
-
-                // Store session data
-                sessionStorage.setItem(
-                  "nijjara_session",
-                  JSON.stringify(response.data)
-                );
-
-                // Show success toast
-                showToast(
-                  "تم تسجيل الدخول بنجاح",
-                  `مرحباً ${response.data.username}، تم تفعيل النظام`,
-                  "success",
-                  3000
-                );
-
-                // Boot into OS with slight delay for toast visibility
-                setTimeout(() => {
-                  bootScreen.style.opacity = "0";
-                  bootScreen.style.visibility = "hidden";
-                  nijjaraOS.style.display = "block";
-
-                  document.getElementById(
-                    "user-info"
-                  ).textContent = `USER: ${response.data.username}`;
-                  startClock();
-                }, 500);
-              } else {
-                logToConsole(
-                  "Login failed: " + response.message,
-                  "CLIENT-ERROR"
-                );
-                document.getElementById("login-feedback").textContent =
-                  response.message || "فشل تسجيل الدخول";
-              }
-            })
-            .withFailureHandler(function (error) {
-              loginButton.disabled = false;
-              loginButton.textContent = "ولوج";
-              logToConsole("Login error: " + error.message, "CLIENT-ERROR");
-              document.getElementById("login-feedback").textContent =
-                "خطأ في الاتصال بالخادم";
-            })
-            .authenticateUser(user, pass);
         }
-        runBootLog();
 
-        function startClock() {
-          const dateTimeEl = document.getElementById("date-time");
-          if (!dateTimeEl) return;
+        function dragEnd(e) {
+          initialX = currentX;
+          initialY = currentY;
+          isDragging = false;
+        }
+      }
 
-          function updateTime() {
-            const now = new Date();
-            const date = now.toLocaleDateString("ar-EG-u-nu-latn", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            });
-            const time = now.toLocaleTimeString("en-US", {
-              hour12: true,
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-            });
-            dateTimeEl.textContent = `${date} | ${time}`;
+      function loadWindowContent(windowId, moduleId, actionId) {
+        const content = document.getElementById(`content-${windowId}`);
+        
+        // Simulate loading content based on module and action
+        setTimeout(() => {
+          switch (moduleId) {
+            case 'hrm':
+              loadHRMContent(content, actionId);
+              break;
+            case 'prj':
+              loadPRJContent(content, actionId);
+              break;
+            case 'fin':
+              loadFINContent(content, actionId);
+              break;
+            case 'sys':
+              loadSYSContent(content, actionId);
+              break;
+            default:
+              content.innerHTML = '<p>محتوى غير متاح</p>';
           }
-          updateTime();
-          setInterval(updateTime, 1000);
+        }, 500);
+      }
+
+      function loadHRMContent(content, actionId) {
+        switch (actionId) {
+          case 'employees':
+            content.innerHTML = `
+              <h3>إدارة الموظفين</h3>
+              <div class="form-grid">
+                <label>الاسم:</label>
+                <input type="text" placeholder="اسم الموظف" />
+                <label>القسم:</label>
+                <select>
+                  <option>اختر القسم</option>
+                  <option>المبيعات</option>
+                  <option>التسويق</option>
+                  <option>المالية</option>
+                </select>
+              </div>
+              <button class="win-btn">بحث</button>
+              <button class="win-btn">إضافة موظف</button>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>الاسم</th>
+                    <th>القسم</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>أحمد محمد</td>
+                    <td>المبيعات</td>
+                    <td>نشط</td>
+                  </tr>
+                </tbody>
+              </table>
+            `;
+            break;
+          case 'attendance':
+            content.innerHTML = `
+              <h3>الحضور والانصراف</h3>
+              <p>نظام تسجيل الحضور والانصراف</p>
+              <div style="text-align: center; margin: 20px;">
+                <button class="win-btn" style="font-size: 18px; padding: 15px 30px;">
+                  تسجيل الحضور
+                </button>
+                <button class="win-btn" style="font-size: 18px; padding: 15px 30px;">
+                  تسجيل الانصراف
+                </button>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>الحضور</th>
+                    <th>الانصراف</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2024-01-15</td>
+                    <td>08:30</td>
+                    <td>17:30</td>
+                  </tr>
+                </tbody>
+              </table>
+            `;
+            break;
+          case 'payroll':
+            content.innerHTML = `
+              <h3>الرواتب</h3>
+              <p>إدارة الرواتب والمستحقات</p>
+              <div class="form-grid">
+                <label>الشهر:</label>
+                <select>
+                  <option>يناير 2024</option>
+                  <option>فبراير 2024</option>
+                </select>
+              </div>
+              <button class="win-btn">عرض الرواتب</button>
+              <button class="win-btn">إصدار الراتب</button>
+            `;
+            break;
         }
+      }
 
-        // --- 3. Window Manager ---
-        let windowCount = 0;
-        let highestZ = 10;
-        const moduleIcons = {
-          hrm: "#icon-hrm",
-          prj: "#icon-prj",
-          fin: "#icon-fin",
-          sys: "#icon-sys",
-        };
-
-        function createWindow(title, content, moduleId) {
-          windowCount++;
-          highestZ++;
-
-          const template = windowTemplate.content.cloneNode(true);
-          const newWindow = template.querySelector(".app-window");
-
-          const windowId = `window-${moduleId}-${Date.now()}`;
-          newWindow.id = windowId;
-
-          newWindow.style.top = `${50 + windowCount * 20}px`;
-          newWindow.style.left = `${100 + windowCount * 20}px`;
-          newWindow.style.zIndex = highestZ;
-          newWindow.dataset.moduleId = moduleId;
-
-          newWindow.querySelector(".window-title").textContent = title;
-          newWindow.querySelector(".window-content").innerHTML = content;
-
-          addTaskThumb(windowId, moduleId, title);
-
-          // إغلاق
-          newWindow
-            .querySelector(".btn-close")
-            .addEventListener("click", () => {
-              removeTaskThumb(windowId);
-              newWindow.remove();
-            });
-
-          // تصغير
-          newWindow.querySelector(".btn-min").addEventListener("click", () => {
-            newWindow.style.display = "none";
-            document
-              .querySelector(`.task-thumb[data-window-id="${windowId}"]`)
-              ?.classList.add("minimized");
-          });
-
-          // تكبير/استعادة
-          newWindow.querySelector(".btn-max").addEventListener("click", (e) => {
-            maximizeWindow(newWindow, e.currentTarget);
-          });
-
-          // إظهار/إخفاء الزر العائم
-          newWindow
-            .querySelector(".btn-toggle-fab")
-            .addEventListener("click", () => {
-              toggleFabForModule(moduleId);
-            });
-
-          newWindow.addEventListener("mousedown", () => {
-            bringWindowToFront(newWindow);
-          });
-
-          makeDraggable(
-            newWindow.querySelector(".window-header"),
-            newWindow,
-            false
-          );
-          nijjaraOS.appendChild(newWindow);
-          // Module specific initializers
-          if (moduleId === "hrm") {
-            initHRMWindow(newWindow);
-          }
-          return newWindow;
+      function loadPRJContent(content, actionId) {
+        switch (actionId) {
+          case 'projects':
+            content.innerHTML = `
+              <h3>المشاريع</h3>
+              <div class="form-grid">
+                <label>اسم المشروع:</label>
+                <input type="text" placeholder="اسم المشروع" />
+              </div>
+              <button class="win-btn">بحث</button>
+              <button class="win-btn">إضافة مشروع</button>
+            `;
+            break;
+          case 'tasks':
+            content.innerHTML = `
+              <h3>المهام</h3>
+              <p>إدارة المهام والأنشطة</p>
+              <button class="win-btn">إضافة مهمة</button>
+            `;
+            break;
+          case 'timeline':
+            content.innerHTML = `
+              <h3>الجدول الزمني</h3>
+              <p>مخطط الجدول الزمني للمشاريع</p>
+            `;
+            break;
         }
+      }
 
-        function bringWindowToFront(windowEl) {
-          highestZ++;
-          windowEl.style.zIndex = highestZ;
-          windowEl.style.display = "block";
-          document
-            .querySelector(`.task-thumb[data-window-id="${windowEl.id}"]`)
-            ?.classList.remove("minimized");
+      function loadFINContent(content, actionId) {
+        switch (actionId) {
+          case 'accounts':
+            content.innerHTML = `
+              <h3>الحسابات</h3>
+              <p>إدارة الحسابات المالية</p>
+              <button class="win-btn">عرض الحسابات</button>
+            `;
+            break;
+          case 'transactions':
+            content.innerHTML = `
+              <h3>المعاملات</h3>
+              <p>سجل المعاملات المالية</p>
+              <button class="win-btn">إضافة معاملة</button>
+            `;
+            break;
+          case 'reports':
+            content.innerHTML = `
+              <h3>التقارير</h3>
+              <p>التقارير المالية</p>
+              <button class="win-btn">تقرير الارباح والخسائر</button>
+              <button class="win-btn">الميزانية العمومية</button>
+            `;
+            break;
         }
+      }
 
-        function maximizeWindow(windowEl, btn) {
-          const icon = btn.querySelector("svg use");
-          if (windowEl.dataset.isMaximized === "true") {
+      function loadSYSContent(content, actionId) {
+        switch (actionId) {
+          case 'users':
+            content.innerHTML = `
+              <h3>المستخدمين</h3>
+              <div class="form-grid">
+                <label>اسم المستخدم:</label>
+                <input type="text" placeholder="اسم المستخدم" />
+              </div>
+              <button class="win-btn">بحث</button>
+              <button class="win-btn">إضافة مستخدم</button>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>اسم المستخدم</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>الدور</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>admin</td>
+                    <td>admin@nijjara.com</td>
+                    <td>مدير النظام</td>
+                    <td>نشط</td>
+                  </tr>
+                </tbody>
+              </table>
+            `;
+            break;
+          case 'permissions':
+            content.innerHTML = `
+              <h3>الصلاحيات</h3>
+              <p>إدارة صلاحيات المستخدمين</p>
+              <button class="win-btn">عرض الصلاحيات</button>
+            `;
+            break;
+          case 'settings':
+            content.innerHTML = `
+              <h3>الإعدادات</h3>
+              <p>إعدادات النظام</p>
+              <button class="win-btn">إعدادات عامة</button>
+              <button class="win-btn">إعدادات الأمان</button>
+            `;
+            break;
+        }
+      }
+
+      function closeWindow(windowId) {
+        const window = state.windows.get(windowId);
+        if (window) {
+          window.element.remove();
+          state.windows.delete(windowId);
+        }
+      }
+
+      function minimizeWindow(windowId) {
+        const window = state.windows.get(windowId);
+        if (window) {
+          window.element.style.display = 'none';
+        }
+      }
+
+      function maximizeWindow(windowId) {
+        const window = state.windows.get(windowId);
+        if (window) {
+          const element = window.element;
+          if (element.style.width === '100vw') {
             // Restore
-            windowEl.style.top = windowEl.dataset.oldTop;
-            windowEl.style.left = windowEl.dataset.oldLeft;
-            windowEl.style.width = windowEl.dataset.oldWidth;
-            windowEl.style.height = windowEl.dataset.oldHeight;
-            windowEl.dataset.isMaximized = "false";
-            icon.setAttribute("href", "#icon-maximize");
+            element.style.width = '600px';
+            element.style.height = '400px';
+            element.style.top = '50px';
+            element.style.left = '50px';
           } else {
             // Maximize
-            windowEl.dataset.oldTop = windowEl.style.top;
-            windowEl.dataset.oldLeft = windowEl.style.left;
-            windowEl.dataset.oldWidth = windowEl.style.width;
-            windowEl.dataset.oldHeight = windowEl.style.height;
-            windowEl.style.top = "0";
-            windowEl.style.left = "0";
-            windowEl.style.width = "100vw";
-            windowEl.style.height = "100vh";
-            windowEl.dataset.isMaximized = "true";
-            icon.setAttribute("href", "#icon-restore");
+            element.style.width = '100vw';
+            element.style.height = '100vh';
+            element.style.top = '0';
+            element.style.left = '0';
           }
         }
+      }
 
-        // (تعديل) وظيفة السحب
-        function makeDraggable(header, windowEl, isFab = false) {
-          let pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
-          let isDragging = false;
+      // --- Nexus System ---
+      function initializeNexus() {
+        const nexusOverlay = document.getElementById('nexus-overlay');
+        const nexus = document.getElementById('nexus');
+        
+        // Close nexus when clicking overlay
+        nexusOverlay.addEventListener('click', () => {
+          hideNexus();
+        });
 
-          header.onmousedown = dragMouseDown;
-
-          function dragMouseDown(e) {
-            if (e.target.closest("button") && !isFab) return;
-
-            isDragging = false;
+        // Keyboard shortcut for nexus
+        document.addEventListener('keydown', (e) => {
+          if (e.ctrlKey && e.key === 'k') {
             e.preventDefault();
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            document.onmouseup = closeDragElement;
-            document.onmousemove = elementDrag;
-          }
-
-          function elementDrag(e) {
-            e.preventDefault();
-            isDragging = true;
-
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-
-            // تحديث الموضع
-            windowEl.style.top = windowEl.offsetTop - pos2 + "px";
-            windowEl.style.left = windowEl.offsetLeft - pos1 + "px";
-          }
-
-          function closeDragElement() {
-            document.onmouseup = null;
-            document.onmousemove = null;
-
-            // إذا كان زراً عائماً ولم يتم سحبه، اعتبره "نقر"
-            if (isFab && !isDragging) {
-              windowEl.classList.toggle("active");
-            }
-          }
-        }
-
-        // --- Window Arrangement Functions ---
-        function arrangeWindowsInGrid() {
-          logToConsole("Arranging windows in grid...", "CLIENT-EVENT");
-          const windows = document.querySelectorAll(
-            '.app-window:not([style*="display: none"])'
-          );
-          const numWindows = windows.length;
-          if (numWindows === 0) return;
-          const cols = Math.ceil(Math.sqrt(numWindows));
-          const rows = Math.ceil(numWindows / cols);
-          const winWidth = window.innerWidth / cols;
-          const winHeight = window.innerHeight / rows;
-
-          windows.forEach((win, index) => {
-            const row = Math.floor(index / cols);
-            const col = index % cols;
-            win.style.top = `${row * winHeight}px`;
-            win.style.left = `${col * winWidth}px`;
-            win.style.width = `${winWidth}px`;
-            win.style.height = `${winHeight}px`;
-          });
-        }
-
-        function arrangeWindowsCascade() {
-          logToConsole("Arranging windows in cascade...", "CLIENT-EVENT");
-          const windows = document.querySelectorAll(
-            '.app-window:not([style*="display: none"])'
-          );
-          windows.forEach((win, index) => {
-            win.style.top = `${50 + index * 40}px`;
-            win.style.left = `${100 + index * 40}px`;
-            win.style.width = "600px";
-            win.style.height = "400px";
-            win.style.zIndex = 10 + index;
-          });
-        }
-
-        function minimizeAllWindows() {
-          logToConsole("Minimizing all windows", "CLIENT-EVENT");
-          document.querySelectorAll(".app-window").forEach((win) => {
-            win.style.display = "none";
-            document
-              .querySelector(`.task-thumb[data-window-id="${win.id}"]`)
-              ?.classList.add("minimized");
-          });
-        }
-
-        function expandAllWindows() {
-          logToConsole("Expanding all windows", "CLIENT-EVENT");
-          document
-            .querySelectorAll('.app-window[style*="display: none"]')
-            .forEach((win) => {
-              win.style.display = "block";
-              document
-                .querySelector(`.task-thumb[data-window-id="${win.id}"]`)
-                ?.classList.remove("minimized");
-            });
-        }
-
-        // --- 4. Five-Engine Module Handlers ---
-
-        function openOrFocusWindow(moduleId, title, content, fabConfig) {
-          logToConsole(`Loading ${moduleId}_Module...`, "CLIENT-INFO");
-          const existing = document.querySelector(
-            `.app-window[data-module-id="${moduleId}"]`
-          );
-          if (existing) {
-            bringWindowToFront(existing);
-            return existing;
-          }
-          if (fabConfig) {
-            ensureFabExists(moduleId, fabConfig.icon, fabConfig.subModules);
-          }
-          return createWindow(title, content, moduleId);
-        }
-
-        // --- Five-Engine Hub System Initialization ---
-        const fiveEngineHub = document.getElementById("five-engine-hub");
-        const compactOrb = document.getElementById("compact-orb");
-        const searchInput = document.getElementById("search-input");
-        const moduleDrawer = document.getElementById("module-drawer");
-        const moduleDrawerOverlay = document.getElementById(
-          "module-drawer-overlay"
-        );
-        const moduleSubmodules = document.getElementById("module-submodules");
-        const moduleDrawerClose = document.getElementById(
-          "module-drawer-close"
-        );
-
-        // Logout Button
-        document.getElementById("logout-btn").addEventListener("click", () => {
-          logToConsole("Logging out...", "CLIENT-INFO");
-          sessionStorage.removeItem("nijjara_session");
-          google.script.run
-            .withSuccessHandler(function () {
-              location.reload();
-            })
-            .withFailureHandler(function () {
-              location.reload();
-            })
-            .logoutUser();
-        });
-
-        // Compact Orb Toggle
-        compactOrb.addEventListener("click", () => {
-          fiveEngineHub.classList.remove("compact");
-          compactOrb.classList.remove("visible");
-          // Telemetry: hub expanded by compact orb
-          try {
-            const activeModule =
-              document
-                .querySelector("#five-engine-hub .orbit-module.active")
-                ?.getAttribute("data-module") || null;
-            window.parent?.postMessage(
-              {
-                type: "nijjara-status",
-                source: "compactOrbExpand",
-                module: activeModule,
-                hubCompact: false,
-                drawerOpen:
-                  moduleDrawer?.classList?.contains("visible") || false,
-                overlayVisible:
-                  moduleDrawerOverlay?.classList?.contains("visible") || false,
-                bodyDrawerOpen: document.body.classList.contains("drawer-open"),
-                timestamp: Date.now(),
-              },
-              "*"
-            );
-          } catch {}
-        });
-
-        // Central Search Functionality
-        searchInput.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" && searchInput.value.trim()) {
-            const query = searchInput.value.trim();
-            showToast("بحث", `جاري البحث عن: ${query}`, "info", 2000);
-            // TODO: Implement smart search logic in Phase 2
-            searchInput.value = "";
+            toggleNexus();
           }
         });
+      }
 
-        // Module Click Handlers (Phase 1: Basic window opening, Phase 2 will add drawer)
-        document.getElementById("module-hrm").addEventListener("click", () => {
-          openModuleDrawer("hrm");
-        });
+      function toggleNexus() {
+        if (state.nexusVisible) {
+          hideNexus();
+        } else {
+          showNexus();
+        }
+      }
 
-        document.getElementById("module-prj").addEventListener("click", () => {
-          openModuleDrawer("prj");
-        });
+      function showNexus() {
+        document.getElementById('nexus-overlay').style.display = 'block';
+        document.getElementById('nexus').style.display = 'block';
+        document.getElementById('nexus-input').focus();
+        state.nexusVisible = true;
+      }
 
-        document.getElementById("module-fin").addEventListener("click", () => {
-          openModuleDrawer("fin");
-        });
+      function hideNexus() {
+        document.getElementById('nexus-overlay').style.display = 'none';
+        document.getElementById('nexus').style.display = 'none';
+        document.getElementById('nexus-input').value = '';
+        state.nexusVisible = false;
+      }
 
-        document.getElementById("module-sys").addEventListener("click", () => {
-          openModuleDrawer("sys");
-        });
+      function executeNexusCommand() {
+        const input = document.getElementById('nexus-input');
+        const command = input.value.trim();
+        
+        if (!command) return;
 
-        // Window Control Listeners (Left Action Bar)
-        document
-          .getElementById("app-grid")
-          .addEventListener("click", arrangeWindowsInGrid);
-        document
-          .getElementById("app-cascade")
-          .addEventListener("click", arrangeWindowsCascade);
-        document
-          .getElementById("app-minimize-all")
-          .addEventListener("click", minimizeAllWindows);
-        document
-          .getElementById("app-expand-all")
-          .addEventListener("click", expandAllWindows);
+        // Simple command parser
+        const parts = command.split(' ');
+        const action = parts[0];
+        
+        switch (action) {
+          case 'موظفين':
+          case 'employees':
+            openWindow('hrm', 'employees', 'إدارة الموظفين');
+            break;
+          case 'مشاريع':
+          case 'projects':
+            openWindow('prj', 'projects', 'المشاريع');
+            break;
+          case 'حسابات':
+          case 'accounts':
+            openWindow('fin', 'accounts', 'الحسابات');
+            break;
+          case 'مستخدمين':
+          case 'users':
+            openWindow('sys', 'users', 'المستخدمين');
+            break;
+          case 'مساعدة':
+          case 'help':
+            alert('الأوامر المتاحة:\nموظفين - فتح إدارة الموظفين\nمشاريع - فتح إدارة المشاريع\nحسابات - فتح الحسابات المالية\nمستخدمين - فتح إدارة المستخدمين');
+            break;
+          default:
+            alert('أمر غير معروف. اكتب "مساعدة" للأوامر المتاحة');
+        }
+        
+        hideNexus();
+      }
 
-        // --- 5. Nexus Command Center Logic --- (بدون تغيير)
-        // ...
-
-        // --- 6. Dynamic Content Listeners --- (بدون تغيير)
-        // ...
-
-        // --- 7. Hierarchical FAB System ---
-        const fabRegistry = new Map(); // Store all FABs by ID
-        let fabIdCounter = 0;
-
-        // HRM Module Configuration
-        const HRM_SUBMODULES = [
-          {
-            id: "hrm-employees",
-            icon: "#icon-hrm",
-            label: "الموظفين",
-            angle: -60,
-          },
-          {
-            id: "hrm-attendance",
-            icon: "#icon-grid",
-            label: "الحضور",
-            angle: -30,
-          },
-          {
-            id: "hrm-deductions",
-            icon: "#icon-minus",
-            label: "الخصومات",
-            angle: 0,
-          },
-          {
-            id: "hrm-overtime",
-            icon: "#icon-plus",
-            label: "الإضافي",
-            angle: 30,
-          },
-          { id: "hrm-advances", icon: "#icon-fin", label: "السلف", angle: 60 },
-          { id: "hrm-payroll", icon: "#icon-fin", label: "الرواتب", angle: 90 },
-        ];
-        const PRJ_SUBMODULES = [
-          { id: "prj-projects", icon: "#icon-prj", label: "المشاريع" },
-          { id: "prj-clients", icon: "#icon-hrm", label: "العملاء" },
-          { id: "prj-tasks", icon: "#icon-grid", label: "المهام" },
-          {
-            id: "prj-timesheets",
-            icon: "#icon-grid",
-            label: "الجداول الزمنية",
-          },
-        ];
-        const FIN_SUBMODULES = [
-          { id: "fin-expenses", icon: "#icon-fin", label: "المصروفات" },
-          { id: "fin-income", icon: "#icon-fin", label: "الإيرادات" },
-          { id: "fin-invoices", icon: "#icon-fin", label: "الفواتير" },
-          { id: "fin-payments", icon: "#icon-fin", label: "المدفوعات" },
-        ];
-        const SYS_SUBMODULES = [
-          { id: "sys-users", icon: "#icon-sys", label: "المستخدمون" },
-          { id: "sys-roles", icon: "#icon-sys", label: "الأدوار" },
-          { id: "sys-permissions", icon: "#icon-sys", label: "الصلاحيات" },
-          { id: "sys-audit", icon: "#icon-info", label: "سجل التدقيق" },
-        ];
-
-        function getModuleTheme(moduleId) {
-          switch (moduleId) {
-            case "hrm":
-              return {
-                color: "rgb(147, 51, 234)",
-                gradient:
-                  "linear-gradient(135deg, rgba(147,51,234,0.4), rgba(126,34,206,0.35))",
-              };
-            case "prj":
-              return {
-                color: "rgb(5, 150, 105)",
-                gradient:
-                  "linear-gradient(135deg, rgba(5,150,105,0.4), rgba(4,120,87,0.35))",
-              };
-            case "fin":
-              return {
-                color: "rgb(217, 119, 6)",
-                gradient:
-                  "linear-gradient(135deg, rgba(217,119,6,0.4), rgba(180,83,9,0.35))",
-              };
-            case "sys":
-              return {
-                color: "rgb(8, 145, 178)",
-                gradient:
-                  "linear-gradient(135deg, rgba(8,145,178,0.4), rgba(21,94,117,0.35))",
-              };
-            default:
-              return {
-                color: "#fff",
-                gradient:
-                  "linear-gradient(135deg, rgba(255,255,255,0.2), rgba(0,0,0,0.2))",
-              };
+      // --- Keyboard Shortcuts ---
+      document.addEventListener('keydown', (e) => {
+        // Nexus shortcut (already handled above)
+        
+        // Module shortcuts
+        if (e.ctrlKey) {
+          switch (e.key) {
+            case '1':
+              e.preventDefault();
+              toggleRays(state.fabModules.get('hrm'), 'hrm', modules.hrm);
+              break;
+            case '2':
+              e.preventDefault();
+              toggleRays(state.fabModules.get('prj'), 'prj', modules.prj);
+              break;
+            case '3':
+              e.preventDefault();
+              toggleRays(state.fabModules.get('fin'), 'fin', modules.fin);
+              break;
+            case '4':
+              e.preventDefault();
+              toggleRays(state.fabModules.get('sys'), 'sys', modules.sys);
+              break;
           }
-        }
-
-        function getSubmodules(moduleId) {
-          switch (moduleId) {
-            case "hrm":
-              return HRM_SUBMODULES;
-            case "prj":
-              return PRJ_SUBMODULES;
-            case "fin":
-              return FIN_SUBMODULES;
-            case "sys":
-              return SYS_SUBMODULES;
-            default:
-              return [];
-          }
-        }
-
-        function openModuleDrawer(moduleId) {
-          // Report current state to parent (for deployment validation telemetry)
-          // This emits lightweight status messages consumable by the top-level page via postMessage
-          function reportState(source, mod) {
-            try {
-              const hubCompact =
-                fiveEngineHub?.classList?.contains("compact") || false;
-              const drawerOpen =
-                moduleDrawer?.classList?.contains("visible") || false;
-              const overlayVisible =
-                moduleDrawerOverlay?.classList?.contains("visible") || false;
-              const bodyDrawerOpen =
-                document.body.classList.contains("drawer-open");
-              const activeModule =
-                document
-                  .querySelector("#five-engine-hub .orbit-module.active")
-                  ?.getAttribute("data-module") || null;
-              const payload = {
-                type: "nijjara-status",
-                source,
-                module: mod || activeModule,
-                hubCompact,
-                drawerOpen,
-                overlayVisible,
-                bodyDrawerOpen,
-                timestamp: Date.now(),
-              };
-              window.parent?.postMessage(payload, "*");
-            } catch (e) {
-              console.warn("reportState error", e);
-            }
-          }
-          // Mark selected module active
-          document
-            .querySelectorAll("#five-engine-hub .orbit-module")
-            .forEach((el) => el.classList.remove("active"));
-          const activeModuleEl = document.querySelector(
-            `#five-engine-hub .orbit-module[data-module="${moduleId}"]`
-          );
-          if (!activeModuleEl) return;
-          activeModuleEl.classList.add("active");
-
-          // Compact the hub and show the compact orb for focused drawer interaction
-          fiveEngineHub.classList.add("compact");
-          compactOrb.classList.add("visible");
-
-          // Show overlay and drawer
-          document.body.classList.add("drawer-open");
-          moduleDrawerOverlay.classList.add("visible");
-          moduleDrawer.classList.add("visible");
-          // Telemetry: drawer opened + hub compacted
-          reportState("openModuleDrawer", moduleId);
-
-          // Populate submodules in circular pattern
-          const subs = getSubmodules(moduleId);
-          moduleSubmodules.innerHTML = "";
-          const theme = getModuleTheme(moduleId);
-          const centerX = 320; // half of 640
-          const centerY = 180; // half of 360
-          const radius = 120;
-          const total = subs.length;
-          subs.forEach((sm, index) => {
-            const angle = (2 * Math.PI * index) / total - Math.PI / 2; // start at top
-            const x = centerX + radius * Math.cos(angle) - 44; // 88/2 offset
-            const y = centerY + radius * Math.sin(angle) - 44;
-            const item = document.createElement("div");
-            item.className = "drawer-submodule";
-            item.style.left = `${x}px`;
-            item.style.top = `${y}px`;
-            item.style.background = theme.gradient;
-            item.innerHTML = `
-                        <div class="icon"><svg><use href="${sm.icon}"></use></svg></div>
-                        <div class="label">${sm.label}</div>
-                    `;
-            item.addEventListener("click", () => {
-              showToast("اختيار", `تم اختيار: ${sm.label}`, "info", 1500);
-              // Future: open window or quick actions (Phase 3/5)
-            });
-            moduleSubmodules.appendChild(item);
-          });
-        }
-
-        function closeModuleDrawer() {
-          moduleDrawer.classList.remove("visible");
-          moduleDrawerOverlay.classList.remove("visible");
-          document.body.classList.remove("drawer-open");
-          document
-            .querySelectorAll("#five-engine-hub .orbit-module")
-            .forEach((el) => el.classList.remove("active"));
-          // Telemetry: drawer closed (hub remains compact until user expands)
-          try {
-            const activeModule =
-              document
-                .querySelector("#five-engine-hub .orbit-module.active")
-                ?.getAttribute("data-module") || null;
-            window.parent?.postMessage(
-              {
-                type: "nijjara-status",
-                source: "closeModuleDrawer",
-                module: activeModule,
-                hubCompact:
-                  fiveEngineHub?.classList?.contains("compact") || false,
-                drawerOpen:
-                  moduleDrawer?.classList?.contains("visible") || false,
-                overlayVisible:
-                  moduleDrawerOverlay?.classList?.contains("visible") || false,
-                bodyDrawerOpen: document.body.classList.contains("drawer-open"),
-                timestamp: Date.now(),
-              },
-              "*"
-            );
-          } catch (e) {
-            console.warn("reportState error", e);
-          }
-        }
-
-        moduleDrawerOverlay.addEventListener("click", closeModuleDrawer);
-        moduleDrawerClose.addEventListener("click", closeModuleDrawer);
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") closeModuleDrawer();
-        });
-
-        // Parent-controlled actions (for deployment validation in sandboxed iframe)
-        // Allows the top-level page to trigger module drawer interactions via postMessage
-        window.addEventListener("message", (e) => {
-          const data = e?.data;
-          if (!data || data.type !== "nijjara-action") return;
-          try {
-            if (data.action === "openModule" && data.module) {
-              openModuleDrawer(String(data.module));
-            } else if (data.action === "closeDrawer") {
-              closeModuleDrawer();
-            } else if (data.action === "compactOrbExpand") {
-              // Expand hub (mirror of compact orb manual click)
-              fiveEngineHub.classList.remove("compact");
-              compactOrb.classList.remove("visible");
-              // Telemetry
-              window.parent?.postMessage(
-                {
-                  type: "nijjara-status",
-                  source: "compactOrbExpand(remote)",
-                  timestamp: Date.now(),
-                },
-                "*"
-              );
-            }
-          } catch (err) {
-            console.warn("Parent nijjara-action handler error:", err);
-          }
-        });
-
-        // Ensure compact orb also closes the drawer if open
-        compactOrb.addEventListener("click", () => {
-          // Telemetry: user clicked compact orb while drawer may be open
-          try {
-            window.parent?.postMessage(
-              {
-                type: "nijjara-status",
-                source: "compactOrbClick",
-                timestamp: Date.now(),
-              },
-              "*"
-            );
-          } catch {}
-          if (document.body.classList.contains("drawer-open")) {
-            closeModuleDrawer();
-          }
-        });
-
-        const HRM_ACTIONS = {
-          "hrm-employees": [
-            {
-              id: "view-employees",
-              icon: "#icon-eye",
-              label: "عرض",
-              angle: -45,
-            },
-            {
-              id: "add-employee",
-              icon: "#icon-plus",
-              label: "إضافة",
-              angle: 45,
-            },
-          ],
-          "hrm-attendance": [
-            {
-              id: "view-attendance",
-              icon: "#icon-eye",
-              label: "عرض",
-              angle: -45,
-            },
-            {
-              id: "clock-in-out",
-              icon: "#icon-grid",
-              label: "تسجيل",
-              angle: 45,
-            },
-          ],
-          "hrm-deductions": [
-            {
-              id: "view-deductions",
-              icon: "#icon-eye",
-              label: "عرض",
-              angle: -45,
-            },
-            {
-              id: "add-deduction",
-              icon: "#icon-plus",
-              label: "إضافة",
-              angle: 45,
-            },
-          ],
-          "hrm-overtime": [
-            {
-              id: "view-overtime",
-              icon: "#icon-eye",
-              label: "عرض",
-              angle: -45,
-            },
-            {
-              id: "add-overtime",
-              icon: "#icon-plus",
-              label: "إضافة",
-              angle: 45,
-            },
-          ],
-          "hrm-advances": [
-            {
-              id: "view-advances",
-              icon: "#icon-eye",
-              label: "عرض",
-              angle: -45,
-            },
-            {
-              id: "add-advance",
-              icon: "#icon-plus",
-              label: "إضافة",
-              angle: 45,
-            },
-          ],
-          "hrm-payroll": [
-            { id: "view-payroll", icon: "#icon-eye", label: "عرض", angle: -45 },
-            {
-              id: "process-payroll",
-              icon: "#icon-grid",
-              label: "معالجة",
-              angle: 45,
-            },
-          ],
-        };
-
-        /**
-         * Create a FAB with rays
-         * @param {string} moduleId - Module identifier (hrm, prj, fin, sys)
-         * @param {string} mainIconHref - SVG icon reference for main button
-         * @param {Array} rays - Array of ray configurations
-         * @param {number} level - FAB hierarchy level (1 or 2)
-         * @param {number} x - X position
-         * @param {number} y - Y position
-         */
-        function createFAB(
-          moduleId,
-          mainIconHref,
-          rays,
-          level = 1,
-          x = null,
-          y = null
-        ) {
-          const fabId = `fab-${fabIdCounter++}`;
-
-          // Create FAB container
-          const fab = document.createElement("div");
-          fab.className = "fab";
-          fab.id = fabId;
-          fab.dataset.module = moduleId;
-          fab.dataset.level = level;
-
-          // Position
-          if (x !== null && y !== null) {
-            fab.style.left = `${x}px`;
-            fab.style.top = `${y}px`;
-          } else {
-            // Default position (right side)
-            fab.style.left = `calc(100vw - 100px)`;
-            fab.style.top = `calc(100vh - 200px)`;
-          }
-
-          // Main button
-          const mainButton = document.createElement("div");
-          mainButton.className = "fab-button";
-          mainButton.innerHTML = `<svg><use href="${mainIconHref}"></use></svg>`;
-          fab.appendChild(mainButton);
-
-          // Make draggable
-          makeFabDraggable(fab, mainButton);
-
-          // Rays container
-          const raysContainer = document.createElement("div");
-          raysContainer.className = "fab-rays";
-
-          rays.forEach((ray, index) => {
-            const rayEl = document.createElement("div");
-            rayEl.className = "fab-ray";
-
-            // Calculate position based on angle
-            const distance = level === 1 ? 120 : 100;
-            const angleRad = (ray.angle * Math.PI) / 180;
-            const rayX = Math.cos(angleRad) * distance;
-            const rayY = Math.sin(angleRad) * distance;
-
-            rayEl.style.transform = `translate(${rayX}px, ${rayY}px)`;
-
-            // Ray button
-            const rayButton = document.createElement("div");
-            rayButton.className = "fab-ray-button";
-            rayButton.dataset.rayId = ray.id;
-            rayButton.innerHTML = `<svg><use href="${ray.icon}"></use></svg>`;
-
-            // Ray label
-            const rayLabel = document.createElement("div");
-            rayLabel.className = "fab-ray-label";
-            rayLabel.textContent = ray.label;
-
-            // Position label based on ray angle
-            if (ray.angle < 0) {
-              rayLabel.style.bottom = "110%";
-              rayLabel.style.left = "50%";
-              rayLabel.style.transform = "translateX(-50%)";
-            } else {
-              rayLabel.style.top = "110%";
-              rayLabel.style.left = "50%";
-              rayLabel.style.transform = "translateX(-50%)";
-            }
-
-            rayButton.addEventListener("click", (e) => {
-              e.stopPropagation();
-              handleRayClick(ray.id, moduleId, level, fab, rayButton);
-            });
-
-            rayEl.appendChild(rayButton);
-            rayEl.appendChild(rayLabel);
-            raysContainer.appendChild(rayEl);
-          });
-
-          fab.appendChild(raysContainer);
-          fabContainer.appendChild(fab);
-
-          // Register FAB
-          fabRegistry.set(fabId, {
-            element: fab,
-            moduleId: moduleId,
-            level: level,
-            parentRayId: null,
-          });
-
-          // Show FAB
-          fab.style.display = "block";
-
-          logToConsole(
-            `Created FAB: ${fabId}, Module: ${moduleId}, Level: ${level}, Rays: ${rays.length}`,
-            "CLIENT-INFO"
-          );
-
-          return fabId;
-        }
-
-        /**
-         * Make FAB draggable
-         */
-        function makeFabDraggable(fab, button) {
-          let pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
-          let isDragging = false;
-
-          button.onmousedown = dragMouseDown;
-
-          function dragMouseDown(e) {
-            isDragging = false;
-            e.preventDefault();
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            document.onmouseup = closeDragElement;
-            document.onmousemove = elementDrag;
-          }
-
-          function elementDrag(e) {
-            e.preventDefault();
-            isDragging = true;
-
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-
-            fab.style.left = fab.offsetLeft - pos1 + "px";
-            fab.style.top = fab.offsetTop - pos2 + "px";
-          }
-
-          function closeDragElement() {
-            document.onmouseup = null;
-            document.onmousemove = null;
-          }
-        }
-
-        /**
-         * Handle ray click - either spawn child FAB or execute action
-         */
-        function handleRayClick(rayId, moduleId, level, parentFab, rayButton) {
-          logToConsole(
-            `Ray clicked: ${rayId}, Level: ${level}`,
-            "CLIENT-EVENT"
-          );
-
-          if (level === 1) {
-            // Level 1: Spawn level 2 FAB
-            const actions = HRM_ACTIONS[rayId] || [];
-            if (actions.length === 0) {
-              showToast("قريباً", `وظيفة ${rayId} قيد التطوير`, "info");
-              return;
-            }
-
-            // Remove any existing level 2 FABs
-            removeChildFABs(parentFab);
-
-            // Calculate position near the clicked ray
-            const fabRect = parentFab.getBoundingClientRect();
-            const rayRect = rayButton.getBoundingClientRect();
-
-            const childX = rayRect.left - 26; // Center the child FAB on ray button
-            const childY = rayRect.top - 26;
-
-            // Get icon from ray
-            const rayIcon = rayButton
-              .querySelector("svg use")
-              .getAttribute("href");
-
-            createFAB(moduleId, rayIcon, actions, 2, childX, childY);
-          } else if (level === 2) {
-            // Level 2: Execute action
-            executeAction(rayId, moduleId);
-          }
-        }
-
-        /**
-         * Remove all child FABs of a parent
-         */
-        function removeChildFABs(parentFab) {
-          const parentId = parentFab.id;
-          fabRegistry.forEach((fabData, fabId) => {
-            if (fabData.level === 2) {
-              fabData.element.remove();
-              fabRegistry.delete(fabId);
-            }
-          });
-        }
-
-        /**
-         * Execute action when level 2 ray is clicked
-         */
-        function executeAction(actionId, moduleId) {
-          logToConsole(`Executing action: ${actionId}`, "CLIENT-EVENT");
-
-          // Map actions to functions
-          const actionMap = {
-            "view-employees": () => openEmployeesWindow("view"),
-            "add-employee": () => openEmployeesWindow("add"),
-            "view-attendance": () =>
-              showToast("قريباً", "عرض الحضور قيد التطوير", "info"),
-            "clock-in-out": () =>
-              showToast("قريباً", "تسجيل الحضور قيد التطوير", "info"),
-            "view-deductions": () =>
-              showToast("قريباً", "عرض الخصومات قيد التطوير", "info"),
-            "add-deduction": () =>
-              showToast("قريباً", "إضافة خصم قيد التطوير", "info"),
-            "view-overtime": () =>
-              showToast("قريباً", "عرض الإضافي قيد التطوير", "info"),
-            "add-overtime": () =>
-              showToast("قريباً", "إضافة إضافي قيد التطوير", "info"),
-            "view-advances": () =>
-              showToast("قريباً", "عرض السلف قيد التطوير", "info"),
-            "add-advance": () =>
-              showToast("قريباً", "إضافة سلفة قيد التطوير", "info"),
-            "view-payroll": () =>
-              showToast("قريباً", "عرض الرواتب قيد التطوير", "info"),
-            "process-payroll": () =>
-              showToast("قريباً", "معالجة الرواتب قيد التطوير", "info"),
-          };
-
-          const action = actionMap[actionId];
-          if (action) {
-            action();
-          } else {
-            showToast("خطأ", `إجراء غير معروف: ${actionId}`, "error");
-          }
-        }
-
-        /**
-         * Open or focus employees window
-         */
-        function openEmployeesWindow(mode) {
-          let win = document.querySelector('.app-window[data-module-id="hrm"]');
-          if (!win) {
-            document.getElementById("module-hrm").click();
-            win = document.querySelector('.app-window[data-module-id="hrm"]');
-          }
-
-          if (win) {
-            bringWindowToFront(win);
-
-            if (mode === "add") {
-              const formWrapper = win.querySelector("#emp-form-wrapper");
-              if (formWrapper) {
-                formWrapper.style.display = "block";
-                showToast("نموذج", "تم فتح نموذج إضافة موظف", "info", 1500);
-              }
-            } else if (mode === "view") {
-              const formWrapper = win.querySelector("#emp-form-wrapper");
-              if (formWrapper) {
-                formWrapper.style.display = "none";
-              }
-              showToast("عرض", "جاري عرض قائمة الموظفين", "info", 1500);
-            }
-          }
-        }
-
-        /**
-         * Toggle FAB visibility for a module
-         */
-        function toggleFabForModule(moduleId) {
-          fabRegistry.forEach((fabData, fabId) => {
-            if (fabData.moduleId === moduleId && fabData.level === 1) {
-              const fab = fabData.element;
-              const isHidden = fab.style.display === "none";
-              fab.style.display = isHidden ? "block" : "none";
-              logToConsole(
-                `Toggled FAB visibility for ${moduleId}: ${
-                  isHidden ? "ON" : "OFF"
-                }`,
-                "CLIENT-EVENT"
-              );
-            }
-          });
-        }
-
-        /**
-         * Create module FAB (called when module window is opened)
-         */
-        function ensureFabExists(moduleId, mainIconHref, subModules) {
-          // Check if level 1 FAB already exists
-          let exists = false;
-          fabRegistry.forEach((fabData) => {
-            if (fabData.moduleId === moduleId && fabData.level === 1) {
-              exists = true;
-            }
-          });
-
-          if (!exists) {
-            createFAB(moduleId, mainIconHref, subModules, 1);
-          }
-        }
-
-        // --- 8. HRM Module Frontend Logic ---
-        function getSessionUserId() {
-          try {
-            const raw = sessionStorage.getItem("nijjara_session");
-            if (!raw) return null;
-            const data = JSON.parse(raw);
-            return data.userId || data.userID || data.USR_ID || null;
-          } catch (e) {
-            return null;
-          }
-        }
-
-        function initHRMWindow(win) {
-          const tableWrapper = win.querySelector("#emp-table-wrapper");
-          const searchInput = win.querySelector("#emp-search");
-          const statusFilter = win.querySelector("#emp-status-filter");
-          const refreshBtn = win.querySelector("#btn-refresh-emps");
-          const formWrapper = win.querySelector("#emp-form-wrapper");
-          const empForm = win.querySelector("#emp-form");
-          const cancelBtn = win.querySelector("#emp-form-cancel");
-
-          if (!tableWrapper) return; // safety
-
-          refreshBtn.addEventListener("click", () => loadEmployees(win));
-          statusFilter.addEventListener("change", () => loadEmployees(win));
-          searchInput.addEventListener("input", () =>
-            filterEmployeeRows(tableWrapper, searchInput.value.trim())
-          );
-          empForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            handleCreateEmployee(win);
-          });
-          cancelBtn.addEventListener("click", () => {
-            formWrapper.style.display = "none";
-          });
-
-          loadEmployees(win);
-        }
-
-        function loadEmployees(win) {
-          const tableWrapper = win.querySelector("#emp-table-wrapper");
-          const statusFilter = win.querySelector("#emp-status-filter");
-          if (!tableWrapper) return;
-          const userId = getSessionUserId();
-          tableWrapper.innerHTML = `<div class="loading" style="padding:15px; text-align:center;">جاري التحميل...</div>`;
-          const status = statusFilter ? statusFilter.value : "All";
-          google.script.run
-            .withSuccessHandler(function (resp) {
-              if (!resp || !resp.success) {
-                tableWrapper.innerHTML = `<div style='color:var(--color-accent-red); padding:15px;'>فشل تحميل البيانات: ${
-                  resp?.message || ""
-                }</div>`;
-                showToast(
-                  "خطأ",
-                  resp?.message || "تعذر تحميل الموظفين",
-                  "error"
-                );
-                return;
-              }
-              renderEmployeesTable(tableWrapper, resp.data.employees || []);
-            })
-            .withFailureHandler(function (err) {
-              tableWrapper.innerHTML = `<div style='color:var(--color-accent-red); padding:15px;'>خطأ في الاتصال بالخادم</div>`;
-              showToast("فشل", "خطأ في الاتصال", "error");
-            })
-            .listEmployees(status, null, 1, 200, userId);
-        }
-
-        function renderEmployeesTable(wrapper, employees) {
-          if (!employees.length) {
-            wrapper.innerHTML = `<div style='padding:10px; text-align:center;'>لا توجد سجلات موظفين</div>`;
-            return;
-          }
-          const headersMap = [
-            { key: "EMP_ID", label: "المعرف" },
-            { key: "EMP_Name_AR", label: "الاسم" },
-            { key: "Job_Title", label: "المسمى" },
-            { key: "DEPT_Name", label: "القسم" },
-            { key: "Hire_Date", label: "تاريخ التعيين" },
-            { key: "EMP_Status", label: "الحالة" },
-          ];
-          let html = `<table class='data-table'><thead><tr>`;
-          headersMap.forEach((h) => {
-            html += `<th>${h.label}</th>`;
-          });
-          html += `</tr></thead><tbody>`;
-          employees.forEach((emp) => {
-            html +=
-              `<tr data-emp-id='${emp.EMP_ID}'>` +
-              headersMap.map((h) => `<td>${emp[h.key] || ""}</td>`).join("") +
-              `</tr>`;
-          });
-          html += `</tbody></table>`;
-          wrapper.innerHTML = html;
-        }
-
-        function filterEmployeeRows(wrapper, term) {
-          const rows = wrapper.querySelectorAll("tbody tr");
-          const t = term.toLowerCase();
-          rows.forEach((r) => {
-            const text = r.textContent.toLowerCase();
-            r.style.display = text.includes(t) ? "" : "none";
-          });
-        }
-
-        function handleCreateEmployee(win) {
-          const userId = getSessionUserId();
-          const formWrapper = win.querySelector("#emp-form-wrapper");
-          const form = win.querySelector("#emp-form");
-          const formData = Object.fromEntries(
-            Array.from(form.elements)
-              .filter((el) => el.name)
-              .map((el) => [el.name, el.value.trim()])
-          );
-          // Basic validation
-          if (
-            !formData.EMP_Name_EN ||
-            !formData.EMP_Name_AR ||
-            !formData.Job_Title ||
-            !formData.DEPT_Name ||
-            !formData.Hire_Date
-          ) {
-            showToast("تنبيه", "جميع الحقول الأساسية مطلوبة", "warning");
-            return;
-          }
-          showToast("جارٍ الحفظ", "إرسال بيانات الموظف...", "info", 2000);
-          google.script.run
-            .withSuccessHandler(function (resp) {
-              if (resp && resp.success) {
-                showToast("تم", "تم إنشاء الموظف بنجاح", "success");
-                form.reset();
-                formWrapper.style.display = "none";
-                loadEmployees(win);
-              } else {
-                showToast("فشل", resp?.message || "تعذر إنشاء الموظف", "error");
-              }
-            })
-            .withFailureHandler(function (err) {
-              showToast("خطأ", "فشل الاتصال بالخادم", "error");
-            })
-            .createEmployee(formData, userId);
-        }
-
-        // --- 9. Task Switcher Manager ---
-        function addTaskThumb(windowId, moduleId, title) {
-          const thumb = taskThumbTemplate.content
-            .cloneNode(true)
-            .querySelector(".task-thumb");
-          thumb.dataset.windowId = windowId;
-
-          const iconHref = moduleIcons[moduleId] || "#icon-sys";
-          thumb.querySelector("svg use").setAttribute("href", iconHref);
-
-          thumb.querySelector(".task-thumb-title").textContent =
-            title.substring(0, 10) + "...";
-
-          thumb.addEventListener("click", () => {
-            const windowEl = document.getElementById(windowId);
-            if (windowEl) {
-              bringWindowToFront(windowEl);
-            }
-          });
-
-          taskSwitcher.appendChild(thumb);
-        }
-
-        function removeTaskThumb(windowId) {
-          document
-            .querySelector(`.task-thumb[data-window-id="${windowId}"]`)
-            ?.remove();
-        }
-
-        // --- 10. Global Log Function ---
-        function logToConsole(message, type = "CLIENT-INFO") {
-          console.log(`[${type}] ${message}`);
         }
       });
 
-      // Temporary auto-validation helper: if URL has ?debug=1 (passed via Apps Script template),
-      // expand the hub and open the HRM module drawer automatically after load.
-      window.addEventListener("load", () => {
-        try {
-          if (String(window.__DEBUG__) === "1") {
-            // Expand hub (simulate compact orb) then open HRM drawer
-            fiveEngineHub.classList.remove("compact");
-            compactOrb.classList.remove("visible");
-            window.parent?.postMessage(
-              {
-                type: "nijjara-status",
-                source: "debug:autoExpandHub",
-                timestamp: Date.now(),
-              },
-              "*"
-            );
-            setTimeout(() => {
-              openModuleDrawer("hrm");
-            }, 300);
+      // --- Initialization ---
+      window.addEventListener('load', () => {
+        // Check for existing session
+        const session = sessionStorage.getItem('nijjara_session');
+        if (session) {
+          try {
+            const userData = JSON.parse(session);
+            state.authenticated = true;
+            state.currentUser = userData;
+            showDesktop();
+          } catch (e) {
+            // Invalid session, show login
+            boot();
           }
-        } catch (err) {
-          console.warn("Debug auto-open failed:", err);
+        } else {
+          boot();
+        }
+      });
+
+      // Handle Enter key in login form
+      document.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !state.authenticated) {
+          const loginBox = document.getElementById('loginBox');
+          if (loginBox.style.display === 'flex') {
+            handleLogin();
+          }
         }
       });
     </script>

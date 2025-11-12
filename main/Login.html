@@ -1,195 +1,813 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neon Cyber Login</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Courier New', 'SF Mono', 'Monaco', 'Inconsolata', monospace;
-      background: #0a0a0a;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      line-height: 1.4;
-      position: relative;
-      overflow: hidden;
-    }
-    .cyber-grid { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .grid-line { position: absolute; background: linear-gradient(90deg, transparent, #00ff41, transparent); opacity: 0.1; animation: gridPulse 4s ease-in-out infinite; }
-    .grid-h-1 { top: 20%; left: 0; width: 100%; height: 1px; animation-delay: 0s; }
-    .grid-h-2 { top: 50%; left: 0; width: 100%; height: 1px; animation-delay: 1.5s; }
-    .grid-h-3 { top: 80%; left: 0; width: 100%; height: 1px; animation-delay: 3s; }
-    .grid-v-1 { top: 0; left: 25%; width: 1px; height: 100%; background: linear-gradient(0deg, transparent, #00ff41, transparent); animation-delay: .75s; }
-    .grid-v-2 { top: 0; left: 75%; width: 1px; height: 100%; background: linear-gradient(0deg, transparent, #00ff41, transparent); animation-delay: 2.25s; }
-    @keyframes gridPulse { 0%,100%{opacity:.1} 50%{opacity:.3} }
-    .cyber-glitch { position:absolute; width:200px; height:2px; background:#ff0080; opacity:0; animation:glitchFlash 6s ease-in-out infinite; }
-    .glitch-1 { top:30%; left:10%; animation-delay:2s; }
-    .glitch-2 { top:70%; right:10%; animation-delay:4s; }
-    @keyframes glitchFlash { 0%,95%,100%{opacity:0; transform:scaleX(0);} 96%,99%{opacity:.8; transform:scaleX(1);} }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nijjara ERP - Login</title>
+    <style>
+      /* Enhanced theme variables */
+      :root {
+        --primary-dark: #001F3F;
+        --accent-blue: #4FC3F7;
+        --accent-blue-light: rgba(79, 195, 247, 0.3);
+        --accent-blue-rgb: 79, 195, 247;
+        --success-bg: rgba(79, 195, 247, 0.1);
+        --success-border: rgba(79, 195, 247, 0.3);
+        --success-text: #E1F5FE;
+        --error-color: #ff5555;
+        --error-bg: rgba(255, 85, 85, 0.1);
+        --error-border: rgba(255, 85, 85, 0.3);
+        --input-bg: #0f0f0f;
+        --input-hover-bg: #1a1a1a;
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+      }
 
-    .login-container { width: 100%; max-width: 460px; position: relative; z-index: 1; }
-    .cyber-terminal { background: rgba(0,0,0,.9); border: 2px solid #00ff41; border-radius: 8px; overflow: hidden; box-shadow: 0 0 30px rgba(0,255,65,.3), inset 0 0 0 1px rgba(0,255,65,.1); position: relative; }
-    .terminal-header { background: linear-gradient(90deg,#1a1a1a,#2a2a2a); padding: 12px 16px; border-bottom: 1px solid #00ff41; display:flex; align-items:center; justify-content:space-between; }
-    .terminal-buttons{display:flex; gap:8px;} .term-btn{width:12px; height:12px; border-radius:50%;} .btn-red{background:#ff5555; box-shadow:0 0 8px rgba(255,85,85,.5);} .btn-yellow{background:#ffff55; box-shadow:0 0 8px rgba(255,255,85,.5);} .btn-green{background:#55ff55; box-shadow:0 0 8px rgba(85,255,85,.5);} .terminal-title{color:#00ff41; font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:1px;}
-    .cyber-content{padding:40px 32px;}
-    .neon-header{ text-align:center; margin-bottom:36px; }
-    .cyber-title{ color:#00ff41; font-size:1.75rem; font-weight:bold; margin-bottom:8px; text-transform:uppercase; letter-spacing:2px; position:relative; }
-    .access-text{ color:#00ff41; opacity:.7; font-size:12px; letter-spacing:1px; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: "Courier New", "SF Mono", "Monaco", "Inconsolata", monospace;
+        background: var(--primary-dark);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        line-height: 1.4;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .cyber-grid {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+      
+      .grid-line {
+        position: absolute;
+        background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+        opacity: 0.1;
+        animation: gridPulse 4s ease-in-out infinite;
+      }
+      
+      .grid-h-1 {
+        top: 20%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        animation-delay: 0s;
+      }
+      
+      .grid-h-2 {
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        animation-delay: 1.5s;
+      }
+      
+      .grid-h-3 {
+        top: 80%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        animation-delay: 3s;
+      }
+      
+      .grid-v-1 {
+        top: 0;
+        left: 25%;
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(0deg, transparent, var(--accent-blue), transparent);
+        animation-delay: 0.75s;
+      }
+      
+      .grid-v-2 {
+        top: 0;
+        left: 75%;
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(0deg, transparent, var(--accent-blue), transparent);
+        animation-delay: 2.25s;
+      }
+      
+      @keyframes gridPulse {
+        0%, 100% {
+          opacity: 0.1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      
+      .cyber-glitch {
+        position: absolute;
+        width: 200px;
+        height: 2px;
+        background: #ff0080;
+        opacity: 0;
+        animation: glitchFlash 6s ease-in-out infinite;
+      }
+      
+      .glitch-1 {
+        top: 30%;
+        left: 10%;
+        animation-delay: 2s;
+      }
+      
+      .glitch-2 {
+        top: 70%;
+        right: 10%;
+        animation-delay: 4s;
+      }
+      
+      @keyframes glitchFlash {
+        0%, 95%, 100% {
+          opacity: 0;
+          transform: scaleX(0);
+        }
+        96%, 99% {
+          opacity: 0.8;
+          transform: scaleX(1);
+        }
+      }
 
-    .neon-form .cyber-field{ margin-bottom:18px; }
-    .field-frame{ position:relative; }
-    .field-border{ position:absolute; inset:0; border:1px solid #00ff41; border-radius:6px; opacity:.4; }
-    .neon-form input{ width:100%; background:#0f0f0f; color:#e6ffe6; border:none; padding:14px 16px; border-radius:6px; outline:none; }
-    .neon-form label{ position:absolute; left:12px; top:-10px; background:#0a0a0a; color:#00ff41; font-size:11px; padding:0 6px; letter-spacing:1px; }
-    .cyber-scanner{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-    .cyber-scanner .scan-line{ position:absolute; left:-100%; top:0; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(0,255,65,.5), transparent); animation:scanLine 2s linear infinite; }
-    @keyframes scanLine { 0%{left:-100%} 100%{left:100%} }
+      .login-container {
+        width: 100%;
+        max-width: 460px;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .cyber-terminal {
+        background: rgba(0, 0, 0, 0.9);
+        border: 2px solid var(--accent-blue);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 30px var(--accent-blue-light),
+          inset 0 0 0 1px var(--accent-blue-light);
+        position: relative;
+      }
+      
+      .terminal-header {
+        background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--accent-blue);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      
+      .terminal-buttons {
+        display: flex;
+        gap: 8px;
+      }
+      
+      .term-btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      
+      .btn-red {
+        background: #ff5555;
+        box-shadow: 0 0 8px rgba(255, 85, 85, 0.5);
+      }
+      
+      .btn-yellow {
+        background: #ffff55;
+        box-shadow: 0 0 8px rgba(255, 255, 85, 0.5);
+      }
+      
+      .btn-green {
+        background: #55ff55;
+        box-shadow: 0 0 8px rgba(85, 255, 85, 0.5);
+      }
+      
+      .terminal-title {
+        color: var(--accent-blue);
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      .cyber-content {
+        padding: 40px 32px;
+      }
+      
+      .neon-header {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+      
+      .cyber-title {
+        color: var(--accent-blue);
+        font-size: 1.75rem;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+      }
+      
+      .access-text {
+        color: var(--accent-blue);
+        opacity: 0.7;
+        font-size: 12px;
+        letter-spacing: 1px;
+      }
 
-    .cyber-options{ display:flex; align-items:center; justify-content:space-between; margin:10px 0 16px; }
-    .neon-checkbox{ display:flex; align-items:center; gap:10px; color:#00ff41; font-size:12px; }
-    .submit-frame{ position:relative; }
-    #loginBtn{ width:100%; padding:12px 16px; border:2px solid #00ff41; background:#0c0c0c; color:#00ff41; font-weight:bold; text-transform:uppercase; letter-spacing:1px; border-radius:6px; cursor:pointer; }
-    #loginBtn:hover{ box-shadow:0 0 14px rgba(0,255,65,.3); }
-    #loginBtn:disabled{ opacity:.6; cursor:not-allowed; }
+      .neon-form .cyber-field {
+        margin-bottom: 18px;
+      }
+      
+      .field-frame {
+        position: relative;
+      }
+      
+      .field-border {
+        position: absolute;
+        inset: 0;
+        border: 1px solid var(--accent-blue);
+        border-radius: 6px;
+        opacity: 0.4;
+        transition: all 0.2s ease;
+        pointer-events: none;
+      }
+      
+      .field-frame:focus-within .field-border {
+        opacity: 1;
+        border-width: 2px;
+        box-shadow: 0 0 8px var(--accent-blue-light);
+      }
+      
+      .neon-form input {
+        width: 100%;
+        background: var(--input-bg);
+        color: var(--text-primary);
+        border: none;
+        padding: 14px 16px;
+        border-radius: 6px;
+        outline: none;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .neon-form input:focus {
+        background: var(--input-hover-bg);
+        box-shadow: 0 0 12px var(--accent-blue-light), inset 0 0 0 1px var(--accent-blue);
+        transform: translateY(-1px);
+      }
+      
+      .neon-form input:hover {
+        background: var(--input-hover-bg);
+        box-shadow: 0 0 6px var(--accent-blue-light);
+      }
+      
+      .neon-form input:active {
+        transform: translateY(0);
+        box-shadow: 0 0 4px var(--accent-blue-light);
+      }
+      
+      .neon-form label {
+        position: absolute;
+        left: 12px;
+        top: -10px;
+        background: var(--primary-dark);
+        color: var(--accent-blue);
+        font-size: 11px;
+        padding: 0 6px;
+        letter-spacing: 1px;
+        transition: all 0.2s ease;
+      }
+      
+      .field-frame:focus-within label {
+        color: var(--accent-blue);
+        text-shadow: 0 0 4px var(--accent-blue-light);
+      }
+      
+      .cyber-scanner {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      
+      .cyber-scanner .scan-line {
+        position: absolute;
+        left: -100%;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent-blue-light),
+          transparent
+        );
+        animation: scanLine 3s linear infinite;
+        opacity: 0.6;
+      }
+      
+      @keyframes scanLine {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
 
-    .message{ margin-top:12px; padding:10px 12px; border-radius:6px; font-size:12px; display:none; text-align:center; }
-    .error{ background: rgba(255,0,0,.1); border:1px solid rgba(255,0,0,.3); color:#ff9f9f; }
-    .success{ background: rgba(0,255,65,.1); border:1px solid rgba(0,255,65,.3); color:#a6ffb0; }
-    .show{ display:block !important; }
-    .footer{ text-align:center; margin-top:16px; color:#7b7b7b; font-size:11px; }
-  </style>
-</head>
-<body>
-  <div class="cyber-grid">
-    <div class="grid-line grid-h-1"></div>
-    <div class="grid-line grid-v-1"></div>
-    <div class="grid-line grid-h-2"></div>
-    <div class="grid-line grid-v-2"></div>
-    <div class="grid-line grid-h-3"></div>
-    <div class="cyber-glitch glitch-1"></div>
-    <div class="cyber-glitch glitch-2"></div>
-  </div>
+      .cyber-options {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 10px 0 16px;
+      }
+      
+      .neon-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--accent-blue);
+        font-size: 12px;
+        cursor: pointer;
+      }
+      
+      .neon-checkbox input {
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .neon-checkbox input:hover {
+        box-shadow: 0 0 4px var(--accent-blue-light);
+      }
+      
+      .neon-checkbox span {
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .neon-checkbox:hover span {
+        text-shadow: 0 0 4px var(--accent-blue);
+      }
+      
+      .cyber-options a {
+        color: #ff0080;
+        font-size: 12px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+      
+      .cyber-options a:hover {
+        text-shadow: 0 0 8px #ff0080;
+        transform: translateY(-1px);
+      }
 
-  <div class="login-container">
-    <div class="cyber-terminal">
-      <div class="terminal-header">
-        <div class="terminal-buttons">
-          <div class="term-btn btn-red"></div>
-          <div class="term-btn btn-yellow"></div>
-          <div class="term-btn btn-green"></div>
-        </div>
-        <div class="terminal-title">NEURAL_INTERFACE.exe</div>
-      </div>
-      <div class="cyber-content">
-        <div class="neon-header">
-          <h1 class="cyber-title"><span class="title-glitch" data-text="CYPHER_NET">CYPHER_NET</span></h1>
-          <p class="access-text">[ SECURE_TERMINAL_ACCESS ]</p>
-        </div>
+      .submit-frame {
+        position: relative;
+      }
+      
+      #loginBtn {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--accent-blue);
+        background: #0c0c0c;
+        color: var(--accent-blue);
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      #loginBtn:hover {
+        box-shadow: 0 0 20px var(--accent-blue-light);
+        background: var(--accent-blue);
+        color: #000000;
+        transform: translateY(-2px);
+      }
+      
+      #loginBtn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      
+      #loginBtn:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 0 10px var(--accent-blue-light);
+      }
 
-        <form class="neon-form" id="loginForm" novalidate>
-          <div class="cyber-field">
-            <div class="field-frame">
-              <div class="field-border"></div>
-              <input type="text" id="username" name="username" required autocomplete="username" placeholder="">
-              <label for="username">&gt; USER_HANDLE</label>
-              <div class="cyber-scanner"><div class="scan-line"></div></div>
-            </div>
-          </div>
-
-          <div class="cyber-field">
-            <div class="field-frame">
-              <div class="field-border"></div>
-              <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="">
-              <label for="password">&gt; ACCESS_CODE</label>
-              <div class="cyber-scanner"><div class="scan-line"></div></div>
-            </div>
-          </div>
-
-          <div class="cyber-options">
-            <label class="neon-checkbox">
-              <input type="checkbox" id="remember" name="remember">
-              <span>[ REMEMBER_SESSION ]</span>
-            </label>
-            <a href="#" style="color:#ff0080; font-size:12px; text-decoration:none;">[ ALT_PROTOCOLS ]</a>
-          </div>
-
-          <div class="submit-frame">
-            <button type="submit" id="loginBtn">[ CONNECT ]</button>
-          </div>
-          <div class="message error" id="errorMsg"></div>
-          <div class="message success" id="successMsg"></div>
-        </form>
-      </div>
+      .message {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        display: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      
+      .message.show {
+        display: block !important;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .error {
+        background: var(--error-bg);
+        border: 1px solid var(--error-border);
+        color: var(--error-color);
+      }
+      
+      .success {
+        background: var(--success-bg);
+        border: 1px solid var(--success-border);
+        color: var(--success-text);
+      }
+      
+      .footer {
+        text-align: center;
+        margin-top: 16px;
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+      
+      /* Loading state */
+      .loading {
+        position: relative;
+      }
+      
+      .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        border: 2px solid var(--accent-blue);
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Responsive design */
+      @media (max-width: 480px) {
+        .cyber-content {
+          padding: 30px 20px;
+        }
+        
+        .cyber-title {
+          font-size: 1.5rem;
+        }
+        
+        .neon-form input {
+          padding: 12px 14px;
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cyber-grid">
+      <div class="grid-line grid-h-1"></div>
+      <div class="grid-line grid-v-1"></div>
+      <div class="grid-line grid-h-2"></div>
+      <div class="grid-line grid-v-2"></div>
+      <div class="grid-line grid-h-3"></div>
+      <div class="cyber-glitch glitch-1"></div>
+      <div class="cyber-glitch glitch-2"></div>
     </div>
-    <p class="footer">[ CONNECTION_ESTABLISHED ] Accessing neural interface...</p>
-  </div>
-      <div class="form-group">
-        <label>كلمة المرور</label>
-        <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+
+    <div class="login-container">
+      <div class="cyber-terminal">
+        <div class="terminal-header">
+          <div class="terminal-buttons">
+            <div class="term-btn btn-red"></div>
+            <div class="term-btn btn-yellow"></div>
+            <div class="term-btn btn-green"></div>
+          </div>
+          <div class="terminal-title">NIJJARA_ERP.exe</div>
+        </div>
+        <div class="cyber-content">
+          <div class="neon-header">
+            <h1 class="cyber-title">
+              <span class="title-glitch" data-text="Nijjara">Nijjara</span>
+            </h1>
+            <p class="access-text">For Contracting & Woodcrafts</p>
+          </div>
+
+          <form class="neon-form" id="loginForm" novalidate>
+            <div class="cyber-field">
+              <div class="field-frame">
+                <div class="field-border"></div>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  required
+                  autocomplete="username"
+                  placeholder="Enter your username"
+                  aria-label="Username"
+                />
+                <label for="username">&gt; USER_HANDLE</label>
+                <div class="cyber-scanner"><div class="scan-line"></div></div>
+              </div>
+            </div>
+
+            <div class="cyber-field">
+              <div class="field-frame">
+                <div class="field-border"></div>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  autocomplete="current-password"
+                  placeholder="Enter your password"
+                  aria-label="Password"
+                />
+                <label for="password">&gt; ACCESS_CODE</label>
+                <div class="cyber-scanner"><div class="scan-line"></div></div>
+              </div>
+            </div>
+
+            <div class="cyber-options">
+              <label class="neon-checkbox">
+                <input type="checkbox" id="remember" name="remember" />
+                <span>[ REMEMBER_SESSION ]</span>
+              </label>
+              <a href="#" onclick="showForgotPassword()">[ ALT_PROTOCOLS ]</a>
+            </div>
+
+            <div class="submit-frame">
+              <button type="submit" id="loginBtn">[ CONNECT ]</button>
+            </div>
+            <div class="message error" id="errorMsg" role="alert"></div>
+            <div class="message success" id="successMsg" role="status"></div>
+          </form>
+        </div>
       </div>
-      <button type="submit" id="loginBtn">تسجيل الدخول</button>
-      <div class="message error" id="errorMsg"></div>
-      <div class="message success" id="successMsg"></div>
-    </form>
-    <p class="footer">Powered by Nijjara Company © 2025</p>
-  </div>
-  <script>
-    const form = document.getElementById('loginForm');
-    const btn = document.getElementById('loginBtn');
-    const errorMsg = document.getElementById('errorMsg');
-    const successMsg = document.getElementById('successMsg');
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-      if (!username || !password) {
-        showError('Missing USER_HANDLE or ACCESS_CODE');
-        return;
+      <p class="footer">
+        [ CONNECTION_ESTABLISHED ] Accessing Nijjara ERP System...
+      </p>
+    </div>
+
+    <script>
+      const form = document.getElementById("loginForm");
+      const btn = document.getElementById("loginBtn");
+      const errorMsg = document.getElementById("errorMsg");
+      const successMsg = document.getElementById("successMsg");
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      
+      // Enhanced input field responsiveness
+      const inputs = document.querySelectorAll('.neon-form input[type="text"], .neon-form input[type="password"]');
+      
+      inputs.forEach(input => {
+        // Immediate visual feedback on focus
+        input.addEventListener('focus', function() {
+          this.parentElement.classList.add('focused');
+          this.placeholder = ''; // Clear placeholder on focus
+        });
+        
+        input.addEventListener('blur', function() {
+          this.parentElement.classList.remove('focused');
+          // Restore placeholder if empty
+          if (this.value === '') {
+            if (this.type === 'text') {
+              this.placeholder = 'Enter your username';
+            } else {
+              this.placeholder = 'Enter your password';
+            }
+          }
+        });
+        
+        // Immediate response on click/tap with micro-interactions
+        input.addEventListener('mousedown', function() {
+          this.style.transform = 'scale(0.98)';
+        });
+        
+        input.addEventListener('mouseup', function() {
+          this.style.transform = 'scale(1)';
+        });
+        
+        // Touch device support
+        input.addEventListener('touchstart', function() {
+          this.style.transform = 'scale(0.98)';
+        });
+        
+        input.addEventListener('touchend', function() {
+          this.style.transform = 'scale(1)';
+        });
+        
+        // Real-time validation feedback
+        input.addEventListener('input', function() {
+          if (this.value.length > 0) {
+            this.style.borderColor = 'var(--accent-blue)';
+          } else {
+            this.style.borderColor = '';
+          }
+        });
+      });
+      
+      // Form submission with enhanced UX
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        
+        // Enhanced validation with specific error messages
+        if (!username && !password) {
+          showError("Please enter both username and password");
+          usernameInput.focus();
+          return;
+        }
+        
+        if (!username) {
+          showError("Please enter your username");
+          usernameInput.focus();
+          return;
+        }
+        
+        if (!password) {
+          showError("Please enter your password");
+          passwordInput.focus();
+          return;
+        }
+        
+        // Show loading state
+        btn.disabled = true;
+        btn.classList.add('loading');
+        btn.textContent = "[ AUTHENTICATING... ]";
+        hideMessages();
+        
+        // Add loading class to form
+        form.classList.add('loading');
+        
+        // Optimized server call
+        google.script.run
+          .withSuccessHandler(handleSuccess)
+          .withFailureHandler(handleFailure)
+          .authenticateUser(username, password);
+      });
+      
+      function handleSuccess(response) {
+        // Remove loading state
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        form.classList.remove('loading');
+        btn.textContent = "[ CONNECT ]";
+        
+        if (response && response.success) {
+          showSuccess("✓ Authentication successful! Redirecting...");
+          
+          // Store session data
+          try {
+            sessionStorage.setItem("nijjara_session", JSON.stringify(response.data));
+            
+            // Redirect to dashboard with smooth transition
+            setTimeout(function () {
+              window.location.href = window.location.origin + window.location.pathname + "?page=dashboard";
+            }, 1200);
+            
+          } catch (err) {
+            showError("Session storage failed. Please enable cookies and try again.");
+            console.error("Session storage error:", err);
+          }
+        } else {
+          // Handle specific authentication errors
+          let errorMessage = "Authentication failed";
+          
+          if (response && response.message) {
+            errorMessage = response.message;
+          } else if (response && response.errors) {
+            if (response.errors.includes('RATE_LIMIT_EXCEEDED')) {
+              errorMessage = "Too many login attempts. Please try again later.";
+            } else if (response.errors.includes('ACCOUNT_INACTIVE')) {
+              errorMessage = "Your account is inactive. Please contact support.";
+            } else {
+              errorMessage = "Invalid username or password";
+            }
+          } else {
+            errorMessage = "Invalid username or password";
+          }
+          
+          showError(errorMessage);
+          passwordInput.value = ''; // Clear password field
+          passwordInput.focus();
+        }
       }
-      btn.disabled = true;
-      btn.textContent = '[ CONNECTING ]';
-      hideMessages();
-      google.script.run
-        .withSuccessHandler(handleSuccess)
-        .withFailureHandler(handleFailure)
-        .authenticateUser(username, password);
-    });
-    function handleSuccess(response) {
-      btn.disabled = false;
-      btn.textContent = '[ CONNECT ]';
-      if (response && response.success) {
-        showSuccess('[ ACCESS GRANTED ]');
-        setTimeout(function() {
-          sessionStorage.setItem('erp_session', JSON.stringify(response.data));
-          window.location.href = window.location.origin + window.location.pathname + '?page=dashboard';
-        }, 1000);
-      } else {
-        showError(response && response.message ? response.message : '[ ACCESS DENIED ] Invalid credentials');
+      
+      function handleFailure(error) {
+        // Remove loading state
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        form.classList.remove('loading');
+        btn.textContent = "[ CONNECT ]";
+        
+        // Enhanced error handling
+        let errorMessage = "Connection failed";
+        
+        if (error && error.message) {
+          if (error.message.includes('timeout')) {
+            errorMessage = "Connection timeout. Please check your internet connection.";
+          } else if (error.message.includes('network')) {
+            errorMessage = "Network error. Please check your connection.";
+          } else {
+            errorMessage = "Connection failed: " + error.message;
+          }
+        }
+        
+        showError(errorMessage);
       }
-    }
-    function handleFailure(error) {
-      btn.disabled = false;
-      btn.textContent = '[ CONNECT ]';
-      showError('[ LINK FAILURE ] Could not reach server');
-    }
-    function showError(msg) {
-      errorMsg.textContent = msg;
-      errorMsg.classList.add('show');
-      successMsg.classList.remove('show');
-    }
-    function showSuccess(msg) {
-      successMsg.textContent = msg;
-      successMsg.classList.add('show');
-      errorMsg.classList.remove('show');
-    }
-    function hideMessages() {
-      errorMsg.classList.remove('show');
-      successMsg.classList.remove('show');
-    }
-  </script>
-</body>
+      
+      function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.classList.add("show");
+        successMsg.classList.remove("show");
+        
+        // Auto-hide error after 5 seconds
+        setTimeout(() => {
+          errorMsg.classList.remove("show");
+        }, 5000);
+        
+        // Add shake animation to form
+        form.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+          form.style.animation = '';
+        }, 500);
+      }
+      
+      function showSuccess(msg) {
+        successMsg.textContent = msg;
+        successMsg.classList.add("show");
+        errorMsg.classList.remove("show");
+      }
+      
+      function hideMessages() {
+        errorMsg.classList.remove("show");
+        successMsg.classList.remove("show");
+      }
+      
+      function showForgotPassword() {
+        showError("Password reset functionality will be available soon.");
+      }
+      
+      // Add shake animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Auto-focus username field on page load
+      window.addEventListener('load', function() {
+        usernameInput.focus();
+      });
+      
+      // Handle Enter key navigation
+      usernameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+          passwordInput.focus();
+        }
+      });
+      
+      passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && this.value) {
+          form.dispatchEvent(new Event('submit'));
+        }
+      });
+    </script>
+  </body>
 </html>
