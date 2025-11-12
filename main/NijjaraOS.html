@@ -141,7 +141,7 @@
     
     /* --- 3D CUBE LOGIN FORM STYLING --- */
     .login-box-3d {
-      display: none;
+      display: flex;
       flex-direction: column;
       width: 320px;
       margin: 0 auto;
@@ -1284,6 +1284,37 @@
 .login-box-3d .btn {
   color: #fff;
 }
+/* Login actions and feedback */
+.login-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+.login-actions .remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text);
+  font-family: 'Cairo', system-ui, Segoe UI, Roboto, Arial, sans-serif;
+}
+.login-actions .forgot-link {
+  color: var(--brand-primary-focus);
+  text-decoration: none;
+}
+.login-actions .forgot-link:hover,
+.login-actions .forgot-link:focus { text-decoration: underline; }
+
+#login-feedback {
+  margin-top: 10px;
+  min-height: 24px;
+  font-family: 'Cairo', system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--color-text);
+}
+
+/* Loading state for login button */
+.login-loading { cursor: wait; opacity: 0.85; }
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1357,8 +1388,14 @@
           <div class='bg'>
             <div class='bg-inner'></div>
           </div>
-        </div>
-        <button class='btn block-cube block-cube-hover' type='button' onclick="handleLogin()">
+        <div class="login-actions">
+  <label class="remember">
+    <input type="checkbox" id="rememberMe" aria-label="تذكرني">
+    <span>تذكرني</span>
+  </label>
+  <a href="#" id="forgotPassword" class="forgot-link" onclick="handleForgotPassword(event)">نسيت كلمة المرور؟</a>
+</div>
+<button class='btn block-cube block-cube-hover' type='button' onclick="handleLogin()">
           <div class='bg-top'>
             <div class='bg-inner'></div>
           </div>
@@ -1487,19 +1524,134 @@
         }
       };
 
-      // --- Boot Sequence ---
+            // --- Boot Sequence ---
       function boot() {
-        const bootLog = document.getElementById('boot-log');
         const loginBox = document.getElementById('loginBox');
-        
+        // Show login quickly after minor delay to allow background paint
         setTimeout(() => {
-          bootLog.innerHTML += '<p>✓ System ready</p>';
-          loginBox.style.display = 'flex';
-          document.getElementById('loginUser').focus();
-        }, 2000);
+          if (loginBox) {
+            loginBox.style.display = 'flex';
+            const userInput = document.getElementById('loginUser');
+            if (userInput) userInput.focus();
+          }
+        }, 600);
       }
 
       // --- Authentication ---
+      function isValidEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      }
+      function isValidUsername(value) {
+        return /^[A-Za-z0-9._-]{3,}$/.test(value);
+      }
+      function validateLogin(username, password) {
+        const userEl = document.getElementById('loginUser');
+        const passEl = document.getElementById('loginPass');
+        const feedback = document.getElementById('login-feedback');
+        userEl?.classList.remove('is-error');
+        passEl?.classList.remove('is-error');
+
+        if (!username) {
+          userEl?.classList.add('is-error');
+          feedback.textContent = 'يرجى إدخال اسم المستخدم أو البريد الإلكتروني';
+          return false;
+        }
+        const isEmail = username.includes('@');
+        if (isEmail && !isValidEmail(username)) {
+          userEl?.classList.add('is-error');
+          feedback.textContent = 'صيغة البريد الإلكتروني غير صحيحة';
+          return false;
+        }
+        if (!isEmail && !isValidUsername(username)) {
+          userEl?.classList.add('is-error');
+          feedback.textContent = 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل';
+          return false;
+        }
+        if (!password) {
+          passEl?.classList.add('is-error');
+          feedback.textContent = 'يرجى إدخال كلمة المرور';
+          return false;
+        }
+        feedback.textContent = '';
+        return true;
+      }
+
+      function handleForgotPassword(e) {
+        if (e) e.preventDefault();
+        const username = document.getElementById('loginUser')?.value || '';
+        if (!username) {
+          alert('يرجى إدخال البريد الإلكتروني لاستعادة كلمة المرور');
+          return;
+        }
+        const isEmail = username.includes('@');
+        if (!isEmail) {
+          alert('يرجى إدخال بريد إلكتروني صالح');
+          return;
+        }
+        try {
+          // If server supports password reset, call it; otherwise gracefully inform the user
+          if (google?.script?.run?.requestPasswordReset) {
+            google.script.run
+              .withSuccessHandler(() => alert('تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني'))
+              .withFailureHandler(err => alert('تعذر إرسال رابط الاستعادة: ' + err.message))
+              .requestPasswordReset(username);
+          } else {
+            window.location.href = 'mailto:support@nijjara.com?subject=Password%20Reset&body=' + encodeURIComponent('Email: ' + username);
+          }
+        } catch (err) {
+          alert('حدث خطأ أثناء محاولة الاستعادة: ' + err.message);
+        }
+      }
+
+      function handleLogin() {
+        const username = document.getElementById('loginUser').value.trim();
+        const password = document.getElementById('loginPass').value;
+        const feedback = document.getElementById('login-feedback');
+        const btn = document.querySelector('.login-box-3d .btn');
+        const remember = document.getElementById('rememberMe')?.checked || false;
+
+        if (!validateLogin(username, password)) return;
+
+        // Visual feedback during submission
+        if (btn) { btn.classList.add('login-loading'); btn.disabled = true; }
+        feedback.textContent = 'جاري التحقق...';
+
+        google.script.run
+          .withSuccessHandler(function(response) {
+            console.log('Login response:', response);
+            if (btn) { btn.classList.remove('login-loading'); btn.disabled = false; }
+
+            if (response && response.success) {
+              state.authenticated = true;
+              state.currentUser = response.data;
+              feedback.textContent = '✓ تم تسجيل الدخول بنجاح';
+
+              // Store session based on remember me
+              try {
+                const store = remember ? localStorage : sessionStorage;
+                store.setItem('nijjara_session', JSON.stringify(response.data));
+                store.setItem('nijjara_login_success', 'true');
+                console.log('Session stored successfully (remember=' + remember + ')');
+              } catch (e) {
+                console.error('Failed to store session:', e);
+                feedback.textContent = 'خطأ في حفظ الجلسة';
+                return;
+              }
+
+              setTimeout(() => { showDesktop(); }, 600);
+            } else {
+              feedback.textContent = (response && response.message) ? response.message : 'فشل تسجيل الدخول';
+              document.getElementById('loginPass').value = '';
+              document.getElementById('loginPass').classList.add('is-error');
+            }
+          })
+          .withFailureHandler(function(error) {
+            console.error('Login error:', error);
+            if (btn) { btn.classList.remove('login-loading'); btn.disabled = false; }
+            feedback.textContent = 'خطأ في الاتصال: ' + error.message;
+          })
+          .authenticateUser(username, password);
+      }
       function handleLogin() {
         const username = document.getElementById('loginUser').value;
         const password = document.getElementById('loginPass').value;
@@ -2165,4 +2317,5 @@
     </script>
   </body>
 </html>
+
 
