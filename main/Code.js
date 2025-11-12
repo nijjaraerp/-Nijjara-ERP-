@@ -299,26 +299,25 @@ function doGet(e) {
       `Loading interface. page=${page || "N/A"}, debug=${debug || "0"}`
     );
 
-    if (shouldShowDashboard) {
-      // Serve dashboard from main folder templates
-      const osTpl = HtmlService.createTemplateFromFile("NijjaraOS");
-      osTpl.debug = debug;
-      const osHtml = osTpl
-        .evaluate()
-        .setTitle("Nijjara-OS | Enterprise Resource Planning")
-        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-        .addMetaTag("viewport", "width=device-width, initial-scale=1");
-      return osHtml;
-    }
 
-    // Default: show Login
-    const loginTpl = HtmlService.createTemplateFromFile("Login");
-    const loginHtml = loginTpl
+    logInfo_(
+      "System",
+      "doGet",
+      "WebApp",
+      "N/A",
+      `Loading NijjaraOS interface. debug=${debug || "0"}`
+    );
+
+    // ALWAYS serve the main NijjaraOS.html file.
+    // It has its own built-in login logic.
+    const osTpl = HtmlService.createTemplateFromFile("NijjaraOS");
+    osTpl.debug = debug;
+    const osHtml = osTpl
       .evaluate()
-      .setTitle("Nijjara ERP | Login")
+      .setTitle("Nijjara-OS | Enterprise Resource Planning")
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
       .addMetaTag("viewport", "width=device-width, initial-scale=1");
-    return loginHtml;
+    return osHtml;
   } catch (error) {
     logError_(
       "System",

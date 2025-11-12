@@ -691,10 +691,14 @@
           // Store session data
           try {
             sessionStorage.setItem("nijjara_session", JSON.stringify(response.data));
+            sessionStorage.setItem("nijjara_login_success", "true");
             
             // Redirect to dashboard with smooth transition
             setTimeout(function () {
-              window.location.href = window.location.origin + window.location.pathname + "?page=dashboard";
+              // Build URL with session token as fallback
+              const baseUrl = window.location.origin + window.location.pathname;
+              const sessionToken = encodeURIComponent(response.data.sessionToken || '');
+              window.location.href = baseUrl + "?page=dashboard&token=" + sessionToken;
             }, 1200);
             
           } catch (err) {

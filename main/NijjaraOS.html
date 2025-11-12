@@ -783,9 +783,9 @@
         <p>Authenticating user...</p>
       </div>
       <div class="login-box" id="loginBox">
-        <h2>تسجيل الدخول</h2>
-        <input type="text" id="loginUser" placeholder="اسم المستخدم" />
-        <input type="password" id="loginPass" placeholder="كلمة المرور" />
+      <h2>تسجيل الدخول</h2>
+        <input type="text" id="loginUser" placeholder="اسم المستخدم" autocomplete="username" />
+        <input type="password" id="loginPass" placeholder="كلمة المرور" autocomplete="current-password" />
         <button onclick="handleLogin()">دخول</button>
         <div id="login-feedback"></div>
       </div>
@@ -907,13 +907,23 @@
 
         google.script.run
           .withSuccessHandler(function(response) {
+            console.log('Login response:', response);
+            
             if (response && response.success) {
               state.authenticated = true;
               state.currentUser = response.data;
               feedback.textContent = '✓ تم تسجيل الدخول بنجاح';
               
               // Store session
-              sessionStorage.setItem('nijjara_session', JSON.stringify(response.data));
+              try {
+                sessionStorage.setItem('nijjara_session', JSON.stringify(response.data));
+                sessionStorage.setItem('nijjara_login_success', 'true');
+                console.log('Session stored successfully');
+              } catch (e) {
+                console.error('Failed to store session:', e);
+                feedback.textContent = 'خطأ في حفظ الجلسة';
+                return;
+              }
               
               setTimeout(() => {
                 showDesktop();
@@ -924,6 +934,7 @@
             }
           })
           .withFailureHandler(function(error) {
+            console.error('Login error:', error);
             feedback.textContent = 'خطأ في الاتصال: ' + error.message;
           })
           .authenticateUser(username, password);
@@ -931,12 +942,28 @@
 
       // --- Desktop Interface ---
       function showDesktop() {
-        document.getElementById('boot-screen').style.opacity = '0';
-        document.getElementById('boot-screen').style.visibility = 'hidden';
-        document.getElementById('nijjara-os').style.display = 'block';
+        const bootScreen = document.getElementById('boot-screen');
+        const nijjaraOS = document.getElementById('nijjara-os');
         
-        initializeFABs();
-        initializeNexus();
+        if (!bootScreen || !nijjaraOS) {
+          console.error('Critical elements not found!');
+          return;
+        }
+        
+        // Fade out boot screen
+        bootScreen.style.opacity = '0';
+        bootScreen.style.visibility = 'hidden';
+        
+        // Show desktop with slight delay for smooth transition
+        setTimeout(() => {
+          nijjaraOS.style.display = 'block';
+          
+          // Initialize desktop components
+          initializeFABs();
+          initializeNexus();
+          
+          console.log('Desktop loaded successfully');
+        }, 300);
       }
 
       // --- FAB System ---
@@ -1476,22 +1503,48 @@
 
       // --- Initialization ---
       window.addEventListener('load', () => {
+        // Check for URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasToken = urlParams.has('token');
+        const loginSuccess = sessionStorage.getItem('nijjara_login_success');
+        
         // Check for existing session
         const session = sessionStorage.getItem('nijjara_session');
+        
         if (session) {
           try {
             const userData = JSON.parse(session);
             state.authenticated = true;
             state.currentUser = userData;
-            showDesktop();
+            
+            // Clear login success flag
+            sessionStorage.removeItem('nijjara_login_success');
+            
+            // Show desktop immediately if coming from login
+            if (hasToken || loginSuccess === 'true') {
+              showDesktop();
+            } else {
+              // Validate session with server before showing desktop
+              validateSessionAndShow(userData);
+            }
           } catch (e) {
+            console.error('Session parse error:', e);
             // Invalid session, show login
+            sessionStorage.clear();
             boot();
           }
         } else {
+          // No session found
           boot();
         }
       });
+      
+      // Validate session with server (optional - can be implemented later)
+      function validateSessionAndShow(userData) {
+        // For now, just show desktop
+        // TODO: Add server-side session validation
+        showDesktop();
+      }
 
       // Handle Enter key in login form
       document.addEventListener('keypress', (e) => {
