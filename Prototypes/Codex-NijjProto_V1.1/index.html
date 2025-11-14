@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>منصة نجر الذكية - نموذج تفاعلي</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+    :root {
+      --space: 16px;
+      --radius: 22px;
+      --radius-sm: 14px;
+      --deep-bg: #05060b;
+      --panel-bg: rgba(9, 13, 27, 0.88);
+      --panel-border: rgba(151, 173, 255, 0.2);
+      --glow: rgba(0, 255, 240, 0.5);
+      --accent-cyan: #4ce0f7;
+      --accent-magenta: #ff63c3;
+      --accent-violet: #8b7bff;
+      --accent-amber: #f6c65b;
+      --accent-emerald: #3cfda1;
+      --accent-red: #ff5f6d;
+      --text-strong: #f6f6ff;
+      --text-dim: #90a3c6;
+      --grid: rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, rgba(83, 255, 216, 0.25), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(255, 124, 194, 0.25), transparent 50%),
+        radial-gradient(circle at 50% 80%, rgba(80, 140, 255, 0.25), transparent 45%),
+        #030307;
+      color: var(--text-strong);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    body::before {
+      background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(20deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 140px 140px;
+      opacity: 0.25;
+      filter: blur(0.5px);
+    }
+
+    body::after {
+      background: radial-gradient(circle at 70% 30%, rgba(86, 163, 255, 0.12), transparent 35%),
+        radial-gradient(circle at 10% 80%, rgba(255, 136, 193, 0.18), transparent 40%);
+      mix-blend-mode: screen;
+    }
+
+    .stellar-surface {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(90deg, transparent 0, transparent 130px, rgba(255, 255, 255, 0.02) 130px, rgba(255, 255, 255, 0.02) 131px),
+        repeating-linear-gradient(0deg, transparent 0, transparent 140px, rgba(255, 255, 255, 0.015) 140px, rgba(255, 255, 255, 0.015) 141px);
+      filter: drop-shadow(0 0 10px rgba(94, 162, 255, 0.1));
+      opacity: 0.25;
+      z-index: 0;
+    }
+
+    .stellar-surface::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="150" cy="150" r="1" fill="white" opacity="0.18"/%3E%3C/svg%3E');
+      opacity: 0.2;
+      animation: drift 40s linear infinite;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        transform: translate3d(-120px, -80px, 0);
+      }
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+    }
+
+    .screen {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 4vw 5vw 5vw;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .screen.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .glass {
+      background: linear-gradient(130deg, rgba(20, 26, 44, 0.9), rgba(5, 12, 32, 0.92));
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      box-shadow: 0 30px 80px rgba(5, 6, 11, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(24px);
+    }
+
+    /* Login screen */
+    #login-screen {
+      flex-direction: column;
+      gap: 32px;
+      text-align: center;
+    }
+
+    .login-shell {
+      width: min(460px, 90vw);
+      padding: 48px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .login-shell::before,
+    .login-shell::after {
+      content: '';
+      position: absolute;
+      inset: -40px;
+      border-radius: 40px;
+      background: radial-gradient(circle, rgba(76, 224, 247, 0.35), transparent 65%);
+      z-index: -2;
+      filter: blur(20px);
+    }
+
+    .login-shell::after {
+      inset: -60px;
+      background: radial-gradient(circle, rgba(255, 99, 195, 0.35), transparent 65%);
+      animation: pulse 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.2;
+        transform: scale(0.9);
+      }
+      50% {
+        opacity: 0.55;
+        transform: scale(1.05);
+      }
+      100% {
+        opacity: 0.2;
+        transform: scale(0.9);
+      }
+    }
+
+    .login-shell h1 {
+      margin: 0 0 6px;
+      font-size: clamp(28px, 4vw, 38px);
+      letter-spacing: 1px;
+    }
+
+    .login-shell p {
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      font-size: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 22px;
+      text-align: right;
+    }
+
+    .field label {
+      font-size: 15px;
+      letter-spacing: 0.5px;
+    }
+
+    .field input {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-size: 16px;
+      color: var(--text-strong);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(76, 224, 247, 0.3);
+      background: rgba(17, 32, 55, 0.9);
+    }
+
+    .login-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-bottom: 28px;
+    }
+
+    .glow-button {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #020205;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      background: linear-gradient(120deg, #4ce0f7, #8b7bff 40%, #ff63c3);
+      box-shadow: 0 10px 30px rgba(140, 123, 255, 0.4);
+    }
+
+    .glow-button:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 20px 60px rgba(76, 224, 247, 0.45);
+    }
+
+    .glow-button:active {
+      transform: scale(0.99);
+    }
+
+    .login-status {
+      min-height: 24px;
+      font-size: 14px;
+      color: var(--accent-emerald);
+    }
+
+    /* Workspace */
+    #workspace {
+      align-items: stretch;
+      justify-content: flex-end;
+      gap: var(--space);
+      padding: 2.5vw;
+    }
+
+    .nav-console {
+      width: 280px;
+      min-height: calc(100vh - 5vw);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      position: sticky;
+      top: 2.5vw;
+    }
+
+    .nav-logo {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-logo span {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .nav-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--text-strong);
+      padding: 14px 18px;
+      text-align: right;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border 0.2s, background 0.2s, transform 0.2s;
+    }
+
+    .nav-item.active,
+    .nav-item:hover {
+      border-color: rgba(120, 169, 255, 0.4);
+      background: linear-gradient(120deg, rgba(76, 224, 247, 0.1), rgba(139, 123, 255, 0.08));
+      transform: translateX(-4px);
+    }
+
+    .status-indicators {
+      margin-top: auto;
+      display: grid;
+      gap: 18px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .status-indicators .pill {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .workspace-shell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-height: calc(100vh - 5vw);
+    }
+
+    .top-meta {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .command-line {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .command-line h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .search-suite {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+    }
+
+    .search-field {
+      position: relative;
+    }
+
+    .search-field input {
+      width: 100%;
+      padding: 16px 52px 16px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-strong);
+      font-size: 15px;
+    }
+
+    .search-field svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      opacity: 0.7;
+    }
+
+    .suggestions {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: calc(100% + 6px);
+      border-radius: var(--radius-sm);
+      background: rgba(6, 10, 23, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+      z-index: 5;
+    }
+
+    .suggestions.visible {
+      display: block;
+    }
+
+    .suggestion-item {
+      padding: 12px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .suggestion-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .chip.active {
+      background: linear-gradient(110deg, rgba(76, 224, 247, 0.25), rgba(139, 123, 255, 0.25));
+      border-color: rgba(76, 224, 247, 0.4);
+      box-shadow: 0 0 20px rgba(76, 224, 247, 0.25);
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(8, 12, 25, 0.86);
+      box-shadow: 0 20px 80px rgba(2, 4, 10, 0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% -10%, rgba(76, 224, 247, 0.35), transparent 45%);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .panel > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .module-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .module-card {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      min-height: 140px;
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform 0.3s ease, border 0.3s ease, background 0.3s ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .module-card:hover,
+    .module-card.active {
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(76, 224, 247, 0.5);
+      background: linear-gradient(140deg, rgba(76, 224, 247, 0.12), rgba(255, 99, 195, 0.12));
+      box-shadow: 0 20px 50px rgba(35, 71, 142, 0.45);
+    }
+
+    .module-card .icon {
+      font-size: 26px;
+    }
+
+    .module-card small {
+      color: var(--text-dim);
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .module-detail h3 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .module-detail p {
+      color: var(--text-dim);
+      margin: 0 0 18px;
+      line-height: 1.6;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .metric {
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(2, 5, 12, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric span {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .metric strong {
+      font-size: 20px;
+    }
+
+    .workflow-pane {
+      border-radius: var(--radius-sm);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .workflow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .workflow-steps span {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .submodule-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .submodule {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.2s ease;
+    }
+
+    .submodule.active {
+      background: linear-gradient(120deg, rgba(76, 224, 247, 0.2), rgba(139, 123, 255, 0.2));
+      border-color: rgba(76, 224, 247, 0.4);
+      box-shadow: 0 0 18px rgba(76, 224, 247, 0.2);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px;
+      color: var(--text-strong);
+      font-family: inherit;
+      font-size: 14px;
+      resize: none;
+    }
+
+    .form-field textarea {
+      min-height: 90px;
+      grid-column: span 2;
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      font-size: 14px;
+    }
+
+    .records-table th,
+    .records-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .records-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .status-pill {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .timeline {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .timeline-event {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .timeline-marker {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .action-button {
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .action-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .insight-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .insight-card {
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .insight-card strong {
+      font-size: 18px;
+    }
+
+    .activity-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .activity-item {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      background: rgba(0, 0, 0, 0.2);
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .workspace-footer {
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .quick-actions button {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-strong);
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 30px;
+      bottom: 30px;
+      padding: 16px 24px;
+      border-radius: var(--radius-sm);
+      background: rgba(6, 18, 24, 0.92);
+      border: 1px solid rgba(76, 224, 247, 0.6);
+      color: var(--accent-cyan);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1280px) {
+      #workspace {
+        flex-direction: column;
+      }
+
+      .nav-console {
+        position: static;
+        width: 100%;
+        min-height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .nav-items {
+        flex: 1;
+      }
+
+      .status-indicators {
+        flex: 1;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+
+      .top-meta,
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #workspace {
+        padding: 5vw 5vw 8vw;
+      }
+
+      .command-line {
+        padding: 22px;
+      }
+
+      .panel {
+        padding: 18px;
+      }
+
+      .module-card {
+        min-height: 120px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-field textarea {
+        grid-column: span 1;
+      }
+
+      .workspace-footer {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+
+      .quick-actions {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stellar-surface"></div>
+  <main>
+    <section id="login-screen" class="screen active">
+      <div class="login-shell glass">
+        <h1>منصة نجر السحابية</h1>
+        <p>ولوج آمن إلى منظومة تخطيط الموارد الذكية مع مراقبة لحظية وتدفق عمل شامل.</p>
+        <form id="login-form">
+          <div class="field">
+            <label for="username">اسم المستخدم</label>
+            <input type="text" id="username" name="username" value="mkhoraiby" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label for="password">كلمة المرور</label>
+            <input type="password" id="password" name="password" value="210388" autocomplete="current-password" required />
+          </div>
+          <div class="login-actions">
+            <span>تفعيل المصادقة الحيوية</span>
+            <span>رمز وصول أحادي - نشط</span>
+          </div>
+          <button type="submit" class="glow-button">ولوج إلى مركز القيادة</button>
+          <div class="login-status" id="login-status"></div>
+        </form>
+      </div>
+    </section>
+
+    <section id="workspace" class="screen">
+      <aside class="nav-console glass">
+        <div class="nav-logo">
+          نجر نيرفانا
+          <span>إصدار الواقع التنبؤي</span>
+        </div>
+        <div class="nav-items">
+          <button class="nav-item active">لوحة الرؤية <span>↗</span></button>
+          <button class="nav-item">توزيع المهام <span>32</span></button>
+          <button class="nav-item">تتبع الالتزامات <span>9</span></button>
+          <button class="nav-item">قنوات الدعم <span>4</span></button>
+          <button class="nav-item">الإعدادات الذكية <span>⚙</span></button>
+        </div>
+        <div class="status-indicators">
+          <div class="pill">مستوى الثقة البياني: 98%</div>
+          <div class="pill">حالة الربط البنكي: مباشر</div>
+          <div class="pill">آخر تحديث: منذ 12 ثانية</div>
+        </div>
+      </aside>
+
+      <div class="workspace-shell">
+        <div class="top-meta">
+          <div class="command-line glass">
+            <h2>محرك التحكم الموحد</h2>
+            <div class="search-suite">
+              <div class="search-field">
+                <input type="text" id="command-search" placeholder="ابحث عن مستند، عميل، مهمة، أو استخدم أوامر مثل: /جديد /اعتماد" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10.5 4a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13z" />
+                  <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                </svg>
+                <div class="suggestions" id="suggestions"></div>
+              </div>
+              <div class="filter-chips">
+                <button class="chip active" data-chip>اليوم</button>
+                <button class="chip" data-chip>هذا الأسبوع</button>
+                <button class="chip" data-chip>مصادقة مطلوبة</button>
+                <button class="chip" data-chip>مستندات قيد الانتظار</button>
+              </div>
+            </div>
+            <div class="search-suite">
+              <div class="form-field">
+                <label>نطاق التاريخ</label>
+                <input type="date" value="2024-05-01" />
+              </div>
+              <div class="form-field">
+                <label>تصفية حسب الوحدة</label>
+                <select>
+                  <option>جميع الوحدات</option>
+                  <option>المالية المتقدمة</option>
+                  <option>إدارة المبيعات الذكية</option>
+                  <option>سلسلة التوريد الذاتية</option>
+                  <option>الموارد البشرية التكيفية</option>
+                  <option>ذكاء الأعمال التنفيذي</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="panel insights">
+            <h3 style="margin-top:0;margin-bottom:12px;">لوحة الطاقة التشغيلية</h3>
+            <div class="insight-panel">
+              <div class="insight-card">
+                <span>سرعة المعالجة</span>
+                <strong>1.8 ثانية</strong>
+                <small>متوسط الموافقات المتسلسلة</small>
+              </div>
+              <div class="insight-card">
+                <span>التزام المراحل</span>
+                <strong>99.2%</strong>
+                <small>تناسق عبر الوحدات</small>
+              </div>
+              <div class="insight-card">
+                <span>استهلاك الذكاء الاصطناعي</span>
+                <strong>74%</strong>
+                <small>تحليلات تنبؤية نشطة</small>
+              </div>
+            </div>
+            <div class="activity-feed">
+              <div class="activity-item">
+                <strong>نظام الحارس</strong>
+                <span>تم عزل محاولة تعديل غير مصرح في وحدة الرواتب.</span>
+              </div>
+              <div class="activity-item">
+                <strong>محلل المخاطر</strong>
+                <span>المخزون عالي القيمة يتجاوز المسار المتوقع بـ 6.4%.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-layout">
+          <div class="panel">
+            <div class="panel-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+              <div>
+                <h3 style="margin:0;font-size:20px;">وحدات النظام الرئيسية</h3>
+                <small style="color:var(--text-dim);">اختر وحدة لاستعراض نماذج الإدخال، السجلات، ومسار العمل الكامل</small>
+              </div>
+              <button class="glow-button" id="new-record">+ منشور متكامل</button>
+            </div>
+            <div class="module-cards" id="module-cards"></div>
+
+            <div class="detail-layout">
+              <div class="module-detail">
+                <h3 id="module-title">—</h3>
+                <p id="module-description">—</p>
+                <div class="metric-grid" id="metric-grid"></div>
+                <div class="submodule-nav" id="submodule-nav"></div>
+                <div class="workflow-pane">
+                  <strong>مسار التنفيذ التفصيلي</strong>
+                  <div class="workflow-steps" id="workflow-steps"></div>
+                </div>
+                <div class="action-bar" id="action-bar"></div>
+              </div>
+              <div>
+                <div class="form-grid" id="form-grid"></div>
+                <table class="records-table">
+                  <thead>
+                    <tr>
+                      <th>المعرف</th>
+                      <th>الوصف</th>
+                      <th>القيمة</th>
+                      <th>المالك</th>
+                      <th>الحالة</th>
+                    </tr>
+                  </thead>
+                  <tbody id="record-rows"></tbody>
+                </table>
+                <div class="timeline" id="timeline"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 style="margin-top:0;">بحث متقدم وروابط فرعية</h3>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>نوع المستند</label>
+                <select>
+                  <option>كل الأنواع</option>
+                  <option>أمر شراء</option>
+                  <option>فاتورة عميل</option>
+                  <option>بيان رواتب</option>
+                  <option>مذكرة اعتماد</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>درجة الأولوية</label>
+                <select>
+                  <option>حرجة</option>
+                  <option>عالية</option>
+                  <option>متوسطة</option>
+                  <option>مجدولة</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>المسار الفرعي</label>
+                <select>
+                  <option>محاذاة مالية</option>
+                  <option>تجربة العملاء</option>
+                  <option>استمرارية الموارد</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>نقطة الإشعار</label>
+                <select>
+                  <option>كل التنبيهات</option>
+                  <option>يتطلب توقيع</option>
+                  <option>بانتظار البيانات</option>
+                  <option>مراقبة ما بعد التفعيل</option>
+                </select>
+              </div>
+            </div>
+            <div class="workflow-pane" style="margin-top:20px;">
+              <strong>محركات البحث الذكي</strong>
+              <div class="workflow-steps">
+                <span>• مطابقة سياقية لجميع الوحدات</span>
+                <span>• تتبع ارتباطي للوثائق والمعتمدين</span>
+                <span>• توصيات ذكية للمسار التالي</span>
+              </div>
+            </div>
+            <div class="activity-feed">
+              <div class="activity-item">
+                <strong>نصيحة تجربة</strong>
+                <span>استخدم الأمر <code>/نبض</code> لاستعراض مؤشرات الوحدة فورًا.</span>
+              </div>
+              <div class="activity-item">
+                <strong>اختصار متاح</strong>
+                <span>سحب وإسقاط المستندات لمركز التحقق الذكي.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="workspace-footer glass">
+          <div>
+            الجلسة المشفرة رقم <strong>#NX-2049</strong> | مخطط الامتثال مفعّل | قنوات الربط: API + Blockchain
+          </div>
+          <div class="quick-actions">
+            <button data-quick>توقيع فوري</button>
+            <button data-quick>بث مباشر للمخزون</button>
+            <button data-quick>تهيئة نسق</button>
+            <button data-quick>إطلاق سلسلة موافقات</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const moduleData = {
+      finance: {
+        name: 'المالية المتقدمة',
+        icon: '💠',
+        tone: '#4ce0f7',
+        description: 'مركز مالي سحابي يدير التدفقات النقدية، الاستحقاقات، والالتزام التشريعي بتتبع لحظي وجاهزية للاعتماد.',
+        stats: [
+          { label: 'صافي التدفق', value: '+12.4%', detail: 'ارتفاع أسبوعي' },
+          { label: 'طلبات بانتظار', value: '7', detail: 'لجنة الموافقات' },
+          { label: 'دقة المطابقة', value: '99.7%', detail: 'مطابقات بنكية' }
+        ],
+        submodules: [
+          { id: 'receipts', label: 'إيصالات ذكية', workflow: ['التقاط الوثيقة الذكي', 'توقيع فوري متعدد العوامل', 'نشر القيود'] },
+          { id: 'payments', label: 'مركز الدفعات', workflow: ['تحقق حدود الصرف', 'ربط بنكي مباشر', 'التسوية الفورية'] },
+          { id: 'budget', label: 'موازنات حية', workflow: ['إشعار الانحراف', 'مناقلة ذكية', 'اعتماد نهائي'] }
+        ],
+        form: [
+          { label: 'عنوان القيد', type: 'text', placeholder: 'مثال: تسوية أرباح الربع الثالث' },
+          { label: 'نوع المستند', type: 'select', options: ['فاتورة', 'دفعة', 'أمر صرف', 'سلفة'] },
+          { label: 'القيمة', type: 'number', placeholder: '0.00 ر.س' },
+          { label: 'تاريخ التنفيذ', type: 'date', placeholder: '' },
+          { label: 'المركز التحليلي', type: 'text', placeholder: 'مركز ربح - الخليج' },
+          { label: 'طريقة الدفع', type: 'select', options: ['تحويل فوري', 'شيك رقمي', 'اعتماد مستندي'] },
+          { label: 'الملاحظات التحليلية', type: 'textarea', placeholder: 'تفاصيل إضافية وتفويض الصرف' }
+        ],
+        records: [
+          { code: 'TR-5541', title: 'دفعة توريد مركبة', value: '148,000 ر.س', owner: 'طارق ناصر', status: 'قيد المراجعة' },
+          { code: 'JV-2088', title: 'قيد تسوية أرباح', value: '82,600 ر.س', owner: 'منى البلوي', status: 'اعتماد تنفيذي' },
+          { code: 'PMT-9941', title: 'تحويل بنكي سريع', value: '412,900 ر.س', owner: 'ليان القرني', status: 'تم التنفيذ' }
+        ],
+        timeline: [
+          { time: '10:24', title: 'اعتماد دفعة حكومية', status: 'مكتمل' },
+          { time: '09:10', title: 'تنبيه انحراف موازنة', status: 'قيد الدرس' },
+          { time: '08:55', title: 'مطابقة كشف بنكي', status: 'مكتمل' }
+        ],
+        actions: ['توليد أمر دفع', 'مزامنة المصارف', 'مقارنة الموازنات']
+      },
+      sales: {
+        name: 'إدارة المبيعات الذكية',
+        icon: '🌀',
+        tone: '#ff63c3',
+        description: 'رحلة العملاء بالكامل من الفرصة وحتى التحصيل مع نظرة تنبؤية لنِسَب الإغلاق والإيراد المتكرر.',
+        stats: [
+          { label: 'قنوات نشطة', value: '54', detail: 'فرص مفتوحة' },
+          { label: 'إيراد متوقع', value: '3.2M', detail: '30 يوم قادمة' },
+          { label: 'دقة التسعير', value: '98.1%', detail: 'نماذج ديناميكية' }
+        ],
+        submodules: [
+          { id: 'opps', label: 'تخطيط الفرص', workflow: ['تصنيف تلقائي', 'تغذية ذكاء السوق', 'اقتراح سيناريو'] },
+          { id: 'contracts', label: 'إدارة العقود', workflow: ['إشهار الصيغة', 'توقيع متتالي', 'جدولة الفواتير'] },
+          { id: 'billing', label: 'اشتراكات وفوترة', workflow: ['قراءة الاستخدام', 'حساب آلي', 'تحصيل متعدد القنوات'] }
+        ],
+        form: [
+          { label: 'اسم العميل', type: 'text', placeholder: 'شركة مدار المستقبل' },
+          { label: 'مرحلة الفرصة', type: 'select', options: ['تأهيل', 'عرض فني', 'تفاوض', 'إغلاق'] },
+          { label: 'قيمة الصفقة', type: 'number', placeholder: '0.00 ر.س' },
+          { label: 'تاريخ الإغلاق المتوقع', type: 'date' },
+          { label: 'احتمالية الفوز', type: 'number', placeholder: '90%' },
+          { label: 'قائد الحساب', type: 'text', placeholder: 'اسم المسؤول' },
+          { label: 'ملخص استراتيجي', type: 'textarea', placeholder: 'ما الذي يميّز العرض...'}
+        ],
+        records: [
+          { code: 'OPP-8821', title: 'حلول سلسلة توريد', value: '620k ر.س', owner: 'ناصر مشهور', status: 'تفاوض' },
+          { code: 'CNT-1104', title: 'عقد صيانة موسع', value: '1.2M ر.س', owner: 'ريما الشرقاوي', status: 'بانتظار توقيع' },
+          { code: 'SUB-7782', title: 'اشتراك بريميوم', value: '96k ر.س', owner: 'أحمد الشهراني', status: 'فعال' }
+        ],
+        timeline: [
+          { time: '11:05', title: 'توقيع إلكتروني مكتمل', status: 'اكتمل' },
+          { time: '09:40', title: 'تحديث نموذج سعر', status: 'مستمر' },
+          { time: '08:15', title: 'تنبيه متابعة عميل', status: 'حرج' }
+        ],
+        actions: ['توليد عرض سعري', 'تسجيل مكالمة', 'إطلاق حملة متابعة']
+      },
+      supply: {
+        name: 'سلسلة التوريد الذاتية',
+        icon: '⚙️',
+        tone: '#8b7bff',
+        description: 'تخطيط مخزون، توريد، ونقل مدعوم بالذكاء الاصطناعي مع رؤية شاملة للعمليات المترابطة.',
+        stats: [
+          { label: 'دقة التنبؤ', value: '92%', detail: '30 يوم' },
+          { label: 'طلبات نشطة', value: '38', detail: 'طور التنفيذ' },
+          { label: 'التغطية المخزنية', value: '41 يوم', detail: 'متوسط الشبكة' }
+        ],
+        submodules: [
+          { id: 'inventory', label: 'موازنة المخزون', workflow: ['إشارة النقص', 'إعادة التوزيع', 'تبليغ الفروع'] },
+          { id: 'procurement', label: 'مركز التوريد', workflow: ['تحليل العطاء', 'اختيار المورد', 'إصدار أمر الشراء'] },
+          { id: 'logistics', label: 'النقل الذكي', workflow: ['تحسين المسار', 'تعقب الشحنة', 'استلام عالي الدقة'] }
+        ],
+        form: [
+          { label: 'اسم المورد', type: 'text', placeholder: 'شركة جسور الإمداد' },
+          { label: 'فئة المواد', type: 'select', options: ['معدات طبية', 'معدات تقنية', 'مواد خام'] },
+          { label: 'الكمية', type: 'number', placeholder: '0' },
+          { label: 'مستودع الوجهة', type: 'text', placeholder: 'مركز الرياض الرئيسي' },
+          { label: 'تاريخ التسليم', type: 'date' },
+          { label: 'مستوى حساس', type: 'select', options: ['عادي', 'حرج', 'تبريد'] },
+          { label: 'إرشادات المناولة', type: 'textarea', placeholder: 'يجب التأكد من سلسلة التبريد...'}
+        ],
+        records: [
+          { code: 'PO-6617', title: 'توريد حساسات حيوية', value: '230k ر.س', owner: 'ثامر التميمي', status: 'قيد التوريد' },
+          { code: 'INV-9042', title: 'موازنة مخزون جدة', value: 'تم', owner: 'هيا المسلم', status: 'جاري' },
+          { code: 'LOG-3021', title: 'وصول شحنة تبريد', value: 'ETA 4h', owner: 'فريق النقل', status: 'حرج' }
+        ],
+        timeline: [
+          { time: '12:30', title: 'انطلاق قافلة شمالية', status: 'متحرك' },
+          { time: '10:00', title: 'تأكيد وصول مستودع جدة', status: 'تم' },
+          { time: '07:45', title: 'تنبيه نقص مادة X', status: 'يتطلب رد' }
+        ],
+        actions: ['إطلاق طلب شراء', 'موازنة تلقائية', 'جدولة شحنة']
+      },
+      hr: {
+        name: 'الموارد البشرية التكيفية',
+        icon: '🧬',
+        tone: '#3cfda1',
+        description: 'إدارة رأس المال البشري بذكاء: التوظيف، الجاهزية، والرواتب مع مراقبة رفاه الموظفين.',
+        stats: [
+          { label: 'جاهزية الرواتب', value: '100%', detail: 'تم التدقيق' },
+          { label: 'طلبات مرنة', value: '18', detail: 'بانتظار الاعتماد' },
+          { label: 'نسبة الرضا', value: '94%', detail: 'استبيان 360°' }
+        ],
+        submodules: [
+          { id: 'talent', label: 'التوظيف الذكي', workflow: ['تصنيف السيرة', 'تقييم افتراضي', 'تجربة تعيين'] },
+          { id: 'payroll', label: 'مركز الرواتب', workflow: ['استيراد الحضور', 'احتساب البدلات', 'إصدار المسيرات'] },
+          { id: 'performance', label: 'أداء وتحفيز', workflow: ['ضبط الأهداف', 'متابعة مؤشرات', 'تغذية راجعة'] }
+        ],
+        form: [
+          { label: 'اسم الموظف', type: 'text', placeholder: 'سارة الملحم' },
+          { label: 'نوع العملية', type: 'select', options: ['طلب توظيف', 'ترقية', 'عقد مرن', 'مكافأة'] },
+          { label: 'التكلفة التقديرية', type: 'number', placeholder: '0.00 ر.س' },
+          { label: 'تاريخ النفاذ', type: 'date' },
+          { label: 'وحدة العمل', type: 'text', placeholder: 'خدمات رقمية' },
+          { label: 'مسار المتابعة', type: 'select', options: ['شؤون موظفين', 'شؤون مالية', 'المدير التنفيذي'] },
+          { label: 'مبررات واستشراف', type: 'textarea', placeholder: 'أثر القرار على الإنتاجية...' }
+        ],
+        records: [
+          { code: 'HR-4411', title: 'مسار ترقية تقنية', value: 'جاهز', owner: 'فريق المواهب', status: 'بموافقة نهائية' },
+          { code: 'PAY-9901', title: 'رواتب مايو', value: '1.7M ر.س', owner: 'قسم الرواتب', status: 'تم الصرف' },
+          { code: 'BEN-3308', title: 'مبادرة رفاهية', value: '120k ر.س', owner: 'ريهام عادل', status: 'مستمر' }
+        ],
+        timeline: [
+          { time: '13:15', title: 'إغلاق ملف ترقية طارق', status: 'تم' },
+          { time: '11:50', title: 'اعتماد بدل مرابطة', status: 'بانتظار توقيع' },
+          { time: '09:05', title: 'تنبيه تدريب إلزامي', status: 'جارٍ' }
+        ],
+        actions: ['فتح دورة توظيف', 'إطلاق كشف الرواتب', 'تفعيل برنامج تحفيز']
+      },
+      bi: {
+        name: 'ذكاء الأعمال التنفيذي',
+        icon: '📈',
+        tone: '#f6c65b',
+        description: 'مركز قيادة البيانات مع مؤشرات استراتيجية، محاكاة سيناريوهات، ولوحات متابعة تنفيذية.',
+        stats: [
+          { label: 'نقاط القرار', value: '128', detail: 'آخر 24 ساعة' },
+          { label: 'أهداف في المسار', value: '91%', detail: 'خطة التحول' },
+          { label: 'تنبيهات حرجة', value: '3', detail: 'تستدعي التفاعل' }
+        ],
+        submodules: [
+          { id: 'dashboards', label: 'لوحات ديناميكية', workflow: ['تجميع المصادر', 'تنظيف البيانات', 'إظهار مؤشرات الغد'] },
+          { id: 'alerts', label: 'تنبيهات استباقية', workflow: ['تحليل الانحراف', 'تصنيف الخطورة', 'اقتراح مسار المعالجة'] },
+          { id: 'sim', label: 'محاكاة السيناريو', workflow: ['اختيار فرضيات', 'تقدير الأثر', 'توصية تنفيذ'] }
+        ],
+        form: [
+          { label: 'عنوان المؤشر', type: 'text', placeholder: 'هامش الربحية المركب' },
+          { label: 'نوع القراءة', type: 'select', options: ['لحظي', 'كل ساعة', 'يومي'] },
+          { label: 'نطاق المقارنة', type: 'select', options: ['ربع سابق', 'خطة سنوية', 'سوق منافس'] },
+          { label: 'عتبة التنبيه', type: 'number', placeholder: 'مثال: -5%' },
+          { label: 'مستوى التصعيد', type: 'select', options: ['إدارة وسطى', 'تنفيذي', 'مجلس'] },
+          { label: 'قناة التوزيع', type: 'text', placeholder: 'لوحة قيادة + بريد آمن' },
+          { label: 'ملاحظات إضافية', type: 'textarea', placeholder: 'أدخل الافتراضات وارتباطها' }
+        ],
+        records: [
+          { code: 'KPI-552', title: 'هامش العمليات', value: '+4.3%', owner: 'مجلس الأداء', status: 'ضمن النطاق' },
+          { code: 'ALR-19', title: 'انخفاض تحصيل آسيا', value: '-8%', owner: 'مركز التحصيل', status: 'حرج' },
+          { code: 'SIM-44', title: 'سيناريو تسارع الطلب', value: '+12%', owner: 'مكتب الرئيس التنفيذي', status: 'قيد التحليل' }
+        ],
+        timeline: [
+          { time: '14:05', title: 'إصدار موجز تنفيذي', status: 'مرسل' },
+          { time: '11:20', title: 'تحليل انحراف الإيرادات', status: 'نشط' },
+          { time: '08:00', title: 'تأكيد مطابقة البيانات', status: 'اكتمل' }
+        ],
+        actions: ['مشاركة لوحة مباشرة', 'إرسال تنبيه تنفيذي', 'تشغيل محاكاة']
+      }
+    };
+
+    const loginForm = document.getElementById('login-form');
+    const loginStatus = document.getElementById('login-status');
+    const loginScreen = document.getElementById('login-screen');
+    const workspace = document.getElementById('workspace');
+    const toast = document.getElementById('toast');
+    const moduleCardsContainer = document.getElementById('module-cards');
+    const moduleTitle = document.getElementById('module-title');
+    const moduleDescription = document.getElementById('module-description');
+    const metricGrid = document.getElementById('metric-grid');
+    const formGrid = document.getElementById('form-grid');
+    const recordRows = document.getElementById('record-rows');
+    const timeline = document.getElementById('timeline');
+    const submoduleNav = document.getElementById('submodule-nav');
+    const workflowSteps = document.getElementById('workflow-steps');
+    const actionBar = document.getElementById('action-bar');
+    const suggestionsBox = document.getElementById('suggestions');
+    const commandSearch = document.getElementById('command-search');
+
+    let activeModule = 'finance';
+    let activeSubmodule = null;
+
+    const showToast = (text) => {
+      toast.textContent = text;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2600);
+    };
+
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const username = loginForm.username.value.trim();
+      const password = loginForm.password.value.trim();
+
+      if (username === 'mkhoraiby' && password === '210388') {
+        loginStatus.textContent = 'تم التحقق من الهوية، تجهيز لوحة التحكم...';
+        setTimeout(() => {
+          loginScreen.classList.remove('active');
+          workspace.classList.add('active');
+          showToast('مرحبًا بك، تم فتح جلسة نجر الآمنة.');
+        }, 600);
+      } else {
+        loginStatus.textContent = 'بيانات الاعتماد غير مطابقة. أعد المحاولة.';
+        loginStatus.style.color = 'var(--accent-red)';
+      }
+    });
+
+    const buildModuleCards = () => {
+      moduleCardsContainer.innerHTML = '';
+      Object.entries(moduleData).forEach(([key, module]) => {
+        const button = document.createElement('button');
+        button.className = 'module-card';
+        button.dataset.module = key;
+        button.innerHTML = `
+          <span class="icon">${module.icon}</span>
+          <strong>${module.name}</strong>
+          <small>${module.description}</small>
+        `;
+        button.addEventListener('click', () => {
+          activeModule = key;
+          activeSubmodule = null;
+          renderModule();
+        });
+        moduleCardsContainer.appendChild(button);
+      });
+    };
+
+    const renderModule = () => {
+      const data = moduleData[activeModule];
+      moduleTitle.textContent = data.name;
+      moduleDescription.textContent = data.description;
+
+      document.querySelectorAll('.module-card').forEach((card) => {
+        card.classList.toggle('active', card.dataset.module === activeModule);
+      });
+
+      metricGrid.innerHTML = data.stats
+        .map(
+          (metric) => `
+        <div class="metric">
+          <span>${metric.label}</span>
+          <strong style="color:${data.tone}">${metric.value}</strong>
+          <small>${metric.detail}</small>
+        </div>`
+        )
+        .join('');
+
+      formGrid.innerHTML = data.form
+        .map((field) => {
+          if (field.type === 'select') {
+            const options = field.options.map((opt) => `<option>${opt}</option>`).join('');
+            return `<div class="form-field">
+              <label>${field.label}</label>
+              <select>${options}</select>
+            </div>`;
+          }
+          if (field.type === 'textarea') {
+            return `<div class="form-field" style="grid-column:span 2;">
+              <label>${field.label}</label>
+              <textarea placeholder="${field.placeholder}"></textarea>
+            </div>`;
+          }
+          return `<div class="form-field">
+            <label>${field.label}</label>
+            <input type="${field.type}" placeholder="${field.placeholder ?? ''}" />
+          </div>`;
+        })
+        .join('');
+
+      recordRows.innerHTML = data.records
+        .map(
+          (record) => `
+          <tr>
+            <td>${record.code}</td>
+            <td>${record.title}</td>
+            <td>${record.value}</td>
+            <td>${record.owner}</td>
+            <td><span class="status-pill" style="color:${data.tone};border-color:${data.tone};">${record.status}</span></td>
+          </tr>`
+        )
+        .join('');
+
+      timeline.innerHTML = data.timeline
+        .map(
+          (item) => `
+          <div class="timeline-event" style="color:${data.tone};">
+            <div class="timeline-marker"></div>
+            <div>
+              <strong>${item.time}</strong>
+              <div style="color:var(--text-strong);">${item.title}</div>
+              <small style="color:var(--text-dim);">${item.status}</small>
+            </div>
+          </div>`
+        )
+        .join('');
+
+      actionBar.innerHTML = data.actions
+        .map((action) => `<button class="action-button" data-action="${action}">${action}</button>`)
+        .join('');
+
+      document.querySelectorAll('[data-action]').forEach((button) => {
+        button.addEventListener('click', () => {
+          showToast(`${button.dataset.action} — تم تسجيله في سجل المهام.`);
+        });
+      });
+
+      submoduleNav.innerHTML = data.submodules
+        .map(
+          (sub, index) => `
+          <button class="submodule${index === 0 && !activeSubmodule ? ' active' : ''}" data-sub="${sub.id}">${sub.label}</button>
+        `
+        )
+        .join('');
+
+      activeSubmodule = activeSubmodule || data.submodules[0].id;
+      updateSubmoduleWorkflow();
+    };
+
+    const updateSubmoduleWorkflow = () => {
+      const data = moduleData[activeModule];
+      const sub = data.submodules.find((item) => item.id === activeSubmodule) || data.submodules[0];
+      activeSubmodule = sub.id;
+
+      document.querySelectorAll('.submodule').forEach((button) => {
+        button.classList.toggle('active', button.dataset.sub === activeSubmodule);
+        button.onclick = () => {
+          activeSubmodule = button.dataset.sub;
+          updateSubmoduleWorkflow();
+        };
+      });
+
+      workflowSteps.innerHTML = sub.workflow
+        .map((step, index) => `<span>${index + 1}. ${step}</span>`)
+        .join('');
+    };
+
+    const buildSuggestions = () => {
+      const items = [];
+      Object.values(moduleData).forEach((module) => {
+        items.push(module.name);
+        module.records.forEach((record) => items.push(record.code));
+      });
+      return items;
+    };
+
+    const suggestionItems = buildSuggestions();
+
+    commandSearch.addEventListener('input', () => {
+      const query = commandSearch.value.trim();
+      if (!query) {
+        suggestionsBox.classList.remove('visible');
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+      const filtered = suggestionItems.filter((item) => item.includes(query)).slice(0, 6);
+      suggestionsBox.innerHTML = filtered
+        .map((text) => `<div class="suggestion-item" data-text="${text}">${text}</div>`)
+        .join('');
+      suggestionsBox.classList.toggle('visible', filtered.length > 0);
+      suggestionsBox.querySelectorAll('.suggestion-item').forEach((el) => {
+        el.addEventListener('click', () => {
+          commandSearch.value = el.dataset.text;
+          suggestionsBox.classList.remove('visible');
+          showToast(`تم تفعيل البحث عن «${el.dataset.text}».`);
+        });
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!commandSearch.contains(event.target)) {
+        suggestionsBox.classList.remove('visible');
+      }
+    });
+
+    document.querySelectorAll('[data-chip]').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('active');
+        showToast('تم تحديث المرشحات السياقية.');
+      });
+    });
+
+    document.querySelectorAll('[data-quick]').forEach((button) => {
+      button.addEventListener('click', () => {
+        showToast(`${button.textContent} قيد الإطلاق.`);
+      });
+    });
+
+    document.getElementById('new-record').addEventListener('click', () => {
+      showToast('تم فتح نموذج إدخال شامل للوحدة المحددة.');
+    });
+
+    buildModuleCards();
+    renderModule();
+  </script>
+</body>
+</html>

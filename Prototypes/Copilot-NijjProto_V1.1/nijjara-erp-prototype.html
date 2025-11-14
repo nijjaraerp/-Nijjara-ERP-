@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نظام نجارة - Nijjara ERP System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-dark: #0a0e27;
+        --bg-darker: #060914;
+        --bg-card: #141929;
+        --bg-card-hover: #1a1f35;
+
+        --primary: #4169ff;
+        --primary-dark: #2845cc;
+        --primary-glow: rgba(65, 105, 255, 0.3);
+
+        --secondary: #7c3aed;
+        --secondary-dark: #5b21b6;
+
+        --accent-cyan: #06b6d4;
+        --accent-pink: #ec4899;
+        --accent-orange: #f97316;
+        --accent-green: #10b981;
+
+        --text-primary: #e2e8f0;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+
+        --border: rgba(255, 255, 255, 0.1);
+        --border-hover: rgba(255, 255, 255, 0.2);
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+        --shadow-glow: 0 0 40px var(--primary-glow);
+      }
+
+      body {
+        font-family: 'Cairo', sans-serif;
+        background: var(--bg-darker);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+
+      /* Animated Background */
+      .animated-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .animated-bg::before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background:
+          radial-gradient(circle at 20% 30%, rgba(65, 105, 255, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+        animation: bgShift 20s ease infinite;
+      }
+
+      @keyframes bgShift {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        33% {
+          transform: translate(-5%, 5%) rotate(120deg);
+        }
+        66% {
+          transform: translate(5%, -5%) rotate(240deg);
+        }
+      }
+
+      /* Glass Effect Utility */
+      .glass {
+        background: rgba(20, 25, 41, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+      }
+
+      .glass-strong {
+        background: rgba(20, 25, 41, 0.9);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid var(--border);
+      }
+
+      /* 3D Glossy Button */
+      .btn-3d {
+        position: relative;
+        padding: 12px 32px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        font-family: 'Cairo', sans-serif;
+      }
+
+      .btn-3d::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+        border-radius: 12px 12px 0 0;
+      }
+
+      .btn-3d::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        padding: 2px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.3),
+          transparent 50%,
+          rgba(255, 255, 255, 0.1)
+        );
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .btn-3d:hover::after {
+        opacity: 1;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        box-shadow: 0 8px 20px rgba(65, 105, 255, 0.4);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(65, 105, 255, 0.5);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      /* Login Screen */
+      #login-screen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .login-container {
+        width: 100%;
+        max-width: 480px;
+        animation: fadeInScale 0.6s ease;
+      }
+
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .login-card {
+        padding: 48px;
+        border-radius: 24px;
+        box-shadow: var(--shadow-lg), var(--shadow-glow);
+      }
+
+      .logo-container {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .logo-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: 900;
+        color: white;
+        box-shadow: 0 8px 24px rgba(65, 105, 255, 0.4);
+        position: relative;
+      }
+
+      .logo-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+        border-radius: 20px 20px 0 0;
+      }
+
+      .logo-text h1 {
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+      }
+
+      .logo-text p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 14px;
+      }
+
+      .input-3d {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 16px;
+        font-family: 'Cairo', sans-serif;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        background: rgba(10, 14, 39, 0.5);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+        direction: ltr;
+        text-align: left;
+      }
+
+      .input-3d:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: rgba(10, 14, 39, 0.7);
+        box-shadow: 0 0 0 4px rgba(65, 105, 255, 0.1);
+      }
+
+      .input-3d::placeholder {
+        color: var(--text-muted);
+      }
+
+      .btn-login {
+        width: 100%;
+        margin-top: 8px;
+      }
+
+      .login-footer {
+        margin-top: 24px;
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 13px;
+      }
+
+      /* Dashboard Layout */
+      #dashboard-screen {
+        display: none;
+        min-height: 100vh;
+      }
+
+      .dashboard-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        grid-template-rows: 80px 1fr;
+        grid-template-areas:
+          'sidebar header'
+          'sidebar main';
+        min-height: 100vh;
+      }
+
+      /* Top Header */
+      .top-header {
+        grid-area: header;
+        padding: 20px 32px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: rgba(10, 14, 39, 0.8);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-left h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .header-search {
+        position: relative;
+      }
+
+      .header-search input {
+        width: 300px;
+        padding: 10px 16px 10px 44px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(20, 25, 41, 0.6);
+        color: var(--text-primary);
+        font-family: 'Cairo', sans-serif;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .header-search input:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: rgba(20, 25, 41, 0.9);
+      }
+
+      .header-search::before {
+        content: '🔍';
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+      }
+
+      .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 16px;
+        border-radius: 12px;
+        background: rgba(20, 25, 41, 0.6);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .user-menu:hover {
+        background: rgba(20, 25, 41, 0.9);
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent-cyan), var(--primary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: white;
+        font-size: 16px;
+      }
+
+      .user-info {
+        text-align: right;
+      }
+
+      .user-info .name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
+      }
+
+      .user-info .role {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      /* Sidebar */
+      .sidebar {
+        grid-area: sidebar;
+        background: rgba(10, 14, 39, 0.9);
+        border-left: 1px solid var(--border);
+        padding: 24px 0;
+        overflow-y: auto;
+      }
+
+      .sidebar-logo {
+        padding: 0 24px 24px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+      }
+
+      .sidebar-logo-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 12px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 900;
+        color: white;
+        box-shadow: 0 6px 20px rgba(65, 105, 255, 0.4);
+      }
+
+      .sidebar-logo h3 {
+        font-size: 20px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-menu {
+        list-style: none;
+        padding: 0 16px;
+      }
+
+      .nav-item {
+        margin-bottom: 4px;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .nav-link::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--primary);
+        transform: translateX(-4px);
+        transition: transform 0.3s ease;
+      }
+
+      .nav-link:hover {
+        background: rgba(65, 105, 255, 0.1);
+        color: var(--text-primary);
+      }
+
+      .nav-link.active {
+        background: rgba(65, 105, 255, 0.15);
+        color: var(--primary);
+      }
+
+      .nav-link.active::before {
+        transform: translateX(0);
+      }
+
+      .nav-icon {
+        font-size: 20px;
+        width: 24px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        grid-area: main;
+        padding: 32px;
+        overflow-y: auto;
+        background: var(--bg-darker);
+      }
+
+      .content-header {
+        margin-bottom: 32px;
+      }
+
+      .content-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+      }
+
+      .content-header p {
+        color: var(--text-secondary);
+        font-size: 15px;
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+
+      .stat-card {
+        padding: 24px;
+        border-radius: 16px;
+        background: rgba(20, 25, 41, 0.7);
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+      }
+
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-hover);
+      }
+
+      .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .stat-icon.blue {
+        background: rgba(65, 105, 255, 0.15);
+        color: var(--primary);
+      }
+      .stat-icon.purple {
+        background: rgba(124, 58, 237, 0.15);
+        color: var(--secondary);
+      }
+      .stat-icon.cyan {
+        background: rgba(6, 182, 212, 0.15);
+        color: var(--accent-cyan);
+      }
+      .stat-icon.green {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--accent-green);
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* Data Table */
+      .data-table-container {
+        background: rgba(20, 25, 41, 0.7);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 32px;
+      }
+
+      .table-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .table-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .table-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn-sm {
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Cairo', sans-serif;
+      }
+
+      .btn-add {
+        background: linear-gradient(135deg, var(--accent-green), #059669);
+        color: white;
+      }
+
+      .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table thead {
+        background: rgba(65, 105, 255, 0.1);
+      }
+
+      .data-table th {
+        padding: 16px 24px;
+        text-align: right;
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .data-table td {
+        padding: 16px 24px;
+        text-align: right;
+        color: var(--text-secondary);
+        font-size: 14px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .data-table tbody tr {
+        transition: all 0.2s ease;
+      }
+
+      .data-table tbody tr:hover {
+        background: rgba(65, 105, 255, 0.05);
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .badge-success {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--accent-green);
+      }
+
+      .badge-warning {
+        background: rgba(249, 115, 22, 0.15);
+        color: var(--accent-orange);
+      }
+
+      .badge-info {
+        background: rgba(6, 182, 212, 0.15);
+        color: var(--accent-cyan);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+
+      .btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .btn-icon.edit {
+        background: rgba(6, 182, 212, 0.15);
+        color: var(--accent-cyan);
+      }
+
+      .btn-icon.delete {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+
+      .btn-icon:hover {
+        transform: scale(1.1);
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        width: 100%;
+        max-width: 600px;
+        background: rgba(20, 25, 41, 0.95);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+
+      .modal-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .btn-close {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: none;
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .btn-close:hover {
+        background: rgba(239, 68, 68, 0.25);
+        transform: rotate(90deg);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+      }
+
+      .btn-secondary {
+        background: rgba(148, 163, 184, 0.15);
+        color: var(--text-secondary);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(148, 163, 184, 0.25);
+      }
+
+      /* Utility Classes */
+      .hidden {
+        display: none !important;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .mt-4 {
+        margin-top: 32px;
+      }
+      .mb-4 {
+        margin-bottom: 32px;
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-darker);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(65, 105, 255, 0.3);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(65, 105, 255, 0.5);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .dashboard-layout {
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            'header'
+            'main';
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .header-search input {
+          width: 200px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .login-card {
+          padding: 32px 24px;
+        }
+
+        .main-content {
+          padding: 20px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .data-table {
+          font-size: 13px;
+        }
+
+        .data-table th,
+        .data-table td {
+          padding: 12px 16px;
+        }
+
+        .header-search {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="animated-bg"></div>
+
+    <!-- Login Screen -->
+    <div id="login-screen">
+      <div class="login-container">
+        <div class="login-card glass-strong">
+          <div class="logo-container">
+            <div class="logo-icon">ن</div>
+            <div class="logo-text">
+              <h1>نظام نجارة</h1>
+              <p>نظام إدارة المشاريع والموارد البشرية</p>
+            </div>
+          </div>
+
+          <form id="login-form" onsubmit="return handleLogin(event)">
+            <div class="form-group">
+              <label for="username">اسم المستخدم</label>
+              <input
+                type="text"
+                id="username"
+                class="input-3d"
+                value="mkhoraiby"
+                placeholder="ادخل اسم المستخدم"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="password">كلمة المرور</label>
+              <input
+                type="password"
+                id="password"
+                class="input-3d"
+                value="210388"
+                placeholder="ادخل كلمة المرور"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn-3d btn-primary btn-login">تسجيل الدخول</button>
+          </form>
+
+          <div class="login-footer">
+            <p>نظام نجارة © 2025 - جميع الحقوق محفوظة</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboard-screen">
+      <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">ن</div>
+            <h3>نظام نجارة</h3>
+          </div>
+
+          <ul class="nav-menu">
+            <li class="nav-item">
+              <a href="#" class="nav-link active" onclick="showScreen('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span>لوحة التحكم</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('hrm-employees')">
+                <span class="nav-icon">👥</span>
+                <span>الموظفين</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('hrm-attendance')">
+                <span class="nav-icon">⏰</span>
+                <span>الحضور والانصراف</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('hrm-leave')">
+                <span class="nav-icon">🏖️</span>
+                <span>الإجازات</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('hrm-advances')">
+                <span class="nav-icon">💰</span>
+                <span>السلف</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('prj-projects')">
+                <span class="nav-icon">🏗️</span>
+                <span>المشاريع</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('prj-clients')">
+                <span class="nav-icon">🤝</span>
+                <span>العملاء</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('prj-tasks')">
+                <span class="nav-icon">✅</span>
+                <span>المهام</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('fin-expenses')">
+                <span class="nav-icon">💸</span>
+                <span>المصروفات</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('fin-revenue')">
+                <span class="nav-icon">💵</span>
+                <span>الإيرادات</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('fin-payroll')">
+                <span class="nav-icon">💳</span>
+                <span>الرواتب</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('sys-users')">
+                <span class="nav-icon">👤</span>
+                <span>المستخدمين</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" onclick="showScreen('sys-roles')">
+                <span class="nav-icon">🔐</span>
+                <span>الأدوار والصلاحيات</span>
+              </a>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Top Header -->
+        <header class="top-header">
+          <div class="header-left">
+            <h2 id="page-title">لوحة التحكم</h2>
+          </div>
+          <div class="header-right">
+            <div class="header-search">
+              <input type="text" placeholder="بحث..." />
+            </div>
+            <div class="user-menu" onclick="logout()">
+              <div class="user-info">
+                <div class="name">محمد خريبي</div>
+                <div class="role">مدير النظام</div>
+              </div>
+              <div class="user-avatar">م.خ</div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+          <!-- Content will be dynamically loaded here -->
+        </main>
+      </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="data-modal">
+      <div class="modal-content glass-strong">
+        <div class="modal-header">
+          <h2 id="modal-title">إضافة عنصر جديد</h2>
+          <button class="btn-close" onclick="closeModal()">×</button>
+        </div>
+        <div id="modal-body">
+          <!-- Form fields will be dynamically loaded -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Global State
+      let currentScreen = 'dashboard';
+      let currentData = {};
+
+      // Login Handler
+      function handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username === 'mkhoraiby' && password === '210388') {
+          document.getElementById('login-screen').style.display = 'none';
+          document.getElementById('dashboard-screen').style.display = 'block';
+          showScreen('dashboard');
+        } else {
+          alert('خطأ في اسم المستخدم أو كلمة المرور');
+        }
+        return false;
+      }
+
+      // Logout Handler
+      function logout() {
+        if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+          document.getElementById('dashboard-screen').style.display = 'none';
+          document.getElementById('login-screen').style.display = 'flex';
+          document.getElementById('username').value = 'mkhoraiby';
+          document.getElementById('password').value = '210388';
+        }
+      }
+
+      // Screen Navigation
+      function showScreen(screen) {
+        currentScreen = screen;
+
+        // Update active nav link
+        document.querySelectorAll('.nav-link').forEach((link) => {
+          link.classList.remove('active');
+        });
+        event.target.closest('.nav-link').classList.add('active');
+
+        // Load content based on screen
+        const content = getScreenContent(screen);
+        document.getElementById('main-content').innerHTML = content;
+        document.getElementById('page-title').textContent = getScreenTitle(screen);
+      }
+
+      function getScreenTitle(screen) {
+        const titles = {
+          dashboard: 'لوحة التحكم',
+          'hrm-employees': 'إدارة الموظفين',
+          'hrm-attendance': 'الحضور والانصراف',
+          'hrm-leave': 'إدارة الإجازات',
+          'hrm-advances': 'إدارة السلف',
+          'prj-projects': 'إدارة المشاريع',
+          'prj-clients': 'إدارة العملاء',
+          'prj-tasks': 'إدارة المهام',
+          'fin-expenses': 'إدارة المصروفات',
+          'fin-revenue': 'إدارة الإيرادات',
+          'fin-payroll': 'إدارة الرواتب',
+          'sys-users': 'إدارة المستخدمين',
+          'sys-roles': 'الأدوار والصلاحيات',
+        };
+        return titles[screen] || 'لوحة التحكم';
+      }
+
+      // Content Generator
+      function getScreenContent(screen) {
+        switch (screen) {
+          case 'dashboard':
+            return getDashboardContent();
+          case 'hrm-employees':
+            return getEmployeesContent();
+          case 'hrm-attendance':
+            return getAttendanceContent();
+          case 'hrm-leave':
+            return getLeaveContent();
+          case 'hrm-advances':
+            return getAdvancesContent();
+          case 'prj-projects':
+            return getProjectsContent();
+          case 'prj-clients':
+            return getClientsContent();
+          case 'prj-tasks':
+            return getTasksContent();
+          case 'fin-expenses':
+            return getExpensesContent();
+          case 'fin-revenue':
+            return getRevenueContent();
+          case 'fin-payroll':
+            return getPayrollContent();
+          case 'sys-users':
+            return getUsersContent();
+          case 'sys-roles':
+            return getRolesContent();
+          default:
+            return getDashboardContent();
+        }
+      }
+
+      function getDashboardContent() {
+        return `
+                <div class="content-header">
+                    <h1>مرحباً بك في نظام نجارة</h1>
+                    <p>نظرة شاملة على أداء النظام والإحصائيات الرئيسية</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon blue">👥</div>
+                        </div>
+                        <div class="stat-value">145</div>
+                        <div class="stat-label">إجمالي الموظفين</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon purple">🏗️</div>
+                        </div>
+                        <div class="stat-value">28</div>
+                        <div class="stat-label">المشاريع النشطة</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon cyan">💰</div>
+                        </div>
+                        <div class="stat-value">2.4M</div>
+                        <div class="stat-label">الإيرادات (ريال)</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon green">✅</div>
+                        </div>
+                        <div class="stat-value">87%</div>
+                        <div class="stat-label">معدل الإنجاز</div>
+                    </div>
+                </div>
+
+                <div class="data-table-container glass">
+                    <div class="table-header">
+                        <h3>المشاريع الأخيرة</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم المشروع</th>
+                                <th>العميل</th>
+                                <th>الحالة</th>
+                                <th>نسبة الإنجاز</th>
+                                <th>الميزانية</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>مشروع الواجهة البحرية</td>
+                                <td>شركة البناء الحديث</td>
+                                <td><span class="badge badge-success">نشط</span></td>
+                                <td>75%</td>
+                                <td>850,000 ريال</td>
+                            </tr>
+                            <tr>
+                                <td>برج الأعمال المركزي</td>
+                                <td>مجموعة الاستثمار العقاري</td>
+                                <td><span class="badge badge-warning">قيد المراجعة</span></td>
+                                <td>45%</td>
+                                <td>1,250,000 ريال</td>
+                            </tr>
+                            <tr>
+                                <td>مجمع سكني الربيع</td>
+                                <td>شركة التطوير العمراني</td>
+                                <td><span class="badge badge-success">نشط</span></td>
+                                <td>92%</td>
+                                <td>650,000 ريال</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+      }
+
+      // Modal Functions
+      function openModal(title, fields, data = {}) {
+        const modal = document.getElementById('data-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+
+        modalTitle.textContent = title;
+        modalBody.innerHTML = generateForm(fields, data);
+        modal.classList.add('active');
+      }
+
+      function closeModal() {
+        document.getElementById('data-modal').classList.remove('active');
+      }
+
+      function generateForm(fields, data) {
+        let form = '<form id="dynamic-form" onsubmit="return handleFormSubmit(event)">';
+
+        fields.forEach((field) => {
+          const value = data[field.name] || '';
+          form += `
+                    <div class="form-group">
+                        <label for="${field.name}">${field.label}</label>
+                        ${
+                          field.type === 'textarea'
+                            ? `<textarea id="${field.name}" class="input-3d" rows="4" ${field.required ? 'required' : ''}>${value}</textarea>`
+                            : `<input type="${field.type}" id="${field.name}" class="input-3d" value="${value}" ${field.required ? 'required' : ''}>`
+                        }
+                    </div>
+                `;
+        });
+
+        form += `
+                <div class="modal-footer">
+                    <button type="button" class="btn-3d btn-secondary" onclick="closeModal()">إلغاء</button>
+                    <button type="submit" class="btn-3d btn-primary">حفظ</button>
+                </div>
+            </form>`;
+
+        return form;
+      }
+
+      function handleFormSubmit(e) {
+        e.preventDefault();
+        alert('تم الحفظ بنجاح!');
+        closeModal();
+        return false;
+      }
+
+      // Initialize
+      window.addEventListener('DOMContentLoaded', function () {
+        // Auto-login for demo
+        // Uncomment the line below to skip login screen
+        // handleLogin(new Event('submit'));
+      });
+    </script>
+  </body>
+</html>

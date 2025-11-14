@@ -6,3 +6,9 @@
 [2025-11-14T01:55:10.649Z] [WARN] File not found: C:\Users\moham\MK_Work\Final_NijjaraERP\favicon.ico
 [2025-11-14T01:57:06.247Z] [INFO] Shutting down browser testing server
 [2025-11-14T01:57:06.249Z] [INFO] Server closed
+[2025-11-14T03:06:10.340Z] [INFO] Browser testing server started on http://localhost:8080
+[2025-11-14T03:06:10.342Z] [INFO] Agent access enabled - shared browser instance available
+[2025-11-14T03:07:11.545Z] [INFO] Request: GET /
+[2025-11-14T03:07:11.578Z] [INFO] Served: C:\Users\moham\MK_Work\Final_NijjaraERP\preview.html (text/html)
+[2025-11-14T03:07:12.957Z] [INFO] Request: GET /favicon.ico
+[2025-11-14T03:07:12.960Z] [WARN] File not found: C:\Users\moham\MK_Work\Final_NijjaraERP\favicon.ico
